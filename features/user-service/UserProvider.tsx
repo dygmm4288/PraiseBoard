@@ -1,9 +1,16 @@
-import { userRepository } from "@/features/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { userRepository } from "./index";
 
-const useApiInit = () => {
+interface UserContextType {
+  isInitialized: boolean;
+  profileId: string | null;
+}
+
+const UserContext = createContext<UserContextType | null>(null);
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
 
@@ -14,22 +21,17 @@ const useApiInit = () => {
         const storedProfileId = await AsyncStorage.getItem("profile_id");
 
         if (storedDeviceId && storedProfileId) {
-          // [기존 유저]
           setProfileId(storedProfileId);
           await userRepository.updateLastLogin(storedDeviceId);
         } else {
-          // [신규 유저]
-
           const newDeviceId = Crypto.randomUUID();
           const newProfileId = await userRepository.createProfile();
-
           await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
 
           await AsyncStorage.setItem("device_id", newDeviceId);
           await AsyncStorage.setItem("profile_id", newProfileId);
 
           setProfileId(newProfileId);
-          console.log("신규 유저 프로필 생성 및 저장 완료:", newProfileId);
         }
       } catch (error) {
         console.error("앱 초기화 중 오류 발생", error);
@@ -41,10 +43,18 @@ const useApiInit = () => {
     initializeApp();
   }, []);
 
-  return {
+  const value = {
     isInitialized,
     profileId,
   };
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-export default useApiInit;
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must use in UserProvider");
+  }
+  return context;
+};

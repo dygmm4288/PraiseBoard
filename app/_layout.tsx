@@ -1,3 +1,4 @@
+import { UserProvider, useUser } from "@/features/user-service/UserProvider";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
@@ -7,7 +8,11 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-export default function RootLayout() {
+const RootLayoutNav = () => {
+  const { isInitialized } = useUser();
+
+  if (!isInitialized) return null;
+
   return (
     <>
       <Stack>
@@ -17,7 +22,17 @@ export default function RootLayout() {
           options={{ presentation: "modal", title: "Modal" }}
         />
       </Stack>
-      <StatusBar style='auto' />
+    </>
+  );
+};
+
+export default function RootLayout() {
+  return (
+    <>
+      <UserProvider>
+        <RootLayoutNav />
+        <StatusBar style='auto' />
+      </UserProvider>
     </>
   );
 }
