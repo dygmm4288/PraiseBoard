@@ -1,6 +1,6 @@
+import { userRepository } from "@/features/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
 
 const useApiInit = () => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -15,31 +15,14 @@ const useApiInit = () => {
         if (storedDeviceId && storedProfileId) {
           // [기존 유저]
           setProfileId(storedProfileId);
-          await supabase
-            .from("devices")
-            .update({ last_login_at: new Date().toISOString() })
-            .eq("device_id", storedDeviceId);
+          await userRepository.updateLastLogin(storedDeviceId);
         } else {
           // [신규 유저]
 
           const newDeviceId = new Crypto().randomUUID();
+          const newProfileId = await userRepository.createProfile();
 
-          const { data: profileData, error: profileError } = await supabase
-            .from("profiles")
-            .insert({})
-            .select("id")
-            .single();
-
-          if (profileError) throw profileError;
-
-          const newProfileId = profileData.id;
-
-          const { error: deviceError } = await supabase.from("devices").insert({
-            device_id: newDeviceId,
-            profile_id: newProfileId,
-          });
-
-          if (deviceError) throw deviceError;
+          await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
 
           await AsyncStorage.setItem("device_id", newDeviceId);
           await AsyncStorage.setItem("profile_id", newProfileId);
