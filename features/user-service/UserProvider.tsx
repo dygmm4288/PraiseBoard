@@ -1,13 +1,16 @@
-import { localStorage } from "@/infra/storage";
 import * as Crypto from "expo-crypto";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { localStorage } from "@/infra/storage";
 import { userRepository } from "./index";
 
 interface UserContextType {
   isInitialized: boolean;
   profileId: string | null;
   hasSeenIntro: boolean;
+  hasCompletedOnboarding: boolean;
   completeIntro: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
+  resetOnboardingProgress: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -16,19 +19,29 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [hasSeenIntro, setHasSeenIntro] = useState<boolean>(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        const [storedDeviceId, storedProfileId, storedHasSeenIntro] =
-          await Promise.all([
-            localStorage.getItem("device_id"),
-            localStorage.getItem("profile_id"),
-            localStorage.getItem("has_seen_intro"),
-          ]);
+        const [
+          storedDeviceId,
+          storedProfileId,
+          storedHasSeenIntro,
+          storedHasCompletedOnboarding,
+        ] = await Promise.all([
+          localStorage.getItem("device_id"),
+          localStorage.getItem("profile_id"),
+          localStorage.getItem("has_seen_intro"),
+          localStorage.getItem("has_completed_onboarding"),
+        ]);
 
         if (storedHasSeenIntro) {
           setHasSeenIntro(true);
+        }
+        if (storedHasCompletedOnboarding) {
+          setHasCompletedOnboarding(true);
         }
 
         if (storedDeviceId && storedProfileId) {
@@ -65,11 +78,36 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const completeOnboarding = async () => {
+    try {
+      await localStorage.setItem("has_completed_onboarding", "true");
+      setHasCompletedOnboarding(true);
+    } catch (error) {
+      console.error("온보딩 완료 처리 오류 발생", error);
+    }
+  };
+
+  const resetOnboardingProgress = async () => {
+    try {
+      await Promise.all([
+        localStorage.removeItem("has_seen_intro"),
+        localStorage.removeItem("has_completed_onboarding"),
+      ]);
+      setHasSeenIntro(false);
+      setHasCompletedOnboarding(false);
+    } catch (error) {
+      console.error("온보딩 상태 초기화 오류 발생", error);
+    }
+  };
+
   const value = {
     isInitialized,
     profileId,
     hasSeenIntro,
+    hasCompletedOnboarding,
     completeIntro,
+    completeOnboarding,
+    resetOnboardingProgress,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
