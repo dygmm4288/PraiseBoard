@@ -12,6 +12,7 @@ const useApiInit = () => {
       try {
         const storedDeviceId = await AsyncStorage.getItem("device_id");
         const storedProfileId = await AsyncStorage.getItem("profile_id");
+        const authUserId = await userRepository.ensureAnonymousSession();
 
         if (storedDeviceId && storedProfileId) {
           // [기존 유저]
@@ -21,7 +22,7 @@ const useApiInit = () => {
           // [신규 유저]
 
           const newDeviceId = Crypto.randomUUID();
-          const newProfileId = await userRepository.createProfile();
+          const newProfileId = await userRepository.createProfile(authUserId);
 
           await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
 

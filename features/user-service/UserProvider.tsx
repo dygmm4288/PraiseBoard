@@ -24,8 +24,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           setProfileId(storedProfileId);
           await userRepository.updateLastLogin(storedDeviceId);
         } else {
+          const authUserId = await userRepository.ensureAnonymousSession();
+
           const newDeviceId = Crypto.randomUUID();
-          const newProfileId = await userRepository.createProfile();
+          const newProfileId = await userRepository.createProfile(authUserId);
           await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
 
           await AsyncStorage.setItem("device_id", newDeviceId);
