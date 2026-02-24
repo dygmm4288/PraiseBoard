@@ -6,6 +6,8 @@ import { userRepository } from "./index";
 interface UserContextType {
   isInitialized: boolean;
   profileId: string | null;
+  hasSeenIntro: boolean;
+  completeIntro: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -13,12 +15,21 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const [hasSeenIntro, setHasSeenIntro] = useState<boolean>(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        const storedDeviceId = await AsyncStorage.getItem("device_id");
-        const storedProfileId = await AsyncStorage.getItem("profile_id");
+        const [storedDeviceId, storedProfileId, storedHasSeenIntro] =
+          await Promise.all([
+            AsyncStorage.getItem("device_id"),
+            AsyncStorage.getItem("profile_id"),
+            AsyncStorage.getItem("has_seen_intro"),
+          ]);
+
+        if (storedHasSeenIntro) {
+          setHasSeenIntro(true);
+        }
 
         if (storedDeviceId && storedProfileId) {
           setProfileId(storedProfileId);
@@ -45,9 +56,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     initializeApp();
   }, []);
 
+  const completeIntro = async () => {
+    try {
+      await AsyncStorage.setItem("has_seen_intro", "true");
+      setHasSeenIntro(true);
+    } catch (error) {
+      console.error("인트로 초기화 오류 발생", error);
+    }
+  };
+
   const value = {
     isInitialized,
     profileId,
+    hasSeenIntro,
+    completeIntro,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
