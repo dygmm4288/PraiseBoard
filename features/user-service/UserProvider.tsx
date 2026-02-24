@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { localStorage } from "@/infra/storage";
 import * as Crypto from "expo-crypto";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { userRepository } from "./index";
@@ -22,9 +22,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const [storedDeviceId, storedProfileId, storedHasSeenIntro] =
           await Promise.all([
-            AsyncStorage.getItem("device_id"),
-            AsyncStorage.getItem("profile_id"),
-            AsyncStorage.getItem("has_seen_intro"),
+            localStorage.getItem("device_id"),
+            localStorage.getItem("profile_id"),
+            localStorage.getItem("has_seen_intro"),
           ]);
 
         if (storedHasSeenIntro) {
@@ -41,8 +41,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           const newProfileId = await userRepository.createProfile(authUserId);
           await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
 
-          await AsyncStorage.setItem("device_id", newDeviceId);
-          await AsyncStorage.setItem("profile_id", newProfileId);
+          await localStorage.setItem("device_id", newDeviceId);
+          await localStorage.setItem("profile_id", newProfileId);
 
           setProfileId(newProfileId);
         }
@@ -58,7 +58,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const completeIntro = async () => {
     try {
-      await AsyncStorage.setItem("has_seen_intro", "true");
+      await localStorage.setItem("has_seen_intro", "true");
       setHasSeenIntro(true);
     } catch (error) {
       console.error("인트로 초기화 오류 발생", error);
