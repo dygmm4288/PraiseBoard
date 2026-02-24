@@ -1,6 +1,7 @@
 import { useUser } from "@/features/user-service/UserProvider";
+import { AppButton, AppText } from "@/shared/components/ui";
 import { Link, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -13,14 +14,16 @@ export default function HomeScreen() {
 
   return (
     <View className='flex-1 items-center justify-center gap-4 bg-white'>
-      <Text className='text-xl text-gray-500'>Welcome to NativeWind</Text>
+      <AppText variant='title' tone='muted'>
+        Welcome to NativeWind
+      </AppText>
       <Link href='/signup'>to signup</Link>
       {__DEV__ ? (
-        <TouchableOpacity
-          className='rounded-xl bg-red-500 px-4 py-3'
+        <AppButton
+          label='Dev: Intro/Onboarding Reset'
+          variant='danger'
           onPress={handleResetOnboarding}>
-          <Text className='text-white'>Dev: Intro/Onboarding Reset</Text>
-        </TouchableOpacity>
+        </AppButton>
       ) : null}
     </View>
   );

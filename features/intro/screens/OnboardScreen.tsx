@@ -1,6 +1,7 @@
 import { useUser } from "@/features/user-service/UserProvider";
+import { AppButton, AppText } from "@/shared/components/ui";
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 const OnboardScreen = () => {
   const router = useRouter();
@@ -13,12 +14,8 @@ const OnboardScreen = () => {
 
   return (
     <View className='flex-1 items-center justify-center gap-4 bg-white px-6'>
-      <Text className='text-2xl font-bold'>Onboarding</Text>
-      <TouchableOpacity
-        className='rounded-xl bg-blue-500 px-4 py-3'
-        onPress={handleComplete}>
-        <Text className='text-white'>완료하고 홈으로</Text>
-      </TouchableOpacity>
+      <AppText variant='title'>Onboarding</AppText>
+      <AppButton label='완료하고 홈으로' onPress={handleComplete} />
     </View>
   );
 };
