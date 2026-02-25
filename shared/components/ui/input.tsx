@@ -11,12 +11,17 @@ export const AppInput = ({
   inputClassName = "",
   reset = false,
   onReset = () => {},
+  value = "",
   ...props
 }: AppInputProps) => {
   return (
     <View className='flex flex-row justify-between w-full rounded-xl border border-gray-300 p-4'>
-      <TextInput className={cn("w-full", inputClassName)} {...props} />
-      {reset && <Button title={"하이"} onPress={onReset} />}
+      <TextInput
+        className={cn("w-full", inputClassName)}
+        value={value}
+        {...props}
+      />
+      {reset && value && <Button title={"하이"} onPress={onReset} />}
     </View>
   );
 };
