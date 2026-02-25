@@ -1,31 +1,51 @@
 import { useUser } from "@/features/user-service/UserProvider";
-import { OnboardingPageLayout, StepDots } from "@/shared/components/flow";
-import { AppButton, AppText } from "@/shared/components/ui";
+import { IntroPageLayout, Stepper } from "@/shared/components/flow";
+import { AppButton } from "@/shared/components/ui";
 import { useRouter } from "expo-router";
+import { View } from "react-native";
+import IntroContent from "../components/intro-content";
 
 const IntroScreen = () => {
-  const router = useRouter();
   const { completeIntro } = useUser();
+  const router = useRouter();
+  const steps = [
+    { label: "intro0", value: "intro0" },
+    { label: "intro1", value: "intro1" },
+  ];
 
-  const handleNext = async () => {
-    await completeIntro();
-    router.replace("/onboard");
+  const handleComplete = async (currentValue: string, next: () => void) => {
+    const isLastStep = currentValue === steps[steps.length - 1]?.value;
+
+    if (isLastStep) {
+      await completeIntro();
+      router.replace("/onboard");
+      return;
+    }
+
+    next();
   };
 
   return (
-    <OnboardingPageLayout
-      title={<AppText variant='title'>text</AppText>}
-      footer={
-        <>
-          <StepDots total={2} current={0} />
-          <AppButton fullWidth label='다음' onPress={handleNext} />
-        </>
-      }>
-      <AppText tone='muted'>내 하루는 누가 알아주나요?</AppText>
-      <AppText tone='muted'>
-        결과보다 과정을 먼저 봐주는 친구를 만나보세요.
-      </AppText>
-    </OnboardingPageLayout>
+    <Stepper steps={steps} defaultValue='intro0'>
+      {({ currentValue, currentIndex, direction, next }) => (
+        <IntroPageLayout
+          currentValue={currentValue}
+          direction={direction}
+          visual={<View className='bg-gray-400 w-full h-64'></View>}
+          footer={
+            <>
+              <AppButton
+                fullWidth
+                variant={currentIndex === 0 ? "outline" : undefined}
+                label={currentIndex === 0 ? "다음" : "시작하기"}
+                onPress={() => handleComplete(currentValue, next)}
+              />
+            </>
+          }>
+          <IntroContent currentIndex={currentIndex} />
+        </IntroPageLayout>
+      )}
+    </Stepper>
   );
 };
 

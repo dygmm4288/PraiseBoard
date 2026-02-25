@@ -44,7 +44,8 @@ export const AppText = ({
   ...props
 }: AppTextProps) => {
   const resolvedWeight =
-    weight ?? (variant === "display" || variant === "title" ? "bold" : "regular");
+    weight ??
+    (variant === "display" || variant === "title" ? "bold" : "regular");
 
   return (
     <RNText
@@ -52,7 +53,7 @@ export const AppText = ({
         TEXT_VARIANT_STYLES[variant],
         TEXT_TONE_STYLES[tone],
         TEXT_WEIGHT_STYLES[resolvedWeight],
-        className
+        className,
       )}
       {...props}
     />
