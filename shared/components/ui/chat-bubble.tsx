@@ -3,11 +3,12 @@ import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { AppText } from "./text";
 
-type ChatBubbleSide = "left" | "right";
+type ChatBubbleSide = "left" | "right" | "center";
 
 const BUBBLE_COLORS: Record<ChatBubbleSide, string> = {
-  left: "#FFFFFF",
-  right: "#FEE500",
+  left: "#7DE0FF",
+  right: "#FFFFF",
+  center: "#7DE0FF",
 };
 
 export interface AppChatBubbleProps extends Omit<ViewProps, "children"> {
@@ -26,7 +27,7 @@ type BubbleTailProps = {
 
 const BubbleTail = ({ side, color }: BubbleTailProps) => (
   <View
-    pointerEvents='none'
+    pointerEvents="none"
     style={[
       styles.tailBase,
       side === "left" ? styles.tailLeft : styles.tailRight,
@@ -46,30 +47,41 @@ export const AppChatBubble = ({
   showTail = true,
   ...props
 }: AppChatBubbleProps) => {
-  const isRight = side === "right";
   const bubbleColor = BUBBLE_COLORS[side];
-  const bubbleTextClassName = isRight
-    ? "text-primary-foreground"
-    : "text-gray-900";
+  const bubbleTextClassName = {
+    left: "text-gray-900",
+    right: "text-primary-foreground",
+    center: "text-primary-foreground",
+  }[side];
+
+  const bubbleAlignClassName = {
+    left: "items-start",
+    right: "items-end",
+    center: "items-center",
+  }[side];
+
+  const bubbleBgClassName = {
+    left: "bg-primary rounded-br-md",
+    right: "bg-white rounded-bl-md border border-gray-200",
+    center: "bg-primary rounded-br-md",
+  };
 
   return (
-    <View
-      className={cn("w-full", isRight ? "items-end" : "items-start", className)}
-      {...props}>
-      <View className='relative'>
+    <View className={cn("w-full", bubbleAlignClassName, className)} {...props}>
+      <View className="relative">
         {showTail ? <BubbleTail side={side} color={bubbleColor} /> : null}
 
         <View
           className={cn(
             "max-w-[80%] px-3.5 py-2.5 rounded-2xl",
-            isRight
-              ? "bg-primary rounded-br-md"
-              : "bg-white rounded-bl-md border border-gray-200",
+            bubbleBgClassName[side],
             bubbleClassName,
-          )}>
+          )}
+        >
           <AppText
-            variant='body'
-            className={cn("leading-6", bubbleTextClassName, textClassName)}>
+            variant="body"
+            className={cn("leading-6", bubbleTextClassName, textClassName)}
+          >
             {message}
           </AppText>
         </View>

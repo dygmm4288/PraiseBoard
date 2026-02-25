@@ -2,7 +2,6 @@ import { useUser } from "@/features/user-service/UserProvider";
 import { IntroPageLayout, Stepper } from "@/shared/components/flow";
 import { AppButton } from "@/shared/components/ui";
 import { useRouter } from "expo-router";
-import { View } from "react-native";
 import IntroContent from "../components/intro-content";
 
 const IntroScreen = () => {
@@ -26,12 +25,12 @@ const IntroScreen = () => {
   };
 
   return (
-    <Stepper steps={steps} defaultValue='intro0'>
+    <Stepper steps={steps} defaultValue="intro0">
       {({ currentValue, currentIndex, direction, next }) => (
         <IntroPageLayout
           currentValue={currentValue}
           direction={direction}
-          visual={<View className='bg-gray-400 w-full h-64'></View>}
+          visual={null}
           footer={
             <>
               <AppButton
@@ -41,7 +40,8 @@ const IntroScreen = () => {
                 onPress={() => handleComplete(currentValue, next)}
               />
             </>
-          }>
+          }
+        >
           <IntroContent currentIndex={currentIndex} />
         </IntroPageLayout>
       )}

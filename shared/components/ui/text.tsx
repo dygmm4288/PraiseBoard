@@ -2,9 +2,19 @@ import { cn } from "@/shared/lib/cn";
 import React from "react";
 import { Text as RNText, TextProps as RNTextProps } from "react-native";
 
-type TextVariant = "display" | "title" | "body" | "caption" | "label";
-type TextTone = "default" | "muted" | "primary" | "danger" | "inverse";
-type TextWeight = "regular" | "medium" | "semibold" | "bold";
+type TextCoreVariant =
+  | "title1"
+  | "title2"
+  | "body1"
+  | "body2"
+  | "caption1"
+  | "button1";
+
+type TextAliasVariant = "title" | "body" | "caption" | "label";
+
+export type TextVariant = TextCoreVariant | TextAliasVariant;
+export type TextTone = "default" | "muted" | "primary" | "inverse" | "danger";
+export type TextWeight = "regular" | "medium" | "semibold" | "bold";
 
 export interface AppTextProps extends RNTextProps {
   className?: string;
@@ -13,20 +23,28 @@ export interface AppTextProps extends RNTextProps {
   weight?: TextWeight;
 }
 
-export const TEXT_VARIANT_STYLES: Record<TextVariant, string> = {
-  display: "text-3xl leading-9",
-  title: "text-2xl leading-8",
-  body: "text-base leading-6",
-  caption: "text-sm leading-5",
-  label: "text-sm leading-5",
+export const TEXT_VARIANT_STYLES: Record<TextCoreVariant, string> = {
+  title1: "text-title1",
+  title2: "text-title2",
+  body1: "text-body1",
+  body2: "text-body2",
+  caption1: "text-caption1",
+  button1: "text-button1",
+};
+
+export const TEXT_VARIANT_ALIASES: Record<TextAliasVariant, TextCoreVariant> = {
+  title: "title2",
+  body: "body2",
+  caption: "caption1",
+  label: "button1",
 };
 
 export const TEXT_TONE_STYLES: Record<TextTone, string> = {
   default: "text-gray-900",
   muted: "text-gray-500",
   primary: "text-blue-600",
-  danger: "text-red-600",
   inverse: "text-white",
+  danger: "text-red-600",
 };
 
 export const TEXT_WEIGHT_STYLES: Record<TextWeight, string> = {
@@ -36,6 +54,20 @@ export const TEXT_WEIGHT_STYLES: Record<TextWeight, string> = {
   bold: "font-bold",
 };
 
+const TEXT_DEFAULT_WEIGHT_BY_VARIANT: Record<TextCoreVariant, TextWeight> = {
+  title1: "bold",
+  title2: "bold",
+  body1: "medium",
+  body2: "regular",
+  caption1: "regular",
+  button1: "semibold",
+};
+
+const resolveTextVariant = (variant: TextVariant): TextCoreVariant =>
+  variant in TEXT_VARIANT_ALIASES
+    ? TEXT_VARIANT_ALIASES[variant as TextAliasVariant]
+    : (variant as TextCoreVariant);
+
 export const AppText = ({
   className,
   variant = "body",
@@ -43,16 +75,16 @@ export const AppText = ({
   weight,
   ...props
 }: AppTextProps) => {
-  const resolvedWeight =
-    weight ??
-    (variant === "display" || variant === "title" ? "bold" : "regular");
+  const resolvedVariant = resolveTextVariant(variant);
+  const resolvedWeight = weight ?? TEXT_DEFAULT_WEIGHT_BY_VARIANT[resolvedVariant];
 
   return (
     <RNText
       className={cn(
-        TEXT_VARIANT_STYLES[variant],
-        TEXT_TONE_STYLES[tone],
+        "font-pretendard",
+        TEXT_VARIANT_STYLES[resolvedVariant],
         TEXT_WEIGHT_STYLES[resolvedWeight],
+        TEXT_TONE_STYLES[tone],
         className,
       )}
       {...props}

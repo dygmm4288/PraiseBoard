@@ -3,5 +3,17 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "on"
+  },
+  "tailwindCSS.classFunctions": ["tw", "cn", "clsx", "cva"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "textClassName",
+    "inputClassName"
+  ]
 }
