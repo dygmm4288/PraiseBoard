@@ -63,22 +63,34 @@ export type Database = {
       }
       devices: {
         Row: {
-          created_at: string | null
+          created_at: string
           device_id: string
-          last_login_at: string | null
+          last_login_at: string
+          platform: string | null
           profile_id: string
+          push_enabled: boolean
+          push_token: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           device_id: string
-          last_login_at?: string | null
+          last_login_at?: string
+          platform?: string | null
           profile_id: string
+          push_enabled?: boolean
+          push_token?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           device_id?: string
-          last_login_at?: string | null
+          last_login_at?: string
+          platform?: string | null
           profile_id?: string
+          push_enabled?: boolean
+          push_token?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -134,22 +146,31 @@ export type Database = {
       }
       profiles: {
         Row: {
-          auth_user_id: string | null
-          created_at: string | null
+          auth_user_id: string
+          created_at: string
           id: string
-          updated_at: string | null
+          last_login_at: string
+          mbti: Database["public"]["Enums"]["mbti_type"] | null
+          nickname: string | null
+          updated_at: string
         }
         Insert: {
-          auth_user_id?: string | null
-          created_at?: string | null
+          auth_user_id: string
+          created_at?: string
           id?: string
-          updated_at?: string | null
+          last_login_at?: string
+          mbti?: Database["public"]["Enums"]["mbti_type"] | null
+          nickname?: string | null
+          updated_at?: string
         }
         Update: {
-          auth_user_id?: string | null
-          created_at?: string | null
+          auth_user_id?: string
+          created_at?: string
           id?: string
-          updated_at?: string | null
+          last_login_at?: string
+          mbti?: Database["public"]["Enums"]["mbti_type"] | null
+          nickname?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -207,6 +228,23 @@ export type Database = {
     }
     Enums: {
       board_status: "active" | "completed"
+      mbti_type:
+        | "INTJ"
+        | "INTP"
+        | "ENTJ"
+        | "ENTP"
+        | "INFJ"
+        | "INFP"
+        | "ENFJ"
+        | "ENFP"
+        | "ISTJ"
+        | "ISFJ"
+        | "ESTJ"
+        | "ESFJ"
+        | "ISTP"
+        | "ISFP"
+        | "ESTP"
+        | "ESFP"
       sticker_source: "app" | "widget"
     }
     CompositeTypes: {
@@ -336,6 +374,24 @@ export const Constants = {
   public: {
     Enums: {
       board_status: ["active", "completed"],
+      mbti_type: [
+        "INTJ",
+        "INTP",
+        "ENTJ",
+        "ENTP",
+        "INFJ",
+        "INFP",
+        "ENFJ",
+        "ENFP",
+        "ISTJ",
+        "ISFJ",
+        "ESTJ",
+        "ESFJ",
+        "ISTP",
+        "ISFP",
+        "ESTP",
+        "ESFP",
+      ],
       sticker_source: ["app", "widget"],
     },
   },

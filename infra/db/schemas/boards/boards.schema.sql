@@ -11,6 +11,7 @@ create table boards (
     target_count int not null check (target_count > 0),
     current_count int not null default 0,
     completed_at timestamptz null default now(),
+    reward_memo text null default null,
     
     reward_enabled boolean not null default false,
     status board_status not null default 'active'
