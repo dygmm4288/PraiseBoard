@@ -1,10 +1,10 @@
 import { onboardImages } from "@/assets/images";
 import { Stepper } from "@/shared/components/flow";
-import AppInputButton from "@/shared/components/inputs/InputButton";
 import { AppButton, AppChatBubble } from "@/shared/components/ui";
-import { Controller, FormProvider } from "react-hook-form";
+import { FormProvider } from "react-hook-form";
 import { Image, View } from "react-native";
 import OnboardStepName from "../components/onboard-step-name";
+import OnboardStepTitle from "../components/onboard-step-title";
 import useOnboardingSetupForm from "../hooks/useOnboardingSetupForm";
 import { steps } from "../onboarding.steps";
 
@@ -35,36 +35,26 @@ const OnboardScreen = () => {
               </View>
             )}
             {currentValue === "name" && (
-              <>
-                <OnboardStepName />
-                <Controller
-                  name="profiles.nickname"
-                  control={form.control}
-                  render={({ field }) => (
-                    <AppInputButton
-                      value={field.value}
-                      onChangeValue={field.onChange}
-                      onPress={async () => {
-                        const ok = await validateBeforeNext({
-                          fields: "profiles.nickname",
-                        });
-                        if (ok) next();
-                      }}
-                      buttonProps={{
-                        label: "다음",
-                      }}
-                    />
-                  )}
-                ></Controller>
-              </>
+              <OnboardStepName
+                form={form}
+                onPress={async () => {
+                  const ok = await validateBeforeNext({
+                    fields: "profiles.nickname",
+                  });
+                  if (ok) next();
+                }}
+              />
             )}
             {currentValue === "title" && (
-              <>
-                <AppChatBubble
-                  side="right"
-                  message={form.getValues("profiles.nickname")}
-                />
-              </>
+              <OnboardStepTitle
+                form={form}
+                onPress={async () => {
+                  const ok = await validateBeforeNext({
+                    fields: "boards.title",
+                  });
+                  if (ok) next();
+                }}
+              ></OnboardStepTitle>
             )}
           </View>
         )}
