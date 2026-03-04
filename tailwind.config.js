@@ -20,8 +20,19 @@ module.exports = {
         },
         white: "#FFFFFF",
         primary: {
+          800: "#2C2643",
+          700: "#44307A",
+          600: "#5839A8",
+          500: "#7145D6",
+          400: "#8C5CFF",
+          300: "#B696FF",
+          200: "#D2BFFF",
+          100: "#E8DEFF",
           DEFAULT: "#7DE0FF",
           foreground: "#000",
+        },
+        secondary: {
+          // TODO 추가 예정
         },
       },
       fontFamily: {
