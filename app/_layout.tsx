@@ -2,11 +2,14 @@ import { UserProvider, useUser } from "@/features/user-service/UserProvider";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
+import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
+
+const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
@@ -29,6 +32,10 @@ const RootLayoutNav = () => {
 };
 
 export default function RootLayout() {
+  if (isStorybookEnabled) {
+    return <StorybookUIRoot />;
+  }
+
   return (
     <>
       <UserProvider>
