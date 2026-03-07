@@ -1,7 +1,7 @@
 import { cn } from "@/shared/lib/cn";
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { AppText } from "./text";
+import { AppText } from "../../../../shared/components/ui/text";
 
 type ChatBubbleSide = "left" | "right" | "center";
 
