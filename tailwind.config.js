@@ -28,8 +28,6 @@ module.exports = {
           300: "#B696FF",
           200: "#D2BFFF",
           100: "#E8DEFF",
-          DEFAULT: "#7DE0FF",
-          foreground: "#000",
         },
         secondary: {
           // TODO 추가 예정
