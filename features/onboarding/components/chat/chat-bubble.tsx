@@ -2,14 +2,9 @@ import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import React from "react";
 import { View, ViewProps } from "react-native";
+import ChatTyping from "./chat-typing";
 
 type ChatBubbleSide = "left" | "right" | "center";
-
-const BUBBLE_COLORS: Record<ChatBubbleSide, string> = {
-  left: "#7DE0FF",
-  right: "#FFFFFF",
-  center: "#7DE0FF",
-};
 
 export interface ChatBubbleProps extends Omit<ViewProps, "children"> {
   className?: string;
@@ -17,7 +12,6 @@ export interface ChatBubbleProps extends Omit<ViewProps, "children"> {
   textClassName?: string;
   message: string;
   side?: ChatBubbleSide;
-  showTail?: boolean;
   showTyping?: boolean;
 }
 
@@ -27,17 +21,9 @@ export const ChatBubble = ({
   textClassName,
   message,
   side = "left",
-  showTail = true,
   showTyping = false,
   ...props
 }: ChatBubbleProps) => {
-  const bubbleColor = BUBBLE_COLORS[side];
-  const bubbleTextClassName = {
-    left: "text-gray-900",
-    right: "text-primary-foreground",
-    center: "text-primary-foreground",
-  }[side];
-
   const bubbleAlignClassName = {
     left: "items-start",
     right: "items-end",
@@ -45,26 +31,23 @@ export const ChatBubble = ({
   }[side];
 
   const bubbleBgClassName = {
-    left: "bg-primary rounded-br-md",
-    right: "bg-white rounded-bl-md border border-gray-200",
-    center: "bg-primary rounded-br-md",
+    left: "bg-gray-100 ",
+    right: "bg-primary-100",
+    center: "bg-gray-100",
   };
 
   return (
     <View className={cn("w-full", bubbleAlignClassName, className)} {...props}>
-      <View className="relative">
+      <View className="relative max-w-[80%]">
         <View
           className={cn(
-            "max-w-[80%] px-3.5 py-2.5 rounded-2xl",
+            "py-[8px] px-[14px] rounded-[20px] min-h-[40px]",
             bubbleBgClassName[side],
             bubbleClassName,
           )}
         >
           {!showTyping ? (
-            <AppText
-              variant="body"
-              className={cn("leading-6", bubbleTextClassName, textClassName)}
-            >
+            <AppText variant="body2" className={textClassName}>
               {message}
             </AppText>
           ) : (
