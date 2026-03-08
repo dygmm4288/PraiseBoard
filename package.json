@@ -10,7 +10,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "storybook-generate": "sb-rn-get-stories"
+    "storybook-generate": "sb-rn-get-stories",
+    "storybook-expo:build": "EXPO_PUBLIC_STORYBOOK_ENABLED=true npx expo export --platform web"
   },
   "dependencies": {
     "@babel/core": "^7.29.0",
