@@ -1,4 +1,4 @@
-import { BoardSetupFormValues } from "@/shared/schemas/board.schema";
+import { BoardSetupFormValues } from "@/entities/board/board.schema";
 import { FieldPath } from "react-hook-form";
 
 export const steps = [

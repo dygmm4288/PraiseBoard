@@ -1,4 +1,7 @@
-import { BOARD_SETUP_DEFAULT_VALUES, BoardSetupFormValues } from "@/shared/schemas/board.schema";
+import {
+  BOARD_SETUP_DEFAULT_VALUES,
+  BoardSetupFormValues,
+} from "@/entities/board/board.schema";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";

@@ -1,7 +1,7 @@
 import {
   BOARD_SETUP_DEFAULT_VALUES,
   type BoardSetupFormValues,
-} from "@/shared/schemas/board.schema";
+} from "@/entities/board/board.schema";
 import { useForm, type FieldPath } from "react-hook-form";
 
 export type ValidateBeforeNextOptions = {

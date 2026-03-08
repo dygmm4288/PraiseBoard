@@ -1,4 +1,4 @@
-import { BoardSetupFormValues } from "@/shared/schemas/board.schema";
+import { BoardSetupFormValues } from "@/entities/board/board.schema";
 import { UseFormReturn } from "react-hook-form";
 
 export type OnboardStepProps = {
