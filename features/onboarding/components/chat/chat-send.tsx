@@ -11,9 +11,9 @@ const ChatSend = ({ onPress, disabled = false }: Props) => {
   return (
     <Pressable
       className={cn(
-        "w-[40px] h-[40px] rounded-full",
+        "w-[40px] h-[40px] rounded-full flex items-center justify-center",
         disabled
-          ? "bg-gray-100 border border-gray-100"
+          ? "bg-gray-200 border border-gray-200"
           : "bg-primary-500 border border-primary-500",
       )}
       disabled={disabled}
