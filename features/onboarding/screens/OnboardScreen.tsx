@@ -1,10 +1,11 @@
 import { onboardImages } from "@/assets/images";
 import { Stepper } from "@/shared/components";
-import { AppButton, AppChatBubble } from "@/shared/components/ui";
+import { AppButton } from "@/shared/ui";
 import { FormProvider } from "react-hook-form";
 import { Image, View } from "react-native";
-import OnboardStepName from "../components/onboard-step-name";
-import OnboardStepTitle from "../components/onboard-step-title";
+import { ChatBubble } from "../components/chat/chat-bubble";
+import OnboardStepName from "../components/onboard/onboard-step-name";
+import OnboardStepTitle from "../components/onboard/onboard-step-title";
 import useOnboardingSetupForm from "../hooks/useOnboardingSetupForm";
 import { steps } from "../onboarding.steps";
 
@@ -26,10 +27,7 @@ const OnboardScreen = () => {
                   className="h-[180px] w-[180px]"
                 />
                 {currentValue === "intro1" && (
-                  <AppChatBubble
-                    side="center"
-                    message="안녕, 나는 칭찬고래야"
-                  />
+                  <ChatBubble side="center" message="안녕, 나는 칭찬고래야" />
                 )}
                 <AppButton label="dev test" onPress={next} />
               </View>

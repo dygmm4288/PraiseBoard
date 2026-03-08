@@ -1,6 +1,5 @@
-import { useUser } from "@/features/user-service/UserProvider";
-import { AppButton, AppText } from "@/shared/components/ui";
-import AppInput from "@/shared/components/ui/input";
+import { useUser } from "@/services/user";
+import { AppButton, AppInput, AppText } from "@/shared/ui";
 import useInput from "@/shared/hooks/useInput";
 import { Link, useRouter } from "expo-router";
 import { View } from "react-native";
@@ -25,7 +24,7 @@ export default function HomeScreen() {
       {__DEV__ ? (
         <AppButton
           label='Dev: Intro/Onboarding Reset'
-          variant='danger'
+          variant='secondary'
           onPress={handleResetOnboarding}></AppButton>
       ) : null}
       <AppInput

@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 

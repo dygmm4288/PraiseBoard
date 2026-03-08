@@ -1,8 +1,9 @@
-import { useUser } from "@/features/user-service/UserProvider";
-import { IntroPageLayout, Stepper } from "@/shared/components";
-import { AppButton } from "@/shared/components/ui";
+import { useUser } from "@/services/user";
+import { Stepper } from "@/shared/components";
+import { AppButton } from "@/shared/ui";
 import { useRouter } from "expo-router";
 import IntroContent from "../components/intro-content";
+import IntroPageLayout from "../components/intro-page-layout";
 
 const IntroScreen = () => {
   const { completeIntro } = useUser();
@@ -35,7 +36,7 @@ const IntroScreen = () => {
             <>
               <AppButton
                 fullWidth
-                variant={currentIndex === 0 ? "outline" : undefined}
+                variant={currentIndex === 0 ? "tertiary" : undefined}
                 label={currentIndex === 0 ? "다음" : "시작하기"}
                 onPress={() => handleComplete(currentValue, next)}
               />

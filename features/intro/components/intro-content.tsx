@@ -1,4 +1,4 @@
-import { AppText } from "@/shared/components/ui";
+import { AppText } from "@/shared/ui";
 import React from "react";
 import { View } from "react-native";
 

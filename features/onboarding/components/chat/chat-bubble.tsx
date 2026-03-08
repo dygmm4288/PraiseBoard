@@ -1,52 +1,36 @@
-import { cn } from "@/shared/lib/cn";
+import { AppText } from "@/shared/ui";
+import { cn } from "@/shared/utils/cn";
 import React from "react";
-import { StyleSheet, View, ViewProps } from "react-native";
-import { AppText } from "../../../../shared/components/ui/text";
+import { View, ViewProps } from "react-native";
 
 type ChatBubbleSide = "left" | "right" | "center";
 
 const BUBBLE_COLORS: Record<ChatBubbleSide, string> = {
   left: "#7DE0FF",
-  right: "#FFFFF",
+  right: "#FFFFFF",
   center: "#7DE0FF",
 };
 
-export interface AppChatBubbleProps extends Omit<ViewProps, "children"> {
+export interface ChatBubbleProps extends Omit<ViewProps, "children"> {
   className?: string;
   bubbleClassName?: string;
   textClassName?: string;
   message: string;
   side?: ChatBubbleSide;
   showTail?: boolean;
+  showTyping?: boolean;
 }
 
-type BubbleTailProps = {
-  side: ChatBubbleSide;
-  color: string;
-};
-
-const BubbleTail = ({ side, color }: BubbleTailProps) => (
-  <View
-    pointerEvents="none"
-    style={[
-      styles.tailBase,
-      side === "left" ? styles.tailLeft : styles.tailRight,
-      side === "left"
-        ? { borderRightColor: color }
-        : { borderLeftColor: color },
-    ]}
-  />
-);
-
-export const AppChatBubble = ({
+export const ChatBubble = ({
   className,
   bubbleClassName,
   textClassName,
   message,
   side = "left",
   showTail = true,
+  showTyping = false,
   ...props
-}: AppChatBubbleProps) => {
+}: ChatBubbleProps) => {
   const bubbleColor = BUBBLE_COLORS[side];
   const bubbleTextClassName = {
     left: "text-gray-900",
@@ -69,8 +53,6 @@ export const AppChatBubble = ({
   return (
     <View className={cn("w-full", bubbleAlignClassName, className)} {...props}>
       <View className="relative">
-        {showTail ? <BubbleTail side={side} color={bubbleColor} /> : null}
-
         <View
           className={cn(
             "max-w-[80%] px-3.5 py-2.5 rounded-2xl",
@@ -78,36 +60,18 @@ export const AppChatBubble = ({
             bubbleClassName,
           )}
         >
-          <AppText
-            variant="body"
-            className={cn("leading-6", bubbleTextClassName, textClassName)}
-          >
-            {message}
-          </AppText>
+          {!showTyping ? (
+            <AppText
+              variant="body"
+              className={cn("leading-6", bubbleTextClassName, textClassName)}
+            >
+              {message}
+            </AppText>
+          ) : (
+            <ChatTyping />
+          )}
         </View>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  tailBase: {
-    position: "absolute",
-    bottom: 10,
-    width: 0,
-    height: 0,
-    borderTopWidth: 6,
-    borderBottomWidth: 6,
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent",
-    zIndex: 0,
-  },
-  tailLeft: {
-    left: -7,
-    borderRightWidth: 10,
-  },
-  tailRight: {
-    right: -7,
-    borderLeftWidth: 10,
-  },
-});

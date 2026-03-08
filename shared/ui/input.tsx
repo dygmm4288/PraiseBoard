@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { Button, TextInput, TextInputProps, View } from "react-native";
 
 export interface AppInputProps extends TextInputProps {

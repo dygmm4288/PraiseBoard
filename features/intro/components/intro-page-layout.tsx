@@ -1,4 +1,4 @@
-import Screen from "@/shared/components/ui/screens/Screen";
+import Screen from "@/shared/ui/Screen";
 import React from "react";
 import { View } from "react-native";
 import Animated, {

@@ -1,4 +1,4 @@
-import { UserProvider, useUser } from "@/features/user-service/UserProvider";
+import { UserProvider, useUser } from "@/services/user";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";

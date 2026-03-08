@@ -1,14 +1,22 @@
-import ChatSend from "@/features/onboarding/components/chat/chat-send";
-import { AppInput } from "@/shared/components/ui";
+import ChatSend from "./chat-send";
+import { AppInput } from "@/shared/ui";
 import { View } from "react-native";
 
-type Props = {};
+type Props = {
+  value?: string;
+  onChangeText?: (value: string) => void;
+  onSend?: () => void;
+};
 
-const ChatInput = ({}: Props) => {
+const ChatInput = ({
+  value = "",
+  onChangeText = () => {},
+  onSend = () => {},
+}: Props) => {
   return (
     <View>
-      <AppInput />
-      <ChatSend />
+      <AppInput value={value} onChangeText={onChangeText} />
+      <ChatSend onPress={onSend} />
     </View>
   );
 };

@@ -1,14 +1,14 @@
 import AppInputButton from "@/shared/components/InputButton";
-import { AppChatBubble } from "@/shared/components/ui";
 import { Controller } from "react-hook-form";
-import { OnboardStepProps } from "../types/onboard-step.type";
+import { OnboardStepProps } from "../../types/onboard-step.type";
+import { ChatBubble } from "../chat/chat-bubble";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepName = ({ form, onPress }: OnboardStepProps) => {
   return (
     <OnboardStepLayout>
-      <AppChatBubble message="난 항상 네 편이 되어주고 싶어" />
-      <AppChatBubble message="네 이름은 뭐야?" />
+      <ChatBubble message="난 항상 네 편이 되어주고 싶어" />
+      <ChatBubble message="네 이름은 뭐야?" />
       <Controller
         name="profiles.nickname"
         control={form.control}

@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user-service/UserProvider";
+import { useUser } from "@/services/user";
 import { Redirect } from "expo-router";
 
 export default function IndexRoute() {

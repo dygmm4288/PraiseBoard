@@ -1,15 +1,12 @@
 import AppInputButton from "@/shared/components/InputButton";
-import { AppChatBubble } from "@/shared/components/ui";
 import { Controller } from "react-hook-form";
-import { OnboardStepProps } from "../types/onboard-step.type";
+import { OnboardStepProps } from "../../types/onboard-step.type";
+import { ChatBubble } from "../chat/chat-bubble";
 
 const OnboardStepTitle = ({ form, onPress }: OnboardStepProps) => {
   return (
     <>
-      <AppChatBubble
-        side="right"
-        message={form.getValues("profiles.nickname")}
-      />
+      <ChatBubble side="right" message={form.getValues("profiles.nickname")} />
 
       <Controller
         name="boards.title"
