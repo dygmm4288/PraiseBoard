@@ -1,5 +1,5 @@
 import { useUser } from "@/features/user-service/UserProvider";
-import { IntroPageLayout, Stepper } from "@/shared/components/flow";
+import { IntroPageLayout, Stepper } from "@/shared/components";
 import { AppButton } from "@/shared/components/ui";
 import { useRouter } from "expo-router";
 import IntroContent from "../components/intro-content";

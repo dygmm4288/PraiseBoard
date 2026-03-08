@@ -1,4 +1,4 @@
-import AppInputButton from "@/shared/components/inputs/InputButton";
+import AppInputButton from "@/shared/components/InputButton";
 import { AppChatBubble } from "@/shared/components/ui";
 import { Controller } from "react-hook-form";
 import { OnboardStepProps } from "../types/onboard-step.type";

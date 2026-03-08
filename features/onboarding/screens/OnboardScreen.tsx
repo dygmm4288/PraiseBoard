@@ -1,5 +1,5 @@
 import { onboardImages } from "@/assets/images";
-import { Stepper } from "@/shared/components/flow";
+import { Stepper } from "@/shared/components";
 import { AppButton, AppChatBubble } from "@/shared/components/ui";
 import { FormProvider } from "react-hook-form";
 import { Image, View } from "react-native";
