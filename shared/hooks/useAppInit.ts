@@ -1,4 +1,4 @@
-import { userRepository } from "@/features/user-service";
+import { userRepository } from "@/services/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
