@@ -13,9 +13,6 @@ type Props = {
   currentIndex: number;
 };
 
-const INACTIVE_WIDTH = 6;
-const ACTIVE_WIDTH = 18;
-
 const INACTIVE = {
   width: 6,
   backgroundColor: "#d9d9d9",
@@ -33,7 +30,7 @@ const DOT_BASE_STYLE: ViewStyle = {
   backgroundColor: INACTIVE.backgroundColor,
 };
 
-const PaginationIndicator = ({ active }: { active: boolean }) => {
+const IndicatorItem = ({ active }: { active: boolean }) => {
   const progress = useSharedValue(active ? ACTIVE : INACTIVE);
 
   useEffect(() => {
@@ -50,11 +47,11 @@ const PaginationIndicator = ({ active }: { active: boolean }) => {
   return <Animated.View style={[DOT_BASE_STYLE, style]} />;
 };
 
-const IndicatorPaginationBar = ({ name, totalCnt, currentIndex }: Props) => {
+const PaginationIndicator = ({ name, totalCnt, currentIndex }: Props) => {
   return (
     <View className="flex flex-row gap-[6px]">
       {Array.from({ length: totalCnt }, (_, i) => (
-        <PaginationIndicator
+        <IndicatorItem
           key={`indicator-${name ?? ""}-${i}`}
           active={currentIndex === i}
         />
@@ -63,4 +60,4 @@ const IndicatorPaginationBar = ({ name, totalCnt, currentIndex }: Props) => {
   );
 };
 
-export default IndicatorPaginationBar;
+export default PaginationIndicator;

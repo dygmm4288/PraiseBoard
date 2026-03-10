@@ -1,3 +1,4 @@
+import PaginationIndicator from "@/shared/components/pagination-indicator";
 import { AppText } from "@/shared/ui";
 import React from "react";
 import { View } from "react-native";
@@ -28,6 +29,9 @@ export default function IntroContent({ currentIndex }: Props) {
       <AppText variant="body2" className="text-center">
         {content}
       </AppText>
+      <View className="flex self-stretch justify-center items-center">
+        <PaginationIndicator totalCnt={2} currentIndex={currentIndex} />
+      </View>
     </View>
   );
 }
