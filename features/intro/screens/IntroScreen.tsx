@@ -26,11 +26,11 @@ export const IntroScreenContent = ({
         <IntroPageLayout
           currentValue={currentValue}
           direction={direction}
-          visual={<View className="w-full h-[480px] bg-gray-200"></View>}
+          visual={<View className="w-full h-[320px] bg-gray-200"></View>}
           footer={
             <AppButton
               fullWidth
-              variant={currentIndex === 0 ? "tertiary" : undefined}
+              variant="primary"
               label={currentIndex === 0 ? "다음" : "시작하기"}
               onPress={async () => {
                 const isLastStep = currentIndex === INTRO_STEPS.length - 1;
