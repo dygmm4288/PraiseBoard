@@ -1,10 +1,10 @@
+import {
+  INTRO_STEP_VALUES,
+  IntroScreenContent,
+} from "@/features/intro/screens/IntroScreen";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { fn } from "storybook/test";
-import {
-  IntroScreenContent,
-  INTRO_STEP_VALUES,
-} from "@/features/intro/screens/IntroScreen";
 
 const meta = {
   title: "Intro/IntroScreen",
