@@ -6,6 +6,7 @@ import { ChatBubble } from "../chat/chat-bubble";
 const OnboardStepTitle = ({ form, onPress }: OnboardStepProps) => {
   return (
     <>
+      <ChatBubble side="left" message={''} showTyping/>
       <ChatBubble side="right" message={form.getValues("profiles.nickname")} />
 
       <Controller
