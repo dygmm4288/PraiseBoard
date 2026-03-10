@@ -28,9 +28,7 @@ const IntroPageLayout = ({
 }: Props) => {
   return (
     <Screen className="flex-1 bg-white">
-      <View
-        className={"flex-1 pt-40 pl-5 pr-5 pb-9 flex flex-col justify-between"}
-      >
+      <View className={"flex-1 flex flex-col justify-between gap-[66px]"}>
         <Animated.View
           key={currentValue}
           className="flex-1 overflow-hidden"

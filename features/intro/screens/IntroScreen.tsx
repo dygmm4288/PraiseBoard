@@ -2,45 +2,47 @@ import { useUser } from "@/services/user";
 import { Stepper } from "@/shared/components";
 import { AppButton } from "@/shared/ui";
 import { useRouter } from "expo-router";
+import { View } from "react-native";
 import IntroContent from "../components/intro-content";
 import IntroPageLayout from "../components/intro-page-layout";
 
-const IntroScreen = () => {
-  const { completeIntro } = useUser();
-  const router = useRouter();
-  const steps = [
-    { label: "intro0", value: "intro0" },
-    { label: "intro1", value: "intro1" },
-  ];
+export const INTRO_STEP_VALUES = ["intro0", "intro1"] as const;
+export type IntroStepValue = (typeof INTRO_STEP_VALUES)[number];
 
-  const handleComplete = async (currentValue: string, next: () => void) => {
-    const isLastStep = currentValue === steps[steps.length - 1]?.value;
+const INTRO_STEPS = INTRO_STEP_VALUES.map((value) => ({ label: value, value }));
 
-    if (isLastStep) {
-      await completeIntro();
-      router.replace("/onboard");
-      return;
-    }
+type IntroScreenContentProps = {
+  defaultStep?: IntroStepValue;
+  onComplete: () => Promise<void> | void;
+};
 
-    next();
-  };
-
+export const IntroScreenContent = ({
+  defaultStep = "intro0",
+  onComplete,
+}: IntroScreenContentProps) => {
   return (
-    <Stepper steps={steps} defaultValue="intro0">
+    <Stepper steps={INTRO_STEPS} defaultValue={defaultStep}>
       {({ currentValue, currentIndex, direction, next }) => (
         <IntroPageLayout
           currentValue={currentValue}
           direction={direction}
-          visual={null}
+          visual={<View className="w-full h-[480px] bg-gray-200"></View>}
           footer={
-            <>
-              <AppButton
-                fullWidth
-                variant={currentIndex === 0 ? "tertiary" : undefined}
-                label={currentIndex === 0 ? "다음" : "시작하기"}
-                onPress={() => handleComplete(currentValue, next)}
-              />
-            </>
+            <AppButton
+              fullWidth
+              variant={currentIndex === 0 ? "tertiary" : undefined}
+              label={currentIndex === 0 ? "다음" : "시작하기"}
+              onPress={async () => {
+                const isLastStep = currentIndex === INTRO_STEPS.length - 1;
+
+                if (isLastStep) {
+                  await onComplete();
+                  return;
+                }
+
+                next();
+              }}
+            />
           }
         >
           <IntroContent currentIndex={currentIndex} />
@@ -48,6 +50,17 @@ const IntroScreen = () => {
       )}
     </Stepper>
   );
+};
+
+const IntroScreen = () => {
+  const { completeIntro } = useUser();
+  const router = useRouter();
+  const handleComplete = async () => {
+    await completeIntro();
+    router.replace("/onboard");
+  };
+
+  return <IntroScreenContent onComplete={handleComplete} />;
 };
 
 export default IntroScreen;
