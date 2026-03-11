@@ -13,13 +13,11 @@ type TextCoreVariant =
 type TextAliasVariant = "title" | "body" | "caption" | "label";
 
 export type TextVariant = TextCoreVariant | TextAliasVariant;
-export type TextTone = "default" | "muted" | "primary" | "inverse" | "danger";
 export type TextWeight = "regular" | "medium" | "semibold" | "bold";
 
 export interface AppTextProps extends RNTextProps {
   className?: string;
   variant?: TextVariant;
-  tone?: TextTone;
   weight?: TextWeight;
 }
 
@@ -37,14 +35,6 @@ export const TEXT_VARIANT_ALIASES: Record<TextAliasVariant, TextCoreVariant> = {
   body: "body2",
   caption: "caption1",
   label: "button1",
-};
-
-export const TEXT_TONE_STYLES: Record<TextTone, string> = {
-  default: "text-gray-900",
-  muted: "text-gray-500",
-  primary: "text-blue-600",
-  inverse: "text-white",
-  danger: "text-red-600",
 };
 
 export const TEXT_WEIGHT_STYLES: Record<TextWeight, string> = {
@@ -71,12 +61,12 @@ const resolveTextVariant = (variant: TextVariant): TextCoreVariant =>
 export const AppText = ({
   className,
   variant = "body",
-  tone = "default",
   weight,
   ...props
 }: AppTextProps) => {
   const resolvedVariant = resolveTextVariant(variant);
-  const resolvedWeight = weight ?? TEXT_DEFAULT_WEIGHT_BY_VARIANT[resolvedVariant];
+  const resolvedWeight =
+    weight ?? TEXT_DEFAULT_WEIGHT_BY_VARIANT[resolvedVariant];
 
   return (
     <RNText
@@ -84,7 +74,6 @@ export const AppText = ({
         "font-pretendard",
         TEXT_VARIANT_STYLES[resolvedVariant],
         TEXT_WEIGHT_STYLES[resolvedWeight],
-        TEXT_TONE_STYLES[tone],
         className,
       )}
       {...props}
