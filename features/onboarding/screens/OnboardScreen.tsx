@@ -1,5 +1,5 @@
-import { useUser } from "@/services/user";
 import { Stepper } from "@/shared/components";
+import { Screen } from "@/shared/ui";
 import { FormProvider } from "react-hook-form";
 import { View } from "react-native";
 import OnboardStepName from "../components/onboard/onboard-step-name";
@@ -9,39 +9,40 @@ import { steps } from "../onboarding.steps";
 
 const OnboardScreen = () => {
   const { form, validateBeforeNext } = useOnboardingSetupForm();
-  const { resetOnboardingProgress } = useUser();
 
   return (
-    <FormProvider {...form}>
-      <Stepper steps={steps as any} defaultValue="name">
-        {({ currentValue, currentIndex, next }) => (
-          <View className="flex-1">
-            {currentValue === "name" && (
-              <OnboardStepName
-                form={form}
-                onPress={async () => {
-                  const ok = await validateBeforeNext({
-                    fields: "profiles.nickname",
-                  });
-                  if (ok) next();
-                }}
-              />
-            )}
-            {currentValue === "title" && (
-              <OnboardStepTitle
-                form={form}
-                onPress={async () => {
-                  const ok = await validateBeforeNext({
-                    fields: "boards.title",
-                  });
-                  if (ok) next();
-                }}
-              ></OnboardStepTitle>
-            )}
-          </View>
-        )}
-      </Stepper>
-    </FormProvider>
+    <Screen>
+      <FormProvider {...form}>
+        <Stepper steps={steps as any} defaultValue="name">
+          {({ currentValue, currentIndex, next }) => (
+            <View className="flex-1">
+              {currentValue === "name" && (
+                <OnboardStepName
+                  form={form}
+                  onSend={async () => {
+                    const ok = await validateBeforeNext({
+                      fields: "profiles.nickname",
+                    });
+                    if (ok) next();
+                  }}
+                />
+              )}
+              {currentValue === "title" && (
+                <OnboardStepTitle
+                  form={form}
+                  onSend={async () => {
+                    const ok = await validateBeforeNext({
+                      fields: "boards.title",
+                    });
+                    if (ok) next();
+                  }}
+                ></OnboardStepTitle>
+              )}
+            </View>
+          )}
+        </Stepper>
+      </FormProvider>
+    </Screen>
   );
 };
 

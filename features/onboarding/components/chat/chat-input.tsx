@@ -25,7 +25,7 @@ const ChatInput = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderClassName="text-gray-400"
+        placeholderTextColor="#9CA3AF"
       />
       <ChatSend onPress={onSend} disabled={sendDisabled} />
     </View>

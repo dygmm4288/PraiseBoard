@@ -13,7 +13,7 @@ interface Props extends PropsWithChildren {
 const Screen = ({ children, className = "" }: Props) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View className={cn("px-section py-section flex-1", className)}>
+      <View className={cn("px-section pt-section flex-1", className)}>
         {children}
       </View>
     </SafeAreaView>

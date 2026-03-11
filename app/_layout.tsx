@@ -1,6 +1,7 @@
 import { UserProvider, useUser } from "@/services/user";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
@@ -37,11 +38,11 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <KeyboardProvider>
       <UserProvider>
         <RootLayoutNav />
         <StatusBar style='auto' />
       </UserProvider>
-    </>
+    </KeyboardProvider>
   );
 }

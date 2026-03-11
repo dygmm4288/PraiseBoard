@@ -3,5 +3,5 @@ import { UseFormReturn } from "react-hook-form";
 
 export type OnboardStepProps = {
   form: UseFormReturn<BoardSetupFormValues>;
-  onPress: () => Promise<void>;
+  onSend: () => Promise<void>;
 };
