@@ -13,7 +13,7 @@ const OnboardScreen = () => {
   return (
     <Screen>
       <FormProvider {...form}>
-        <Stepper steps={steps as any} defaultValue="name">
+        <Stepper steps={steps as any} defaultValue="title">
           {({ currentValue, currentIndex, next }) => (
             <View className="flex-1">
               {currentValue === "name" && (
