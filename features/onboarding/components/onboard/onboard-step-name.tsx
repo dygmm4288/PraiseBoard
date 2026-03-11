@@ -27,19 +27,24 @@ const OnboardStepName = ({ form, onSend }: OnboardStepProps) => {
             <ChatBubble message="당신의 이름은 무엇인가요?" />
           </ChatBubbleList>
         </KeyboardAwareScrollView>
-        <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
-          <Controller
-            name="profiles.nickname"
-            control={form.control}
-            render={({ field }) => (
-              <ChatInput
-                placeholder="이름을 알려주세요"
-                value={field.value}
-                onChangeText={field.onChange}
-                onSend={onSend}
-              />
-            )}
-          />
+        <KeyboardStickyView
+          offset={{ closed: 0, opened: 0 }}
+          style={{ backgroundColor: "#FFFFFF" }}
+        >
+          <View className="bg-white py-[8px]">
+            <Controller
+              name="profiles.nickname"
+              control={form.control}
+              render={({ field }) => (
+                <ChatInput
+                  placeholder="이름을 알려주세요"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onSend={onSend}
+                />
+              )}
+            />
+          </View>
         </KeyboardStickyView>
       </View>
     </OnboardStepLayout>
