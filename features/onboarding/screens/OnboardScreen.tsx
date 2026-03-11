@@ -1,9 +1,7 @@
-import { onboardImages } from "@/assets/images";
+import { useUser } from "@/services/user";
 import { Stepper } from "@/shared/components";
-import { AppButton } from "@/shared/ui";
 import { FormProvider } from "react-hook-form";
-import { Image, View } from "react-native";
-import { ChatBubble } from "../components/chat/chat-bubble";
+import { View } from "react-native";
 import OnboardStepName from "../components/onboard/onboard-step-name";
 import OnboardStepTitle from "../components/onboard/onboard-step-title";
 import useOnboardingSetupForm from "../hooks/useOnboardingSetupForm";
@@ -11,27 +9,13 @@ import { steps } from "../onboarding.steps";
 
 const OnboardScreen = () => {
   const { form, validateBeforeNext } = useOnboardingSetupForm();
-
-  const isIntroSteps = (step: string) => step.startsWith("intro");
+  const { resetOnboardingProgress } = useUser();
 
   return (
     <FormProvider {...form}>
-      <Stepper steps={steps as any} defaultValue="intro0">
+      <Stepper steps={steps as any} defaultValue="name">
         {({ currentValue, currentIndex, next }) => (
           <View className="flex-1">
-            {isIntroSteps(currentValue) && (
-              <View className="flex-1 items-center justify-center gap-lg">
-                <Image
-                  source={onboardImages[currentIndex]}
-                  resizeMode="contain"
-                  className="h-[180px] w-[180px]"
-                />
-                {currentValue === "intro1" && (
-                  <ChatBubble side="center" message="안녕, 나는 칭찬고래야" />
-                )}
-                <AppButton label="dev test" onPress={next} />
-              </View>
-            )}
             {currentValue === "name" && (
               <OnboardStepName
                 form={form}
