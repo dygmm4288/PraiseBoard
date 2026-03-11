@@ -1,7 +1,7 @@
+import { localStorage } from "@/infra/storage";
 import * as Crypto from "expo-crypto";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { localStorage } from "@/infra/storage";
-import { userRepository } from "./index";
+import { userRepository } from "./user.repository.impl";
 
 interface UserContextType {
   isInitialized: boolean;
