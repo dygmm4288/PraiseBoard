@@ -28,10 +28,10 @@ const IntroPageLayout = ({
 }: Props) => {
   return (
     <Screen className="flex-1 bg-white">
-      <View className={"flex-1 flex flex-col justify-between gap-[66px]"}>
+      <View className="flex-1 justify-between">
         <Animated.View
           key={currentValue}
-          className="flex-1 overflow-hidden"
+          className="w-full flex-1 items-center gap-[30px] overflow-hidden"
           entering={
             direction === "forward"
               ? SlideInRight.duration(220).reduceMotion(ReduceMotion.System)
@@ -47,12 +47,10 @@ const IntroPageLayout = ({
                 : FadeOut.duration(120).reduceMotion(ReduceMotion.System)
           }
         >
-          <View className="flex-1 flex flex-col gap-20">
-            <View>{visual}</View>
-            <View>{children}</View>
-          </View>
+          {visual}
+          {children}
         </Animated.View>
-        <View className="mt-6 gap-4">{footer}</View>
+        <View>{footer}</View>
       </View>
     </Screen>
   );

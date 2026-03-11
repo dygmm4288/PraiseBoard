@@ -31,25 +31,35 @@ const DOT_BASE_STYLE: ViewStyle = {
 };
 
 const IndicatorItem = ({ active }: { active: boolean }) => {
-  const progress = useSharedValue(active ? ACTIVE : INACTIVE);
+  const width = useSharedValue(active ? ACTIVE.width : INACTIVE.width);
 
   useEffect(() => {
-    progress.value = withTiming(active ? ACTIVE : INACTIVE, {
+    width.value = withTiming(active ? ACTIVE.width : INACTIVE.width, {
       duration: 220,
       reduceMotion: ReduceMotion.System,
     });
-  }, [active, progress]);
+  }, [active, width]);
 
   const style = useAnimatedStyle(() => ({
-    ...progress.value,
+    width: width.value,
   }));
 
-  return <Animated.View style={[DOT_BASE_STYLE, style]} />;
+  return (
+    <Animated.View
+      style={[
+        DOT_BASE_STYLE,
+        {
+          backgroundColor: active ? ACTIVE.backgroundColor : INACTIVE.backgroundColor,
+        },
+        style,
+      ]}
+    />
+  );
 };
 
 const PaginationIndicator = ({ name, totalCnt, currentIndex }: Props) => {
   return (
-    <View className="flex flex-row gap-[6px]">
+    <View className="h-[18px] flex-row items-center gap-[6px]">
       {Array.from({ length: totalCnt }, (_, i) => (
         <IndicatorItem
           key={`indicator-${name ?? ""}-${i}`}

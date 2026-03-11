@@ -1,5 +1,6 @@
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props extends PropsWithChildren {
@@ -11,8 +12,10 @@ interface Props extends PropsWithChildren {
  */
 const Screen = ({ children, className = "" }: Props) => {
   return (
-    <SafeAreaView className={cn("px-section py-section", className)}>
-      {children}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View className={cn("px-section py-section flex-1", className)}>
+        {children}
+      </View>
     </SafeAreaView>
   );
 };

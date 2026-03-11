@@ -2,7 +2,7 @@ import { useUser } from "@/services/user";
 import { Stepper } from "@/shared/components";
 import { AppButton } from "@/shared/ui";
 import { useRouter } from "expo-router";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import IntroContent from "../components/intro-content";
 import IntroPageLayout from "../components/intro-page-layout";
 
@@ -20,13 +20,26 @@ export const IntroScreenContent = ({
   defaultStep = "intro0",
   onComplete,
 }: IntroScreenContentProps) => {
+  const { height: screenHeight } = useWindowDimensions();
+  const visualHeight = Math.min(
+    360,
+    Math.max(220, Math.floor(screenHeight * 0.42)),
+  );
+
   return (
     <Stepper steps={INTRO_STEPS} defaultValue={defaultStep}>
       {({ currentValue, currentIndex, direction, next }) => (
         <IntroPageLayout
           currentValue={currentValue}
           direction={direction}
-          visual={<View className="w-full h-[320px] bg-gray-200"></View>}
+          visual={
+            <View
+              className="w-full bg-[#E3E3E6]"
+              style={{
+                height: visualHeight,
+              }}
+            />
+          }
           footer={
             <AppButton
               fullWidth
