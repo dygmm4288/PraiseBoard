@@ -82,9 +82,8 @@ const OnboardStepTitle = ({ form, onSend }: OnboardStepProps) => {
         >
           <ChatBubbleList>
             {messages.map((v, i) => (
-              <>
+              <View key={`onboard-step-name${i}`}>
                 <ChatBubble
-                  key={`onboard-step-name${i}`}
                   showTyping={v.type === "typing"}
                   message={v.message ?? ""}
                   side={v.role === "system" ? "left" : "right"}
@@ -105,7 +104,7 @@ const OnboardStepTitle = ({ form, onSend }: OnboardStepProps) => {
                     </>
                   </View>
                 )}
-              </>
+              </View>
             ))}
           </ChatBubbleList>
         </KeyboardAwareScrollView>
