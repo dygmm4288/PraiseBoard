@@ -7,7 +7,7 @@ import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepNotification = ({ form, onSend }: OnboardStepProps) => {
   return (
-    <OnboardStepLayout stepName="title">
+    <OnboardStepLayout stepName="notification">
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"

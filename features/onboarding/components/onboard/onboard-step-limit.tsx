@@ -1,7 +1,5 @@
-import { BoardSetupFormValues } from "@/entities/board/board.schema";
 import { AppText } from "@/shared/ui";
 import { useEffect, useState } from "react";
-import { ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
@@ -51,7 +49,7 @@ const OnboardStepLimit = ({ form, onSend }: OnboardStepProps) => {
     ));
 
   return (
-    <OnboardStepLayout stepName="title">
+    <OnboardStepLayout stepName="limit">
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"

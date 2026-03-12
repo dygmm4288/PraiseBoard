@@ -62,7 +62,7 @@ const OnboardStepReward = ({ form, onSend }: OnboardStepProps) => {
     ));
 
   return (
-    <OnboardStepLayout stepName="title">
+    <OnboardStepLayout stepName="reward">
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"
