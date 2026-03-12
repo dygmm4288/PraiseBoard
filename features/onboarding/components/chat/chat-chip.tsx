@@ -1,18 +1,22 @@
 import { AppText } from "@/shared/ui";
-import { View } from "react-native";
+import { Pressable } from "react-native";
 
 type Props = {
   icon: string;
   text: string;
+  onPress: () => void;
 };
-const ChatChip = ({ icon, text }: Props) => {
+const ChatChip = ({ icon, text, onPress }: Props) => {
   return (
-    <View className="flex flex-row rounded-[20px] border border-gray-200 bg-white py-sm px-[14px]">
+    <Pressable
+      className="flex flex-row rounded-[20px] border border-gray-200 bg-white py-sm px-[14px]"
+      onPress={onPress}
+    >
       <AppText>{icon}</AppText>
       <AppText variant="body2" className="text-gray-700">
         {text}
       </AppText>
-    </View>
+    </Pressable>
   );
 };
 
