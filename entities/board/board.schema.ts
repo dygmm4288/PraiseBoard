@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const NICKNAME_MAX_LENGTH = 15;
+
 const targetCountSchema = z
   .string()
   .trim()
@@ -21,7 +23,13 @@ export const boardSetupDraftSchema = z.object({
       .max(200, "보상 메모는 200자 이하로 입력해 주세요."),
   }),
   profiles: z.object({
-    nickname: z.string().trim().max(20, "닉네임은 20자 이하로 입력해 주세요."),
+    nickname: z
+      .string()
+      .trim()
+      .max(
+        NICKNAME_MAX_LENGTH,
+        `닉네임은 ${NICKNAME_MAX_LENGTH}자 이하로 입력해 주세요.`,
+      ),
   }),
 });
 
