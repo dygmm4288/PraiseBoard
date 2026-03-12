@@ -1,7 +1,7 @@
-import { ICONS } from ".";
+import { ICONS, IconName } from "./registry";
 
 type Props = {
-  name: keyof typeof ICONS;
+  name: IconName;
   size?: number;
 };
 
