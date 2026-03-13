@@ -3,7 +3,7 @@ import sleep from "@/shared/utils/sleep";
 import { useRef, useState } from "react";
 
 export type WhaleMessage = {
-  message: string;
+  message: string | (() => string);
   userDisabled?: boolean;
   onOk?: () => void;
   waitUser?: boolean;
@@ -60,7 +60,7 @@ const useOnboardChat = ({ whaleMessages }: Props) => {
           next[lastTypingIdx] = {
             type: "text",
             role: "system",
-            message: topMessages.message,
+            message: resolveMessage(topMessages),
           };
         }
         return next;
@@ -84,6 +84,11 @@ const useOnboardChat = ({ whaleMessages }: Props) => {
     messages,
     disabled,
   };
+};
+
+const resolveMessage = (message: WhaleMessage): string => {
+  if (typeof message.message === "function") return message.message();
+  return message.message;
 };
 
 export default useOnboardChat;
