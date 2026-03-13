@@ -9,6 +9,7 @@ import OnboardStepReward from "../components/onboard/onboard-step-reward";
 import OnboardStepTitle from "../components/onboard/onboard-step-title";
 import useOnboardingSetupForm from "../hooks/useOnboardingSetupForm";
 import { steps } from "../onboarding.steps";
+import OnboardStepIntro from "../components/onboard/onboard-step-intro";
 
 const OnboardScreen = () => {
   const { form, validateBeforeNext } = useOnboardingSetupForm();
@@ -16,9 +17,17 @@ const OnboardScreen = () => {
   return (
     <Screen>
       <FormProvider {...form}>
-        <Stepper steps={steps as any} defaultValue="name">
-          {({ currentValue, currentIndex, next }) => (
+        <Stepper steps={steps as any} defaultValue="intro">
+          {({ currentValue, next }) => (
             <View className="flex-1">
+              {currentValue === "intro" && (
+                <OnboardStepIntro
+                  form={form}
+                  onSend={async () => {
+                    next();
+                  }}
+                />
+              )}
               {currentValue === "name" && (
                 <OnboardStepName
                   form={form}

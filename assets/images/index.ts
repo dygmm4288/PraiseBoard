@@ -25,10 +25,12 @@ export const images: {
   illustrations: {
     whale: require("./whale_1f40b 1.png"),
     spoutingWhale: require("./spouting-whale_1f433 1.png"),
+    onboardWhale: require("./onboard-intro-whale.png"),
   },
 };
 
 export const onboardImages: ImageSourcePropType[] = [
   images.illustrations.whale,
   images.illustrations.spoutingWhale,
+  images.illustrations.onboardWhale,
 ];
