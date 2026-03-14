@@ -1,3 +1,4 @@
+import { KOR_ENG_SYMBOL_SPACE_REGEX } from "@/shared/utils/regex";
 import { z } from "zod";
 
 export const NICKNAME_MAX_LENGTH = 15;
@@ -26,9 +27,11 @@ export const boardSetupDraftSchema = z.object({
     nickname: z
       .string()
       .trim()
-      .max(
-        NICKNAME_MAX_LENGTH,
-        `닉네임은 ${NICKNAME_MAX_LENGTH}자 이하로 입력해 주세요.`,
+      .min(1, "이름은 최소 1자이상 입력해 주세요")
+      .max(NICKNAME_MAX_LENGTH, "이름은 15자까지 입력할 수 있어요.")
+      .regex(
+        KOR_ENG_SYMBOL_SPACE_REGEX,
+        "닉네임은 한글/영문/특수문자/공백만 입력할 수 있어요.",
       ),
   }),
 });

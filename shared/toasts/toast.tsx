@@ -4,26 +4,62 @@ import Toast, { BaseToast, BaseToastProps } from "react-native-toast-message";
 import { COLOR } from "../constants/colors.constant";
 import { AppText } from "../ui";
 
+type ToastOverrides = Partial<
+  Pick<
+    Parameters<typeof Toast.show>[0],
+    | "position"
+    | "autoHide"
+    | "visibilityTime"
+    | "topOffset"
+    | "bottomOffset"
+    | "keyboardOffset"
+    | "avoidKeyboard"
+    | "onShow"
+    | "onHide"
+    | "onPress"
+    | "swipeable"
+    | "props"
+  >
+>;
+
+const keyboardBottomToastOptions: ToastOverrides = {
+  position: "bottom",
+  bottomOffset: 12,
+  keyboardOffset: 8,
+  avoidKeyboard: true,
+};
+
 export const toast = {
-  success(title: string, message?: string) {
+  success(title: string, message?: string, options?: ToastOverrides) {
     Toast.show({
       type: "success",
       text1: title,
       text2: message,
+      ...options,
     });
   },
 
-  error(message: string) {
+  error(message: string, options?: ToastOverrides) {
     Toast.show({
       type: "error",
       text1: message,
+      ...options,
     });
   },
 
-  info(message: string) {
+  info(message: string, options?: ToastOverrides) {
     Toast.show({
       type: "info",
       text1: message,
+      ...options,
+    });
+  },
+
+  chatError(message: string) {
+    Toast.show({
+      type: "error",
+      text1: message,
+      ...keyboardBottomToastOptions,
     });
   },
 };

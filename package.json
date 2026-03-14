@@ -10,6 +10,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "test:regex": "node --experimental-strip-types --test shared/utils/regex.node.test.ts",
     "storybook-generate": "sb-rn-get-stories",
     "storybook-expo:build": "EXPO_PUBLIC_STORYBOOK_ENABLED=true npx expo export --platform web"
   },
@@ -17,6 +18,7 @@
     "@babel/core": "^7.29.0",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.8",
+    "@hookform/resolvers": "^5.2.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "^8.6.0",
     "@react-native-community/slider": "^5.1.2",

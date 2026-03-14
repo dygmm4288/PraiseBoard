@@ -5,11 +5,11 @@ import { Image, View } from "react-native";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 
-const OnboardStepIntro = ({ form, onSend }: OnboardStepProps) => {
+const OnboardStepIntro = ({ form, onNext }: OnboardStepProps) => {
   useEffect(() => {
     const run = async () => {
       await sleep(1500);
-      onSend();
+      onNext();
     };
 
     run();
