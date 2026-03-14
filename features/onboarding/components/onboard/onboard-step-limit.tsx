@@ -1,5 +1,5 @@
 import { AppText } from "@/shared/ui";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
@@ -15,18 +15,11 @@ const CHIPS = [
   { icon: "💯", text: "100개" },
 ];
 
-const OnboardStepLimit = ({ form, onSend }: OnboardStepProps) => {
-  const [showChips, setShowChips] = useState(false);
-  const { messages, addUserMessage, run, disabled } = useOnboardChat({
+const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
+  const { messages, addUserMessage, run } = useOnboardChat({
     whaleMessages: [
       {
         message: `${form.getValues("profiles.nickname")}님이 원하는 구슬 개수를 골라주세요. 속도에 맞춰 드릴게요!`,
-      },
-      {
-        message:
-          "첫번째 목표를 정하기 위해 준비가 필요해요. 우선, 무엇을 먼저 시작해보고 싶어요?",
-        userDisabled: false,
-        onOk: () => setShowChips(true),
       },
     ],
   });
@@ -42,8 +35,8 @@ const OnboardStepLimit = ({ form, onSend }: OnboardStepProps) => {
         {...props}
         onPress={async () => {
           await addUserMessage(props.text);
-          await onSend();
-          form.setValue("boards.title", props.text);
+          onNext();
+          form.setValue("boards.target_count", props.text);
         }}
       />
     ));
@@ -61,15 +54,14 @@ const OnboardStepLimit = ({ form, onSend }: OnboardStepProps) => {
         >
           <ChatBubbleList>
             {messages.map((v, i) => (
-              <>
+              <Fragment key={`onboard-step-name${i}`}>
                 <ChatBubble
-                  key={`onboard-step-name${i}`}
                   showTyping={v.type === "typing"}
                   message={v.message ?? ""}
                   side={v.role === "system" ? "left" : "right"}
                 />
                 {/* TODO 조건 수정 */}
-                {showChips && v.role === "system" && i === 1 && (
+                {v.role === "system" && i === 1 && (
                   <View className="mt-[40px] flex flx-col justify-center gap-[10px]">
                     <AppText
                       variant="caption1"
@@ -83,7 +75,7 @@ const OnboardStepLimit = ({ form, onSend }: OnboardStepProps) => {
                     </View>
                   </View>
                 )}
-              </>
+              </Fragment>
             ))}
           </ChatBubbleList>
         </KeyboardAwareScrollView>

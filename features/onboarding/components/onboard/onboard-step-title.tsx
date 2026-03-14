@@ -1,4 +1,5 @@
 import { BoardSetupFormValues } from "@/entities/board/board.schema";
+import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import { useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -8,6 +9,7 @@ import {
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
+import { validateBeforeNext } from "../../hooks/useOnboardingSetupForm";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
@@ -23,7 +25,7 @@ const CHIPS = [
   { icon: "🪴", text: "화분 물주기" },
   { icon: "📝", text: "감사일기 쓰기" },
 ];
-const OnboardStepTitle = ({ form, onSend }: OnboardStepProps) => {
+const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
   const [showChips, setShowChips] = useState(false);
 
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
@@ -47,7 +49,7 @@ const OnboardStepTitle = ({ form, onSend }: OnboardStepProps) => {
         {...props}
         onPress={async () => {
           await addUserMessage(props.text);
-          await onSend();
+          onNext();
           form.setValue("boards.title", props.text);
         }}
       />
@@ -57,11 +59,18 @@ const OnboardStepTitle = ({ form, onSend }: OnboardStepProps) => {
     field: ControllerRenderProps<BoardSetupFormValues, "boards.title">,
   ) => {
     const title = (field.value ?? "").trim();
-    // TODO: title validation
+    const error = await validateBeforeNext(form, {
+      fields: "boards.reward_memo",
+      shouldFocus: true,
+    });
+    if (error) {
+      toast.chatError(error);
+      return;
+    }
     form.clearErrors("boards.title");
     field.onChange("");
     await addUserMessage(title);
-    await onSend();
+    onNext();
     field.onChange(title);
   };
 

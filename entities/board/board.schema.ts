@@ -2,26 +2,31 @@ import { KOR_ENG_SYMBOL_SPACE_REGEX } from "@/shared/utils/regex";
 import { z } from "zod";
 
 export const NICKNAME_MAX_LENGTH = 15;
-
-const targetCountSchema = z
-  .string()
-  .trim()
-  .min(1, "목표 개수를 입력해 주세요.")
-  .refine(
-    (value) => /^\d+$/.test(value),
-    "목표 개수는 숫자만 입력할 수 있어요.",
-  )
-  .refine((value) => Number(value) > 0, "목표 개수는 1 이상이어야 해요.")
-  .refine((value) => [10, 30, 50].includes(Number(value)));
+export const TITLE_MAX_LENGTH = 15;
+export const REWARD_MEMO_LENGTH = 20;
 
 export const boardSetupDraftSchema = z.object({
   boards: z.object({
-    title: z.string().trim().min(1, "보드 제목을 입력해 주세요."),
-    target_count: targetCountSchema,
+    title: z
+      .string()
+      .trim()
+      .min(1, "보드 제목을 입력해 주세요.")
+      .max(TITLE_MAX_LENGTH, "보드 제목은 15자까지 입력할 수 있어요."),
+    target_count: z
+      .string()
+      .trim()
+      .min(1, "목표 개수를 입력해 주세요.")
+      .refine(
+        (value) => /^\d+$/.test(value),
+        "목표 개수는 숫자만 입력할 수 있어요.",
+      )
+      .refine((value) => Number(value) > 0, "목표 개수는 1 이상이어야 해요.")
+      .refine((value) => [10, 30, 50].includes(Number(value))),
     reward_memo: z
       .string()
       .trim()
-      .max(200, "보상 메모는 200자 이하로 입력해 주세요."),
+      .max(REWARD_MEMO_LENGTH, "보상은 20자까지 입력할 수 있어요.")
+      .nullable(),
   }),
   profiles: z.object({
     nickname: z

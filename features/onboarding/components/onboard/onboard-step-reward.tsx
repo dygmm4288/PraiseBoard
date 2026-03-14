@@ -1,13 +1,21 @@
+import { BoardSetupFormValues } from "@/entities/board/board.schema";
+import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import sleep from "@/shared/utils/sleep";
 import { useEffect, useState } from "react";
+import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  KeyboardAwareScrollView,
+  KeyboardStickyView,
+} from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
+import { validateBeforeNext } from "../../hooks/useOnboardingSetupForm";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatChip from "../chat/chat-chip";
+import ChatInput from "../chat/chat-input";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
@@ -18,9 +26,9 @@ const CHIPS = [
   { icon: "🐳", text: "기부하기" },
   { icon: "🫥", text: "보상 비워두기" },
 ];
-const OnboardStepReward = ({ form, onSend }: OnboardStepProps) => {
+const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   const [showChips, setShowChips] = useState(false);
-  const { messages, addUserMessage, run } = useOnboardChat({
+  const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
       {
         message:
@@ -32,14 +40,13 @@ const OnboardStepReward = ({ form, onSend }: OnboardStepProps) => {
         waitUser: true,
       },
       {
-        // TODO 보상 비워두기 value값 현재는 깡 문자열인데. 이보다는 다른 방식으로 받을 수 있게 수정하는 편이 좋을 것 같다.
         message: () =>
-          form.getValues("boards.reward_memo") === "보상 비워두기"
+          form.getValues("boards.reward_memo") === null
             ? `우와~ 벌써 선물을 받은 ${form.getValues("boards.reward_memo")}님이 상상되네요.함께 열심히 구슬을 모아봐요. 🔮선물 변경을 원하면, 설정에서 언제든 변경할 수 있어요.`
             : "지금 생각나지 않아도 괜찮아요~ 다음에 생각나면 설정에서 ‘선물’을 언제든 입력할 수 있어요. 📝",
         async onOk() {
           await sleep(1200);
-          await onSend();
+          onNext();
         },
       },
     ],
@@ -49,13 +56,36 @@ const OnboardStepReward = ({ form, onSend }: OnboardStepProps) => {
     run();
   }, []);
 
+  const onSendForm = async (
+    field: ControllerRenderProps<BoardSetupFormValues, "boards.reward_memo">,
+  ) => {
+    const rewardMemo = (field.value ?? "").trim();
+
+    const error = await validateBeforeNext(form, {
+      fields: "boards.reward_memo",
+      shouldFocus: true,
+    });
+
+    if (error) {
+      toast.chatError(error);
+      return;
+    }
+
+    form.clearErrors("boards.reward_memo");
+    field.onChange("");
+    await addUserMessage(rewardMemo);
+    onNext();
+    field.onChange(rewardMemo);
+  };
+
   const Chips = () =>
     CHIPS.map((props) => (
       <ChatChip
         key={props.icon}
         {...props}
         onPress={async () => {
-          form.setValue("boards.reward_memo", props.text);
+          const rewardMemo = props.text !== "보상 비워두기" ? props.text : null;
+          form.setValue("boards.reward_memo", rewardMemo);
           await addUserMessage(props.text);
         }}
       />
@@ -101,6 +131,28 @@ const OnboardStepReward = ({ form, onSend }: OnboardStepProps) => {
             ))}
           </ChatBubbleList>
         </KeyboardAwareScrollView>
+        <KeyboardStickyView
+          offset={{ closed: 0, opened: 0 }}
+          style={{ backgroundColor: "#FFFFFF" }}
+        >
+          <View className="bg-white py-[8px]">
+            <Controller
+              name="boards.reward_memo"
+              control={form.control}
+              render={({ field }) => (
+                <View className="gap-2">
+                  <ChatInput
+                    placeholder="이름을 알려주세요"
+                    value={field.value || ""}
+                    onChangeText={field.onChange}
+                    onSend={() => onSendForm(field)}
+                    disabled={disabled}
+                  />
+                </View>
+              )}
+            />
+          </View>
+        </KeyboardStickyView>
       </View>
     </OnboardStepLayout>
   );
