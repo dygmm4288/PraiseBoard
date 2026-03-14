@@ -1,8 +1,10 @@
 import { UserProvider, useUser } from "@/services/user";
+import { toastConfig } from "@/shared/toasts/toast";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
@@ -20,11 +22,11 @@ const RootLayoutNav = () => {
   return (
     <>
       <Stack>
-        <Stack.Screen name='index' options={{ headerShown: false }} />
-        <Stack.Screen name='(onboarding)' options={{ headerShown: false }} />
-        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
-          name='modal'
+          name="modal"
           options={{ presentation: "modal", title: "Modal" }}
         />
       </Stack>
@@ -41,7 +43,8 @@ export default function RootLayout() {
     <KeyboardProvider>
       <UserProvider>
         <RootLayoutNav />
-        <StatusBar style='auto' />
+        <Toast config={toastConfig} />
+        <StatusBar style="auto" />
       </UserProvider>
     </KeyboardProvider>
   );
