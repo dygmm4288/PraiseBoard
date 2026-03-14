@@ -61,14 +61,13 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
                   side={v.role === "system" ? "left" : "right"}
                 />
                 {/* TODO 조건 수정 */}
-                {v.role === "system" && i === 1 && (
+                {v.role === "system" && i === 0 && (
                   <View className="mt-[40px] flex flx-col justify-center gap-[10px]">
                     <AppText
                       variant="caption1"
-                      className="text-gray-400 text-center"
+                      className="text-gray-400 text-center whitespace-pre"
                     >
-                      한 번 선택한 구슬 개수를 변경할 수 없어요. 신중하게
-                      선택해주세요.
+                      {`한 번 선택한 구슬 개수를 변경할 수 없어요.\n신중하게 선택해주세요.`}
                     </AppText>
                     <View className="w-full flex-row flex-wrap items-center justify-center gap-[6px]">
                       <Chips />

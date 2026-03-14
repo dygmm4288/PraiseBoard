@@ -6,7 +6,7 @@ import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import OnboardStepLayout from "./onboard-step-layout";
 
-const OnboardStepNotification = ({ form, onSend }: OnboardStepProps) => {
+const OnboardStepNotification = ({ form, onNext }: OnboardStepProps) => {
   const { messages } = useOnboardChat({
     whaleMessages: [
       {
