@@ -3,7 +3,9 @@ import {
   NICKNAME_MAX_LENGTH,
   boardSetupDraftSchema,
 } from "@/entities/board/board.schema";
+import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
+import sleep from "@/shared/utils/sleep";
 import { useEffect } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
@@ -32,6 +34,14 @@ const OnboardStepName = ({ form, onSend }: OnboardStepProps) => {
       },
     ],
   });
+
+  useEffect(() => {
+    const run = async () => {
+      await sleep(1200);
+      toast.error("toast message");
+    };
+    run();
+  }, []);
 
   const onSendForm = async (
     field: ControllerRenderProps<BoardSetupFormValues, "profiles.nickname">,
