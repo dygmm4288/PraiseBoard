@@ -1,3 +1,4 @@
+import BoardScreen from "@/features/board/screens/BoardScreen";
 import { useUser } from "@/services/user";
 import { Redirect } from "expo-router";
 
@@ -6,8 +7,8 @@ export default function IndexRoute() {
 
   if (!isInitialized) return null;
 
-  if (!hasSeenIntro) return <Redirect href='/intro' />;
-  if (!hasCompletedOnboarding) return <Redirect href='/onboard' />;
+  if (!hasSeenIntro) return <Redirect href="/intro" />;
+  if (!hasCompletedOnboarding) return <Redirect href="/onboard" />;
 
-  return <Redirect href='/(tabs)' />;
+  return <BoardScreen />;
 }

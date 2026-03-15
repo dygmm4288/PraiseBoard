@@ -5,6 +5,7 @@ import { Text as RNText, TextProps as RNTextProps } from "react-native";
 type TextCoreVariant =
   | "title1"
   | "title2"
+  | "title3"
   | "body1"
   | "body2"
   | "caption1"
@@ -24,6 +25,7 @@ export interface AppTextProps extends RNTextProps {
 export const TEXT_VARIANT_STYLES: Record<TextCoreVariant, string> = {
   title1: "text-title1",
   title2: "text-title2",
+  title3: "text-title3",
   body1: "text-body1",
   body2: "text-body2",
   caption1: "text-caption1",
@@ -47,6 +49,7 @@ export const TEXT_WEIGHT_STYLES: Record<TextWeight, string> = {
 const TEXT_DEFAULT_WEIGHT_BY_VARIANT: Record<TextCoreVariant, TextWeight> = {
   title1: "bold",
   title2: "bold",
+  title3: "bold",
   body1: "medium",
   body2: "regular",
   caption1: "regular",
