@@ -8,10 +8,6 @@ import Toast from "react-native-toast-message";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
 const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 
 const RootLayoutNav = () => {
