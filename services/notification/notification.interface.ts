@@ -1,3 +1,12 @@
+export type PushPlatform = "ios" | "android" | "web";
+
+export type SavePushTokenInput = {
+  deviceId: string;
+  pushToken: string | null;
+  pushEnabled: boolean;
+  platform: PushPlatform;
+};
+
 export type INotificationService = {
   bootstrap: () => Promise<void>;
   requestPermissionFromOnboarding: () => Promise<boolean>;
@@ -6,11 +15,5 @@ export type INotificationService = {
 };
 
 export type INotificationRepository = {
-    savePushToken: (input:{
-        deviceId: string;
-        pushToken: string | null;
-        pushEnabled: boolean;
-        platform: "ios" | "android";
-    }) => Promise<void>;
-    updatePushToken: () => Promise<void>;
+  savePushToken: (input: SavePushTokenInput) => Promise<void>;
 };
