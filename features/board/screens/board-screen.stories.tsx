@@ -3,16 +3,36 @@ import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { BoardScreenContent } from "./BoardScreen";
 
-const DEFAULT_BOARD_STORY_DATA: BoardCardData = {
+type BoardScreenStoryProps = BoardCardData;
+
+const DEFAULT_BOARD_STORY_DATA: BoardScreenStoryProps = {
   title: "아침에 물 한 잔",
   rewardMemo: "새로운 화분 구매",
   totalCount: 100,
   completedCount: 1,
 };
 
+const BoardScreenStory = ({
+  title,
+  rewardMemo,
+  totalCount,
+  completedCount,
+}: BoardScreenStoryProps) => {
+  return (
+    <BoardScreenContent
+      board={{
+        title,
+        rewardMemo,
+        totalCount,
+        completedCount,
+      }}
+    />
+  );
+};
+
 const meta = {
   title: "Board/BoardScreen",
-  component: BoardScreenContent,
+  component: BoardScreenStory,
   decorators: [
     (Story) => (
       <View style={{ flex: 1 }}>
@@ -20,13 +40,37 @@ const meta = {
       </View>
     ),
   ],
-  args: {
-    board: DEFAULT_BOARD_STORY_DATA,
+  args: DEFAULT_BOARD_STORY_DATA,
+  argTypes: {
+    title: {
+      control: "text",
+    },
+    rewardMemo: {
+      control: "text",
+    },
+    totalCount: {
+      control: "number",
+    },
+    completedCount: {
+      control: "number",
+    },
   },
-} satisfies Meta<typeof BoardScreenContent>;
+} satisfies Meta<typeof BoardScreenStory>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
+
+export const Midway: Story = {
+  args: {
+    completedCount: 50,
+  },
+};
+
+export const Completed: Story = {
+  args: {
+    completedCount: 100,
+  },
+};
