@@ -8,14 +8,13 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { COLOR } from "../constants/colors.constant";
 
 const TRACK_HEIGHT = 30;
-const TRACK_RADIUS = 8;
 const INDICATOR_RADIUS = 7;
 const TRACK_PADDING = 2;
 const DEFAULT_SEGMENT_WIDTH = 27;
-const TRACK_BACKGROUND = "#E3E3E6";
-const INDICATOR_BACKGROUND = "#FFFFFF";
+const INDICATOR_BACKGROUND = COLOR.white;
 
 type Option<T> = {
   value: T;
@@ -98,21 +97,17 @@ const ButtonToggle = <T,>({
   return (
     <View
       className={cn(
-        "relative flex-row items-center overflow-hidden bg-[#E3E3E6] p-[2px]",
+        "relative flex-row items-center bg-gray-200 p-[2px] rounded-[8px]",
         className,
       )}
-      style={{
-        width: resolvedWidth,
-        height: TRACK_HEIGHT,
-        borderRadius: TRACK_RADIUS,
-        backgroundColor: TRACK_BACKGROUND,
-      }}
     >
       <Animated.View
         pointerEvents="none"
-        className="absolute top-[2px] bottom-[2px]"
         style={[
           {
+            position: "absolute",
+            top: TRACK_PADDING,
+            bottom: TRACK_PADDING,
             left: TRACK_PADDING,
             borderRadius: INDICATOR_RADIUS,
             backgroundColor: INDICATOR_BACKGROUND,
