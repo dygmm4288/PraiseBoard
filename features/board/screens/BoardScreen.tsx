@@ -1,8 +1,9 @@
+import { images } from "@/assets/images";
 import { ChatBubble } from "@/features/onboarding/components/chat/chat-bubble";
 import { AppButton, Screen } from "@/shared/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import Header from "../components/header/header";
 import { BoardCardData } from "../types/board-card.type";
 
@@ -29,6 +30,17 @@ export const BoardScreenContent = ({ board }: BoardScreenContentProps) => {
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={StyleSheet.absoluteFillObject}
+      />
+      <Image
+        source={images.illustrations.onboardWhale}
+        style={{
+          position: "absolute",
+          top: 176,
+          left: "50%",
+          width: 317,
+          height: 327,
+          transform: [{ translateX: "-50%" }],
+        }}
       />
       <Header title={board.title} showTitle={showTitle} />
       <View className="flex-1 my-[30px] flex flex-col justify-between">

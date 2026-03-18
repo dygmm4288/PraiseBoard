@@ -34,3 +34,7 @@ export const onboardImages: ImageSourcePropType[] = [
   images.illustrations.spoutingWhale,
   images.illustrations.onboardWhale,
 ];
+
+export const boardImages: ImageSourcePropType[] = [
+  images.illustrations.onboardWhale,
+]
