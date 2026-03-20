@@ -3,12 +3,13 @@ import { useUser } from "@/services/user";
 import { Redirect } from "expo-router";
 
 export default function IndexRoute() {
-  const { isInitialized, hasSeenIntro, hasCompletedOnboarding } = useUser();
+  const { isInitialized, effectiveHasCompletedOnboarding, effectiveHasSeenIntro } =
+    useUser();
 
   if (!isInitialized) return null;
 
-  if (!hasSeenIntro) return <Redirect href="/intro" />;
-  if (!hasCompletedOnboarding) return <Redirect href="/onboard" />;
+  if (!effectiveHasSeenIntro) return <Redirect href="/intro" />;
+  if (!effectiveHasCompletedOnboarding) return <Redirect href="/onboard" />;
 
   return <BoardScreen />;
 }

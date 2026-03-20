@@ -1,8 +1,9 @@
 import { Icon } from "@/assets/icons";
 import { AppText } from "@/shared/ui";
 import ButtonToggle from "@/shared/ui/button-toggle";
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
 type Props = {
   title: string;
@@ -25,7 +26,7 @@ const HEADER_TOGGLE_OPTIONS = [
 type HEADER_MODE = (typeof HEADER_TOGGLE_OPTIONS)[number]["value"];
 
 const Header = ({ title, showTitle }: Props) => {
-    // TODO: 로컬 상태로 승격해야함.
+  const router = useRouter();
   const [mode, setMode] = useState<HEADER_MODE>("board");
 
   return (
@@ -42,7 +43,12 @@ const Header = ({ title, showTitle }: Props) => {
       )}
       <View className="flex flex-row gap-[9px]">
         <Icon name="Share" />
-        <Icon name="Setting" />
+        <Pressable
+          accessibilityLabel="설정 열기"
+          onPress={() => router.push("/settings")}
+        >
+          <Icon name="Setting" />
+        </Pressable>
       </View>
     </View>
   );
