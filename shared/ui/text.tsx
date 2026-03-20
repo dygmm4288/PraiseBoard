@@ -8,6 +8,7 @@ type TextCoreVariant =
   | "title3"
   | "body1"
   | "body2"
+  | "body3"
   | "caption1"
   | "button1";
 
@@ -28,6 +29,7 @@ export const TEXT_VARIANT_STYLES: Record<TextCoreVariant, string> = {
   title3: "text-title3",
   body1: "text-body1",
   body2: "text-body2",
+  body3: "text-body3",
   caption1: "text-caption1",
   button1: "text-button1",
 };
@@ -52,6 +54,7 @@ const TEXT_DEFAULT_WEIGHT_BY_VARIANT: Record<TextCoreVariant, TextWeight> = {
   title3: "bold",
   body1: "medium",
   body2: "regular",
+  body3: "regular",
   caption1: "regular",
   button1: "semibold",
 };

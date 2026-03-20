@@ -37,8 +37,8 @@ module.exports = {
         title3: [
           "20px",
           {
-            lineHeight: "30px",
-            letterSpacing: "-0.18px",
+            lineHeight: "28px",
+            letterSpacing: "-0.2px",
           },
         ],
         body1: [
@@ -53,6 +53,13 @@ module.exports = {
           {
             lineHeight: "28px",
             letterSpacing: "0em",
+          },
+        ],
+        body3: [
+          "14px",
+          {
+            lineHeight: "20px",
+            letterSpacing: "0",
           },
         ],
         button1: [

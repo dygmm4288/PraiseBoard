@@ -47,7 +47,7 @@ export const ChatBubble = ({
           )}
         >
           {!showTyping ? (
-            <AppText variant="body2" className={textClassName}>
+            <AppText variant="body3" className={textClassName}>
               {message}
             </AppText>
           ) : (
