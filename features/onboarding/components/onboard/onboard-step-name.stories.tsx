@@ -21,7 +21,7 @@ const StepNameStory = ({ nickname = "" }: StepNameStoryProps) => {
     },
   });
 
-  return <OnboardStepName form={form} onSend={async () => undefined} />;
+  return <OnboardStepName form={form} onNext={() => undefined} />;
 };
 
 const meta = {
