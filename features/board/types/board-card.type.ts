@@ -6,7 +6,6 @@ export type BoardCardData = {
 };
 
 export type BoardCardProps = {
-  data: BoardCardData;
   className?: string;
   columns?: number;
 };
