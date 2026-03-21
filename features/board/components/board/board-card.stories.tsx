@@ -26,7 +26,6 @@ const BoardCardStory = ({
           totalCount,
           completedCount,
         },
-        titleMode: "main",
       }}
     >
       <BoardCard columns={columns} />

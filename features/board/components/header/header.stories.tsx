@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
-import { BoardProvider } from "../../hooks";
+import { BoardProvider, BoardUIProvider } from "../../hooks";
 import Header from "./header";
 
 type HeaderStoryProps = {
@@ -20,10 +20,17 @@ const HeaderStory = ({ title, showTitle }: HeaderStoryProps) => {
           totalCount: 100,
           completedCount: 1,
         },
-        titleMode: showTitle ? "header" : "main",
       }}
     >
-      <Header />
+      <BoardUIProvider
+        value={{
+          isBoardOpen: showTitle,
+          toggleBoardOpen: () => undefined,
+          titleMode: showTitle ? "header" : "main",
+        }}
+      >
+        <Header />
+      </BoardUIProvider>
     </BoardProvider>
   );
 };

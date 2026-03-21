@@ -9,13 +9,10 @@ import {
 } from "react";
 import { BoardCardData } from "../types/board-card.type";
 
-export type BoardTitleMode = "header" | "main";
-
 export interface BoardContextType {
   isLoading: boolean;
   errorMessage: string | null;
   boardData: BoardCardData | null;
-  titleMode: BoardTitleMode;
 }
 
 const BoardContext = createContext<BoardContextType | null>(null);
@@ -76,7 +73,6 @@ const BoardQueryProvider = ({ children }: PropsWithChildren) => {
     isLoading,
     errorMessage,
     boardData,
-    titleMode: "main",
   } satisfies BoardContextType;
 
   return (
@@ -86,7 +82,9 @@ const BoardQueryProvider = ({ children }: PropsWithChildren) => {
 
 export const BoardProvider = ({ children, value }: BoardProviderProps) => {
   if (value) {
-    return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
+    return (
+      <BoardContext.Provider value={value}>{children}</BoardContext.Provider>
+    );
   }
 
   return <BoardQueryProvider>{children}</BoardQueryProvider>;

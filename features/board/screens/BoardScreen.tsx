@@ -6,7 +6,7 @@ import { type ReactNode } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import BoardCard from "../components/board/board-card";
 import Header from "../components/header/header";
-import { useBoard } from "../hooks";
+import { BoardUIProvider, useBoard } from "../hooks";
 
 const SHELL_GRADIENT_COLORS = ["#F1F2F4", "#E8DEFF", "#F1F2F4"] as const;
 
@@ -72,21 +72,19 @@ const BoardScreenStatus = ({ message }: { message: string }) => {
 const BoardScreen = () => {
   const { isLoading, errorMessage, boardData } = useBoard();
 
-  if (isLoading) {
-    return <BoardScreenStatus message="보드를 불러오는 중이에요." />;
-  }
-
-  if (errorMessage) {
-    return <BoardScreenStatus message={errorMessage} />;
-  }
-
-  if (!boardData) {
-    return (
-      <BoardScreenStatus message="아직 받은 보드가 없어요. 온보딩을 완료해 주세요." />
-    );
-  }
-
-  return <BoardScreenContent />;
+  return (
+    <BoardUIProvider>
+      {isLoading ? (
+        <BoardScreenStatus message="보드를 불러오는 중이에요." />
+      ) : errorMessage ? (
+        <BoardScreenStatus message={errorMessage} />
+      ) : !boardData ? (
+        <BoardScreenStatus message="아직 받은 보드가 없어요. 온보딩을 완료해 주세요." />
+      ) : (
+        <BoardScreenContent />
+      )}
+    </BoardUIProvider>
+  );
 };
 
 export default BoardScreen;

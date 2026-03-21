@@ -4,7 +4,7 @@ import ButtonToggle from "@/shared/ui/button-toggle";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
-import { useBoard } from "../../hooks";
+import { useBoard, useBoardUI } from "../../hooks";
 
 const HEADER_TOGGLE_OPTIONS = [
   {
@@ -24,8 +24,8 @@ type HEADER_MODE = (typeof HEADER_TOGGLE_OPTIONS)[number]["value"];
 const Header = () => {
   const router = useRouter();
   const [mode, setMode] = useState<HEADER_MODE>("board");
-  const { boardData, titleMode } = useBoard();
-  const showTitle = boardData && boardData.title && titleMode === "header";
+  const { boardData } = useBoard();
+  const {titleMode} = useBoardUI();
 
   return (
     <View className="flex justify-between flex-row">
@@ -34,9 +34,9 @@ const Header = () => {
         onChange={(v) => setMode(v)}
         options={HEADER_TOGGLE_OPTIONS}
       />
-      {showTitle && (
+      {titleMode === 'header' && (
         <AppText variant="button1" className="text-gray-700">
-          {boardData.title}
+          {boardData?.title}
         </AppText>
       )}
       <View className="flex flex-row gap-[9px]">
