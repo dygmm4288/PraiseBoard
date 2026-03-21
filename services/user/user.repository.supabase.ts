@@ -46,4 +46,14 @@ export const userRepository: IUserRepository = {
 
     if (error) throw error;
   },
+  updateProfile: async (profileId, input) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        nickname: input.nickname,
+      })
+      .eq("id", profileId);
+
+    if (error) throw error;
+  },
 };

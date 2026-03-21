@@ -10,9 +10,9 @@ import ChatChip from "../chat/chat-chip";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
-  { icon: "🌟", text: "30개" },
-  { icon: "🔥", text: "50개" },
-  { icon: "💯", text: "100개" },
+  { icon: "🌟", text: "30개", value: "30" },
+  { icon: "🔥", text: "50개", value: "50" },
+  { icon: "💯", text: "100개", value: "100" },
 ];
 
 const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
@@ -36,7 +36,7 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
         onPress={async () => {
           await addUserMessage(props.text);
           onNext();
-          form.setValue("boards.target_count", props.text);
+          form.setValue("boards.target_count", props.value);
         }}
       />
     ));

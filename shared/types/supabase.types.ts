@@ -22,6 +22,7 @@ export type Database = {
           id: string
           profile_id: string
           reward_enabled: boolean
+          reward_memo: string | null
           status: Database["public"]["Enums"]["board_status"]
           target_count: number
           title: string
@@ -34,6 +35,7 @@ export type Database = {
           id?: string
           profile_id: string
           reward_enabled?: boolean
+          reward_memo?: string | null
           status?: Database["public"]["Enums"]["board_status"]
           target_count: number
           title: string
@@ -46,6 +48,7 @@ export type Database = {
           id?: string
           profile_id?: string
           reward_enabled?: boolean
+          reward_memo?: string | null
           status?: Database["public"]["Enums"]["board_status"]
           target_count?: number
           title?: string
