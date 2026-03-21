@@ -14,6 +14,7 @@ import { steps } from "../onboarding.steps";
 const OnboardScreen = () => {
   const { form } = useOnboardingSetupForm();
 
+
   return (
     <Screen>
       <FormProvider {...form}>

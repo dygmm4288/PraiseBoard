@@ -41,7 +41,6 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
       },
       {
         message: () => {
-          console.log("@@@ message", form.getValues("boards.reward_memo"));
           return form.getValues("boards.reward_memo") !== null
             ? `우와~ 벌써 선물을 받은 ${form.getValues("boards.reward_memo")}님이 상상되네요.함께 열심히 구슬을 모아봐요. 🔮선물 변경을 원하면, 설정에서 언제든 변경할 수 있어요.`
             : "지금 생각나지 않아도 괜찮아요~ 다음에 생각나면 설정에서 ‘선물’을 언제든 입력할 수 있어요. 📝";
