@@ -1,6 +1,7 @@
 import { BoardCardData } from "@/features/board/types/board-card.type";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
+import { BoardProvider } from "../hooks";
 import { BoardScreenContent } from "./BoardScreen";
 
 type BoardScreenStoryProps = BoardCardData;
@@ -19,14 +20,21 @@ const BoardScreenStory = ({
   completedCount,
 }: BoardScreenStoryProps) => {
   return (
-    <BoardScreenContent
-      board={{
-        title,
-        rewardMemo,
-        totalCount,
-        completedCount,
+    <BoardProvider
+      value={{
+        isLoading: false,
+        errorMessage: null,
+        boardData: {
+          title,
+          rewardMemo,
+          totalCount,
+          completedCount,
+        },
+        titleMode: "main",
       }}
-    />
+    >
+      <BoardScreenContent />
+    </BoardProvider>
   );
 };
 

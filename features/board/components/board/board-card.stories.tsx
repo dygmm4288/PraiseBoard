@@ -1,6 +1,7 @@
 import { BoardCardData } from "@/features/board/types/board-card.type";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
+import { BoardProvider } from "../../hooks";
 import BoardCard from "./board-card";
 
 type BoardCardStoryProps = BoardCardData & {
@@ -15,15 +16,21 @@ const BoardCardStory = ({
   columns = 10,
 }: BoardCardStoryProps) => {
   return (
-    <BoardCard
-      data={{
-        title,
-        rewardMemo,
-        totalCount,
-        completedCount,
+    <BoardProvider
+      value={{
+        isLoading: false,
+        errorMessage: null,
+        boardData: {
+          title,
+          rewardMemo,
+          totalCount,
+          completedCount,
+        },
+        titleMode: "main",
       }}
-      columns={columns}
-    />
+    >
+      <BoardCard columns={columns} />
+    </BoardProvider>
   );
 };
 

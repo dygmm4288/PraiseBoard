@@ -1,10 +1,36 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
+import { BoardProvider } from "../../hooks";
 import Header from "./header";
+
+type HeaderStoryProps = {
+  title: string;
+  showTitle: boolean;
+};
+
+const HeaderStory = ({ title, showTitle }: HeaderStoryProps) => {
+  return (
+    <BoardProvider
+      value={{
+        isLoading: false,
+        errorMessage: null,
+        boardData: {
+          title,
+          rewardMemo: null,
+          totalCount: 100,
+          completedCount: 1,
+        },
+        titleMode: showTitle ? "header" : "main",
+      }}
+    >
+      <Header />
+    </BoardProvider>
+  );
+};
 
 const meta = {
   title: "Board/Header",
-  component: Header,
+  component: HeaderStory,
   decorators: [
     (Story) => (
       <View
@@ -32,7 +58,7 @@ const meta = {
       control: "boolean",
     },
   },
-} satisfies Meta<typeof Header>;
+} satisfies Meta<typeof HeaderStory>;
 
 export default meta;
 
