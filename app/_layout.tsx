@@ -4,6 +4,7 @@ import { toastConfig } from "@/shared/toasts/toast";
 import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Pressable, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
@@ -65,12 +66,14 @@ export default function RootLayout() {
   }
 
   return (
-    <KeyboardProvider>
-      <UserProvider>
-        <RootLayoutNav />
-        <Toast config={toastConfig} />
-        <StatusBar style="auto" />
-      </UserProvider>
-    </KeyboardProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardProvider>
+        <UserProvider>
+          <RootLayoutNav />
+          <Toast config={toastConfig} />
+          <StatusBar style="auto" />
+        </UserProvider>
+      </KeyboardProvider>
+    </GestureHandlerRootView>
   );
 }

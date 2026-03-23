@@ -25,7 +25,7 @@ const Header = () => {
   const router = useRouter();
   const [mode, setMode] = useState<HEADER_MODE>("board");
   const { boardData } = useBoard();
-  const {titleMode} = useBoardUI();
+  const { titleMode } = useBoardUI();
 
   return (
     <View className="flex justify-between flex-row">
@@ -34,7 +34,7 @@ const Header = () => {
         onChange={(v) => setMode(v)}
         options={HEADER_TOGGLE_OPTIONS}
       />
-      {titleMode === 'header' && (
+      {titleMode === "header" && (
         <AppText variant="button1" className="text-gray-700">
           {boardData?.title}
         </AppText>

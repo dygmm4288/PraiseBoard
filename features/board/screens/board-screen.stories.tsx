@@ -34,9 +34,10 @@ const BoardScreenStory = ({
     >
       <BoardUIProvider
         value={{
-          isBoardOpen: false,
-          toggleBoardOpen: () => undefined,
-          titleMode: "main",
+          boardSheetState: "peek",
+          setBoardSheetState: () => undefined,
+          isBoardExpanded: false,
+          titleMode: "header",
         }}
       >
         <BoardScreenContent />

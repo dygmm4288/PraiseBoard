@@ -1,8 +1,11 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
+export type BoardSheetState = "peek" | "half" | "full";
+
 export interface BoardUIContextType {
-  isBoardOpen: boolean;
-  toggleBoardOpen: () => void;
+  boardSheetState: BoardSheetState;
+  setBoardSheetState: (state: BoardSheetState) => void;
+  isBoardExpanded: boolean;
   titleMode: "header" | "main";
 }
 
@@ -12,24 +15,23 @@ type BoardUIProviderProps = PropsWithChildren<{
   value?: BoardUIContextType;
 }>;
 
-export const BoardUIProvider = ({
-  children,
-  value,
-}: BoardUIProviderProps) => {
+export const BoardUIProvider = ({ children, value }: BoardUIProviderProps) => {
   if (value) {
     return (
-      <BoardUIContext.Provider value={value}>{children}</BoardUIContext.Provider>
+      <BoardUIContext.Provider value={value}>
+        {children}
+      </BoardUIContext.Provider>
     );
   }
 
-  const [isBoardOpen, setBoardOpen] = useState(false);
-
-  const toggleBoardOpen = () => setBoardOpen((prev) => !prev);
-  const titleMode = isBoardOpen ? "header" : "main";
+  const [boardSheetState, setBoardSheetState] = useState<BoardSheetState>("peek");
+  const isBoardExpanded = boardSheetState !== "peek";
+  const titleMode = "header";
 
   const resolvedValue = {
-    isBoardOpen,
-    toggleBoardOpen,
+    boardSheetState,
+    setBoardSheetState,
+    isBoardExpanded,
     titleMode,
   } satisfies BoardUIContextType;
 

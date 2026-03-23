@@ -24,8 +24,9 @@ const HeaderStory = ({ title, showTitle }: HeaderStoryProps) => {
     >
       <BoardUIProvider
         value={{
-          isBoardOpen: showTitle,
-          toggleBoardOpen: () => undefined,
+          boardSheetState: showTitle ? "half" : "peek",
+          setBoardSheetState: () => undefined,
+          isBoardExpanded: showTitle,
           titleMode: showTitle ? "header" : "main",
         }}
       >
