@@ -14,7 +14,9 @@ const HeaderStory = ({ title, showTitle }: HeaderStoryProps) => {
       value={{
         isLoading: false,
         errorMessage: null,
+        collectSticker: async () => undefined,
         boardData: {
+          id: "header-story-board",
           title,
           rewardMemo: null,
           totalCount: 100,

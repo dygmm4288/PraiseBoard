@@ -7,6 +7,7 @@ import { BoardScreenContent } from "./BoardScreen";
 type BoardScreenStoryProps = BoardCardData;
 
 const DEFAULT_BOARD_STORY_DATA: BoardScreenStoryProps = {
+  id: "board-screen-story",
   title: "아침에 물 한 잔",
   rewardMemo: "새로운 화분 구매",
   totalCount: 100,
@@ -14,6 +15,7 @@ const DEFAULT_BOARD_STORY_DATA: BoardScreenStoryProps = {
 };
 
 const BoardScreenStory = ({
+  id,
   title,
   rewardMemo,
   totalCount,
@@ -24,7 +26,9 @@ const BoardScreenStory = ({
       value={{
         isLoading: false,
         errorMessage: null,
+        collectSticker: async () => undefined,
         boardData: {
+          id,
           title,
           rewardMemo,
           totalCount,

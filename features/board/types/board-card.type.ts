@@ -1,4 +1,5 @@
 export type BoardCardData = {
+  id: string;
   title: string;
   rewardMemo?: string | null;
   totalCount: number;

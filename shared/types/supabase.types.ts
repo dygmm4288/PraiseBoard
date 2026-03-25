@@ -224,6 +224,50 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      collect_sticker_app: {
+        Args: { board_id: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string | null
+          current_count: number
+          id: string
+          profile_id: string
+          reward_enabled: boolean
+          reward_memo: string | null
+          status: Database["public"]["Enums"]["board_status"]
+          target_count: number
+          title: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "boards"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      collect_sticker_widget: {
+        Args: { board_id: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string | null
+          current_count: number
+          id: string
+          profile_id: string
+          reward_enabled: boolean
+          reward_memo: string | null
+          status: Database["public"]["Enums"]["board_status"]
+          target_count: number
+          title: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "boards"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       refresh_board_progress_for: {
         Args: { p_board_id: string }
         Returns: undefined

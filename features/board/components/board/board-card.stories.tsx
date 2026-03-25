@@ -9,6 +9,7 @@ type BoardCardStoryProps = BoardCardData & {
 };
 
 const BoardCardStory = ({
+  id,
   title,
   rewardMemo,
   totalCount,
@@ -20,7 +21,9 @@ const BoardCardStory = ({
       value={{
         isLoading: false,
         errorMessage: null,
+        collectSticker: async () => undefined,
         boardData: {
+          id,
           title,
           rewardMemo,
           totalCount,
@@ -44,6 +47,7 @@ const meta = {
     ),
   ],
   args: {
+    id: "board-story-1",
     title: "아침에 물 한 잔",
     rewardMemo: "새로운 화분 구매",
     totalCount: 100,

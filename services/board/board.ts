@@ -15,4 +15,8 @@ export const board: IBoardService = {
   async getLatestBoard(profileId) {
     return boardRepository.getLatestBoard(profileId);
   },
+
+  async collectSticker(boardId, source) {
+    return boardRepository.collectSticker(boardId, source);
+  },
 };

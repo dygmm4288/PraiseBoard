@@ -23,6 +23,11 @@ export type CreateBoardInput = {
 export type IBoardRepository = {
   createBoard: (input: CreateBoardInput) => Promise<BoardRecord>;
   getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
+  collectSticker: (
+    boardId: string,
+    source: Database["public"]["Enums"]["sticker_source"],
+  ) => Promise<BoardRecord>;
+  getBoard: (profileId: string, boardId: string) => Promise<BoardRecord>;
 };
 
 export type IBoardService = {
@@ -31,4 +36,8 @@ export type IBoardService = {
     payload: BoardSetupPayload,
   ) => Promise<BoardRecord>;
   getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
+  collectSticker: (
+    boardId: string,
+    source: Database["public"]["Enums"]["sticker_source"],
+  ) => Promise<BoardRecord>;
 };

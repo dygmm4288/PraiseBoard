@@ -41,6 +41,7 @@ const BoardScreenShell = ({ children }: { children: ReactNode }) => {
 
 export const BoardScreenContent = () => {
   const { boardSheetState, setBoardSheetState } = useBoardUI();
+  const { collectSticker } = useBoard();
 
   return (
     <BoardScreenShell>
@@ -51,7 +52,11 @@ export const BoardScreenContent = () => {
             message="안녕! 오늘의 구슬을 모아볼까? 푸우~🐳"
           />
           <View className="items-center pb-[30px]">
-            <AppButton variant="primary" className="w-max self-center">
+            <AppButton
+              variant="primary"
+              className="w-max self-center"
+              onPress={collectSticker}
+            >
               구슬 모으기
             </AppButton>
           </View>

@@ -1,8 +1,5 @@
 import { supabase } from "@/shared/lib/supabase";
-import {
-  BoardRecord,
-  IBoardRepository,
-} from "./board.interface";
+import { BoardRecord, IBoardRepository } from "./board.interface";
 
 const BOARD_FIELDS =
   "id, profile_id, title, reward_memo, target_count, current_count, status";
@@ -54,6 +51,29 @@ export const boardRepository: IBoardRepository = {
 
     if (error) throw error;
     if (!data) return null;
+
+    return toBoardRecord(data);
+  },
+
+  async getBoard(profileId, boardId) {
+    const { data, error } = await supabase
+      .from("boards")
+      .select(BOARD_FIELDS)
+      .eq("id", boardId)
+      .eq("profile_id", profileId)
+      .single();
+    if (error) throw error;
+    return toBoardRecord(data);
+  },
+
+  async collectSticker(boardId, source) {
+    const { data, error } = await supabase
+      .rpc(`collect_sticker_${source}`, {
+        board_id: boardId,
+      })
+      .select(BOARD_FIELDS);
+
+    if (error) throw error;
 
     return toBoardRecord(data);
   },

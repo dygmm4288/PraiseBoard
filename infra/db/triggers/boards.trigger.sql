@@ -9,7 +9,7 @@ begin
 
   update boards
   set current_count = v_count,
-      status = case when v_count >= target_count then 'completed' else 'active' end,
+      status = case when v_count >= target_count then 'completed'::board_status else 'active'::board_status end,
       completed_at = case
         when v_count >= target_count then coalesce(completed_at, now())
         else null

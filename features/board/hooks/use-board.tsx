@@ -13,6 +13,7 @@ export interface BoardContextType {
   isLoading: boolean;
   errorMessage: string | null;
   boardData: BoardCardData | null;
+  collectSticker: () => Promise<void>;
 }
 
 const BoardContext = createContext<BoardContextType | null>(null);
@@ -69,10 +70,17 @@ const BoardQueryProvider = ({ children }: PropsWithChildren) => {
     };
   }, [profileId]);
 
+  const collectSticker = async () => {
+    if (!boardData) return;
+    const newBoardData = await board.collectSticker(boardData.id, "app");
+    if (newBoardData) setBoardData(mapBoardToCardData(newBoardData));
+  };
+
   const value = {
     isLoading,
     errorMessage,
     boardData,
+    collectSticker,
   } satisfies BoardContextType;
 
   return (
@@ -102,6 +110,7 @@ const mapBoardToCardData = (
   if (!input) return null;
 
   return {
+    id: input.id,
     title: input.title,
     rewardMemo: input.rewardMemo,
     totalCount: input.targetCount,
