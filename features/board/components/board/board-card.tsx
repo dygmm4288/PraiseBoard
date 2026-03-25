@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { useBoard } from "../../hooks";
 import { BoardCardProps } from "../../types/board-card.type";
 import { getBoardProgress } from "../../utils/board-progress";
-import BoardHeader from "./board-header";
 import BoardProgress from "./board-progress";
 import BoardStickerGrid from "./board-sticker-grid";
 
@@ -23,15 +22,14 @@ const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
         className,
       )}
     >
-      <BoardHeader title={boardData.title} rewardMemo={boardData.rewardMemo} />
+      <BoardProgress
+        remainingCount={progress.remainingCount}
+        progressPercent={progress.progressPercent}
+      />
       <BoardStickerGrid
         totalCount={progress.totalCount}
         completedCount={progress.completedCount}
         columns={columns}
-      />
-      <BoardProgress
-        remainingCount={progress.remainingCount}
-        progressPercent={progress.progressPercent}
       />
     </View>
   );
