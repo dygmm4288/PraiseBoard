@@ -64,6 +64,139 @@ const StatusRow = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
+type SettingsScreenContentProps = {
+  hasSeenIntro: boolean;
+  hasCompletedOnboarding: boolean;
+  overrideMode: UserFlowOverrideMode;
+  isDebugUserFlowEnabled: boolean;
+  effectiveHasSeenIntro: boolean;
+  effectiveHasCompletedOnboarding: boolean;
+  onOverridePress?: (mode: UserFlowOverrideMode) => Promise<void> | void;
+  onResetPress?: () => Promise<void> | void;
+};
+
+export const SettingsScreenContent = ({
+  hasSeenIntro,
+  hasCompletedOnboarding,
+  overrideMode,
+  isDebugUserFlowEnabled,
+  effectiveHasSeenIntro,
+  effectiveHasCompletedOnboarding,
+  onOverridePress = () => undefined,
+  onResetPress = () => undefined,
+}: SettingsScreenContentProps) => {
+  const currentRoute = resolveCurrentRouteLabel({
+    effectiveHasSeenIntro,
+    effectiveHasCompletedOnboarding,
+  });
+
+  return (
+    <Screen className="bg-[#F3F4F6] px-0 pt-0">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 16 }}
+      >
+        <View className="gap-4 pb-8">
+          <View className="rounded-[28px] bg-white px-5 py-6">
+            <AppText variant="title3" className="text-gray-700">
+              Device User Flow
+            </AppText>
+            <AppText variant="body3" className="mt-2 text-gray-500">
+              intro와 onboarding은 이 기기에서 한 번만 보이는 상태입니다. QA와
+              개발 환경에서는 아래 override로 원하는 화면부터 바로 진입할 수
+              있습니다.
+            </AppText>
+          </View>
+
+          <View className="rounded-[28px] bg-white px-5 py-5">
+            <AppText variant="button1" className="text-gray-700">
+              현재 상태
+            </AppText>
+            <View className="mt-4 gap-3">
+              <StatusRow
+                label="실제 hasSeenIntro"
+                value={formatBooleanState(hasSeenIntro)}
+              />
+              <StatusRow
+                label="실제 hasCompletedOnboarding"
+                value={formatBooleanState(hasCompletedOnboarding)}
+              />
+              <StatusRow label="override mode" value={overrideMode} />
+              <StatusRow label="현재 진입 화면" value={currentRoute} />
+            </View>
+          </View>
+
+          <View className="rounded-[28px] bg-white px-5 py-5">
+            <AppText variant="button1" className="text-gray-700">
+              Debug / QA
+            </AppText>
+            <AppText variant="body3" className="mt-2 text-gray-500">
+              선택 즉시 홈으로 이동해서 해당 흐름으로 진입합니다.
+            </AppText>
+
+            {isDebugUserFlowEnabled ? (
+              <View className="mt-4 gap-3">
+                {USER_FLOW_OPTIONS.map((option) => {
+                  const isSelected = option.value === overrideMode;
+
+                  return (
+                    <Pressable
+                      key={option.value}
+                      className={cn(
+                        "rounded-[22px] border px-4 py-4",
+                        isSelected
+                          ? "border-primary-500 bg-primary-100"
+                          : "border-gray-100 bg-[#F7F7F9]",
+                      )}
+                      onPress={() => {
+                        void onOverridePress(option.value);
+                      }}
+                    >
+                      <AppText variant="button1" className="text-gray-700">
+                        {option.title}
+                      </AppText>
+                      <AppText variant="body3" className="mt-2 text-gray-500">
+                        {option.description}
+                      </AppText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ) : (
+              <View className="mt-4 rounded-[22px] bg-[#F7F7F9] px-4 py-4">
+                <AppText variant="body3" className="text-gray-500">
+                  디버그 override는 dev/qa 환경에서만 사용할 수 있습니다.
+                </AppText>
+              </View>
+            )}
+          </View>
+
+          {isDebugUserFlowEnabled ? (
+            <View className="rounded-[28px] bg-white px-5 py-5">
+              <AppText variant="button1" className="text-gray-700">
+                실제 상태 초기화
+              </AppText>
+              <AppText variant="body3" className="mt-2 text-gray-500">
+                이 기기의 실제 intro/onboarding 완료 상태를 지우고, override를
+                real로 되돌린 뒤 홈으로 이동합니다.
+              </AppText>
+              <AppButton
+                variant="tertiary"
+                className="mt-4"
+                onPress={() => {
+                  void onResetPress();
+                }}
+              >
+                실제 온보딩 상태 초기화
+              </AppButton>
+            </View>
+          ) : null}
+        </View>
+      </ScrollView>
+    </Screen>
+  );
+};
+
 const SettingsScreen = () => {
   const router = useRouter();
   const {
@@ -76,11 +209,6 @@ const SettingsScreen = () => {
     setOverrideMode,
     resetOnboardingProgress,
   } = useUser();
-
-  const currentRoute = resolveCurrentRouteLabel({
-    effectiveHasSeenIntro,
-    effectiveHasCompletedOnboarding,
-  });
 
   const handleOverridePress = async (mode: UserFlowOverrideMode) => {
     await setOverrideMode(mode);
@@ -96,105 +224,16 @@ const SettingsScreen = () => {
   return (
     <>
       <Stack.Screen options={{ title: "설정" }} />
-      <Screen className="bg-[#F3F4F6] px-0 pt-0">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 16 }}
-        >
-          <View className="gap-4 pb-8">
-            <View className="rounded-[28px] bg-white px-5 py-6">
-              <AppText variant="title3" className="text-gray-700">
-                Device User Flow
-              </AppText>
-              <AppText variant="body3" className="mt-2 text-gray-500">
-                intro와 onboarding은 이 기기에서 한 번만 보이는 상태입니다. QA와
-                개발 환경에서는 아래 override로 원하는 화면부터 바로 진입할 수
-                있습니다.
-              </AppText>
-            </View>
-
-            <View className="rounded-[28px] bg-white px-5 py-5">
-              <AppText variant="button1" className="text-gray-700">
-                현재 상태
-              </AppText>
-              <View className="mt-4 gap-3">
-                <StatusRow
-                  label="실제 hasSeenIntro"
-                  value={formatBooleanState(hasSeenIntro)}
-                />
-                <StatusRow
-                  label="실제 hasCompletedOnboarding"
-                  value={formatBooleanState(hasCompletedOnboarding)}
-                />
-                <StatusRow label="override mode" value={overrideMode} />
-                <StatusRow label="현재 진입 화면" value={currentRoute} />
-              </View>
-            </View>
-
-            <View className="rounded-[28px] bg-white px-5 py-5">
-              <AppText variant="button1" className="text-gray-700">
-                Debug / QA
-              </AppText>
-              <AppText variant="body3" className="mt-2 text-gray-500">
-                선택 즉시 홈으로 이동해서 해당 흐름으로 진입합니다.
-              </AppText>
-
-              {isDebugUserFlowEnabled ? (
-                <View className="mt-4 gap-3">
-                  {USER_FLOW_OPTIONS.map((option) => {
-                    const isSelected = option.value === overrideMode;
-
-                    return (
-                      <Pressable
-                        key={option.value}
-                        className={cn(
-                          "rounded-[22px] border px-4 py-4",
-                          isSelected
-                            ? "border-primary-500 bg-primary-100"
-                            : "border-gray-100 bg-[#F7F7F9]",
-                        )}
-                        onPress={() => handleOverridePress(option.value)}
-                      >
-                        <AppText variant="button1" className="text-gray-700">
-                          {option.title}
-                        </AppText>
-                        <AppText variant="body3" className="mt-2 text-gray-500">
-                          {option.description}
-                        </AppText>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              ) : (
-                <View className="mt-4 rounded-[22px] bg-[#F7F7F9] px-4 py-4">
-                  <AppText variant="body3" className="text-gray-500">
-                    디버그 override는 dev/qa 환경에서만 사용할 수 있습니다.
-                  </AppText>
-                </View>
-              )}
-            </View>
-
-            {isDebugUserFlowEnabled ? (
-              <View className="rounded-[28px] bg-white px-5 py-5">
-                <AppText variant="button1" className="text-gray-700">
-                  실제 상태 초기화
-                </AppText>
-                <AppText variant="body3" className="mt-2 text-gray-500">
-                  이 기기의 실제 intro/onboarding 완료 상태를 지우고, override를
-                  real로 되돌린 뒤 홈으로 이동합니다.
-                </AppText>
-                <AppButton
-                  variant="tertiary"
-                  className="mt-4"
-                  onPress={handleResetPress}
-                >
-                  실제 온보딩 상태 초기화
-                </AppButton>
-              </View>
-            ) : null}
-          </View>
-        </ScrollView>
-      </Screen>
+      <SettingsScreenContent
+        hasSeenIntro={hasSeenIntro}
+        hasCompletedOnboarding={hasCompletedOnboarding}
+        overrideMode={overrideMode}
+        isDebugUserFlowEnabled={isDebugUserFlowEnabled}
+        effectiveHasSeenIntro={effectiveHasSeenIntro}
+        effectiveHasCompletedOnboarding={effectiveHasCompletedOnboarding}
+        onOverridePress={handleOverridePress}
+        onResetPress={handleResetPress}
+      />
     </>
   );
 };

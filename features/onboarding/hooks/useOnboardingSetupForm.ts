@@ -11,9 +11,11 @@ export type ValidateBeforeNextOptions = {
   shouldFocus?: boolean;
 };
 
-const useOnboardingSetupForm = () => {
+const useOnboardingSetupForm = (
+  defaultValues: BoardSetupFormValues = BOARD_SETUP_DEFAULT_VALUES,
+) => {
   const form = useForm<BoardSetupFormValues>({
-    defaultValues: structuredClone(BOARD_SETUP_DEFAULT_VALUES),
+    defaultValues: structuredClone(defaultValues),
     resolver: zodResolver(boardSetupDraftSchema),
   });
 
