@@ -18,7 +18,7 @@ const DebugSettingsShortcut = () => {
   const router = useRouter();
   const { isDebugUserFlowEnabled } = useUser();
 
-  if (!isDebugUserFlowEnabled || pathname === "/settings") {
+  if (!isDebugUserFlowEnabled || pathname === "/debug-settings") {
     return null;
   }
 
@@ -26,7 +26,7 @@ const DebugSettingsShortcut = () => {
     <Pressable
       accessibilityLabel="디버그 설정 열기"
       className="absolute bottom-7 right-5 z-50 h-[54px] w-[54px] items-center justify-center rounded-full bg-white"
-      onPress={() => router.push("/settings")}
+      onPress={() => router.push("/debug-settings")}
       style={{
         shadowColor: "#111111",
         shadowOpacity: 0.12,
@@ -54,6 +54,7 @@ const RootLayoutNav = () => {
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}
         />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
       </Stack>
       <DebugSettingsShortcut />
     </View>
