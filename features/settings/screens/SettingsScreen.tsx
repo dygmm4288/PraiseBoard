@@ -11,7 +11,7 @@ const SettingsScreen = () => {
   return (
     <Screen>
       <ScreenHeader left={<Icon name="ChevronLeft" />} title="설정" />
-      <View>
+      <View className="flex flex-col gap-[24px] mt-[10px]">
         <SettingProfile />
         <SettingNotification />
         <SettingEnv />

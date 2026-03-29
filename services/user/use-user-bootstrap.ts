@@ -1,6 +1,7 @@
 import { localStorage } from "@/infra/storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
+import { AuthState } from "./user.interface";
 import { userRepository } from "./user.repository.impl";
 
 type UserBootstrapState = {
@@ -8,6 +9,7 @@ type UserBootstrapState = {
   authUserId: string | null;
   profileId: string | null;
   deviceId: string | null;
+  authState: AuthState;
 };
 
 export const useUserBootstrap = (): UserBootstrapState => {
@@ -16,6 +18,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
     authUserId: null,
     profileId: null,
     deviceId: null,
+    authState: "public",
   });
 
   useEffect(() => {
@@ -24,6 +27,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
     const bootstrap = async () => {
       try {
         const authUserId = await userRepository.ensureAnonymousSession();
+        const { authState } = await userRepository.getCurrentAuthUser();
 
         let profile = await userRepository.getMyProfile();
         if (!profile) {
@@ -48,6 +52,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
           authUserId,
           profileId: profile.id,
           deviceId,
+          authState: authState,
         });
       } catch (error) {
         console.error("유저 bootstrap 중 오류 발생", error);
@@ -59,6 +64,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
           authUserId: null,
           profileId: null,
           deviceId: null,
+          authState: "public",
         });
       }
     };

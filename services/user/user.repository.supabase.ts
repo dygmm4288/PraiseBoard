@@ -96,4 +96,24 @@ export const userRepository: IUserRepository = {
     if (deviceError) throw deviceError;
     if (profileError) throw profileError;
   },
+
+  async getCurrentAuthUser() {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    if (error) throw error;
+
+    if (!user) {
+      return {
+        authState: "public" as const,
+        authUserId: null,
+      };
+    }
+
+    return {
+      authUserId: user.id,
+      authState: user.is_anonymous ? "anonymous" : "member",
+    };
+  },
 };

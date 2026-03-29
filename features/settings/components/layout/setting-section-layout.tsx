@@ -19,7 +19,6 @@ const SettingSectionLayout = ({
           {title}
         </AppText>
       )}
-
       {children}
     </View>
   );
