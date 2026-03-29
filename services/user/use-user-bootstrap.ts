@@ -34,6 +34,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
         const deviceId = storedDeviceId ?? Crypto.randomUUID();
 
         await userRepository.ensureDeviceLink(deviceId, profile.id);
+        await userRepository.syncLoginMetadata(profile.id, deviceId);
 
         await Promise.all([
           localStorage.setItem("device_id", deviceId),

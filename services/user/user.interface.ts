@@ -15,7 +15,7 @@ export interface IUserRepository {
   createProfile(authUserId: string): Promise<UserProfile>;
 
   ensureDeviceLink(deviceId: string, profileId: string): Promise<void>;
-  updateLastLogin(deviceId: string): Promise<void>;
+  syncLoginMetadata(profileId: string, deviceId: string): Promise<void>;
 
   updateProfile(
     profileId: string,

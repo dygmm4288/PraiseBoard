@@ -24,14 +24,6 @@ export const userRepository: IUserRepository = {
 
     return authUserId;
   },
-  updateLastLogin: async (deviceId) => {
-    const { error } = await supabase
-      .from("devices")
-      .update({ last_login_at: new Date().toISOString() })
-      .eq("device_id", deviceId);
-
-    if (error) throw error;
-  },
   createProfile: async (authUserId) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -78,12 +70,30 @@ export const userRepository: IUserRepository = {
       {
         device_id: deviceId,
         profile_id: profileId,
-        last_login_at: new Date().toISOString(),
       },
       {
         onConflict: "device_id",
       },
     );
     if (error) throw error;
+  },
+  async syncLoginMetadata(profileId, deviceId) {
+    const timestamp = new Date().toISOString();
+
+    const [{ error: deviceError }, { error: profileError }] = await Promise.all(
+      [
+        supabase
+          .from("devices")
+          .update({ last_login_at: timestamp })
+          .eq("device_id", deviceId),
+        supabase
+          .from("profiles")
+          .update({ last_login_at: timestamp })
+          .eq("id", profileId),
+      ],
+    );
+
+    if (deviceError) throw deviceError;
+    if (profileError) throw profileError;
   },
 };
