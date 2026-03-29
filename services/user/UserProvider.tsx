@@ -82,8 +82,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           const authUserId = await userRepository.ensureAnonymousSession();
 
           const newDeviceId = Crypto.randomUUID();
-          const newProfileId = await userRepository.createProfile(authUserId);
-          await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
+          const { id:newProfileId } = await userRepository.createProfile(authUserId);
+          await userRepository.ensureDeviceLink(newDeviceId, newProfileId);
 
           await localStorage.setItem("device_id", newDeviceId);
           await localStorage.setItem("profile_id", newProfileId);

@@ -22,9 +22,10 @@ const useApiInit = () => {
           // [신규 유저]
 
           const newDeviceId = Crypto.randomUUID();
-          const newProfileId = await userRepository.createProfile(authUserId);
+          const { id: newProfileId } =
+            await userRepository.createProfile(authUserId);
 
-          await userRepository.linkDeviceToProfile(newDeviceId, newProfileId);
+          await userRepository.ensureDeviceLink(newDeviceId, newProfileId);
 
           await AsyncStorage.setItem("device_id", newDeviceId);
           await AsyncStorage.setItem("profile_id", newProfileId);

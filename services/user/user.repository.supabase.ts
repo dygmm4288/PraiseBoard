@@ -1,6 +1,9 @@
 import { supabase } from "@/shared/lib/supabase";
 import { IUserRepository } from "./user.interface";
 
+const PROFILE_SELECT =
+  "id, auth_user_id, nickname, mbti, created_at, updated_at, last_login_at";
+
 export const userRepository: IUserRepository = {
   ensureAnonymousSession: async () => {
     const {
@@ -33,27 +36,54 @@ export const userRepository: IUserRepository = {
     const { data, error } = await supabase
       .from("profiles")
       .insert({ auth_user_id: authUserId })
-      .select("id")
+      .select(PROFILE_SELECT)
       .single();
     if (error) throw error;
 
-    return data.id;
-  },
-  linkDeviceToProfile: async (deviceId, profileId) => {
-    const { error } = await supabase
-      .from("devices")
-      .insert({ device_id: deviceId, profile_id: profileId });
-
-    if (error) throw error;
+    return data;
   },
   updateProfile: async (profileId, input) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .update({
         nickname: input.nickname,
       })
-      .eq("id", profileId);
+      .eq("id", profileId)
+      .select(PROFILE_SELECT)
+      .single();
 
+    if (error) throw error;
+    return data;
+  },
+
+  async getProfile(profileId: string) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(PROFILE_SELECT)
+      .eq("id", profileId)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async getMyProfile() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(PROFILE_SELECT)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  async ensureDeviceLink(deviceId: string, profileId: string) {
+    const { error } = await supabase.from("devices").upsert(
+      {
+        device_id: deviceId,
+        profile_id: profileId,
+        last_login_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "device_id",
+      },
+    );
     if (error) throw error;
   },
 };
