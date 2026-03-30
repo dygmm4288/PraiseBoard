@@ -76,6 +76,12 @@ module.exports = {
             letterSpacing: "0em",
           },
         ],
+        caption2: [
+          "13px",
+          {
+            lineHeight: "18px",
+          },
+        ],
       },
       spacing: {
         screen: "16px",

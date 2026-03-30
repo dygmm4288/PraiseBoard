@@ -1,4 +1,6 @@
-import React, { createContext, useContext } from "react";
+import { notification } from "@/services/notification";
+import React, { createContext, useContext, useEffect } from "react";
+import { AppState } from "react-native";
 import { useUserBootstrap } from "./use-user-bootstrap";
 import { UserFlowOverrideMode, useUserFlow } from "./use-user-flow";
 import { AuthState } from "./user.interface";
@@ -28,6 +30,23 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     authState,
   } = useUserBootstrap();
   const { isInitialized: isFlowInitialized, ...flow } = useUserFlow();
+
+  useEffect(() => {
+    if (!isBootstrapInitialized || !profileId) return;
+
+    void notification.bootstrap();
+    void notification.syncPushToken();
+
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        void notification.syncPushToken();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isBootstrapInitialized, profileId]);
 
   const value = {
     isInitialized: isBootstrapInitialized && isFlowInitialized,

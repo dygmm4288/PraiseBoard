@@ -3,7 +3,10 @@ import { ensureAndroidChannels } from "@/infra/notification/channel";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import { INotificationService } from "./notification.interface";
+import {
+  INotificationService,
+  PushPermissionStatus,
+} from "./notification.interface";
 import { notificationRepository } from "./notification.repository.impl";
 
 const getDeviceId = async () => {
@@ -20,14 +23,43 @@ const resolvePlatform = () => {
   return "web" as const;
 };
 
-const savePushState = async (pushEnabled: boolean, pushToken: string | null) => {
+const resolvePermissionStatus = (status: string): PushPermissionStatus => {
+  if (status === "granted") return "granted";
+  if (status === "denied") return "denied";
+  return "undetermined";
+};
+
+const savePushState = async ({
+  pushEnabled,
+  pushToken,
+  permissionStatus,
+}: {
+  pushEnabled: boolean;
+  pushToken: string | null;
+  permissionStatus: PushPermissionStatus;
+}) => {
   const deviceId = await getDeviceId();
+  const currentState = await notificationRepository.getPushState(deviceId);
+  const now = new Date().toISOString();
 
   await notificationRepository.savePushToken({
     deviceId,
     pushToken,
     pushEnabled,
+    pushEnabledUpdatedAt:
+      currentState.pushEnabled === pushEnabled
+        ? currentState.pushEnabledUpdatedAt
+        : now,
     platform: resolvePlatform(),
+    pushPermissionStatus: permissionStatus,
+    pushPermissionGrantedAt:
+      permissionStatus === "granted"
+        ? currentState.pushPermissionGrantedAt ?? now
+        : currentState.pushPermissionGrantedAt,
+    pushPermissionUpdatedAt:
+      currentState.pushPermissionStatus === permissionStatus
+        ? currentState.pushPermissionUpdatedAt
+        : now,
   });
 };
 
@@ -63,12 +95,20 @@ const requestPermissionAndSave = async () => {
   }
 
   if (status !== "granted") {
-    await savePushState(false, null);
+    await savePushState({
+      pushEnabled: false,
+      pushToken: null,
+      permissionStatus: resolvePermissionStatus(status),
+    });
     return false;
   }
 
   const pushToken = await getExpoPushToken();
-  await savePushState(true, pushToken);
+  await savePushState({
+    pushEnabled: true,
+    pushToken,
+    permissionStatus: "granted",
+  });
   return true;
 };
 
@@ -88,9 +128,19 @@ export const notification: INotificationService = {
   async requestPermissionFromOnboarding(): Promise<boolean> {
     return requestPermissionAndSave();
   },
+  async getPushEnabledFromSettings() {
+    const deviceId = await getDeviceId();
+    return notificationRepository.getPushEnabled(deviceId);
+  },
   async setPushEnabledFromSettings(enabled) {
     if (!enabled) {
-      await savePushState(false, null);
+      const permissions = await Notifications.getPermissionsAsync();
+
+      await savePushState({
+        pushEnabled: false,
+        pushToken: null,
+        permissionStatus: resolvePermissionStatus(permissions.status),
+      });
       return;
     }
 
@@ -99,13 +149,23 @@ export const notification: INotificationService = {
   async syncPushToken() {
     await ensureAndroidChannels();
 
+    const deviceId = await getDeviceId();
+    const currentState = await notificationRepository.getPushState(deviceId);
     const permissions = await Notifications.getPermissionsAsync();
     if (permissions.status !== "granted") {
-      await savePushState(false, null);
+      await savePushState({
+        pushEnabled: false,
+        pushToken: null,
+        permissionStatus: resolvePermissionStatus(permissions.status),
+      });
       return;
     }
 
-    const pushToken = await getExpoPushToken();
-    await savePushState(true, pushToken);
+    const pushToken = currentState.pushEnabled ? await getExpoPushToken() : null;
+    await savePushState({
+      pushEnabled: currentState.pushEnabled,
+      pushToken,
+      permissionStatus: "granted",
+    });
   },
 };

@@ -6,6 +6,11 @@ create table devices (
     -- Expo push token (알림 등록 전에는 null 허용)
     push_token text null,
     push_enabled boolean not null default false,
+    push_enabled_updated_at timestamptz null,
+    push_permission_status text not null default 'undetermined'
+        check (push_permission_status in ('undetermined', 'denied', 'granted')),
+    push_permission_granted_at timestamptz null,
+    push_permission_updated_at timestamptz null,
     platform text null check (platform in ('ios', 'android', 'web')),
     
     created_at timestamptz not null default now(),
