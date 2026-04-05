@@ -19,7 +19,7 @@ export const BoardUIProvider = ({ children, value }: BoardUIProviderProps) => {
   const [boardSheetState, setBoardSheetState] =
     useState<BoardSheetState>("peek");
   const isBoardExpanded = boardSheetState !== "peek";
-  const titleMode = "main";
+  const titleMode = boardSheetState === "full" ? "header" : "main";
 
   if (value) {
     return (
