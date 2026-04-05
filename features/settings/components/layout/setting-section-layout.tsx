@@ -1,4 +1,5 @@
 import { AppText } from "@/shared/ui";
+import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
 
@@ -12,8 +13,9 @@ const SettingSectionLayout = ({
   children,
   bottomBorderYn = true,
 }: Props) => {
+  const bottomBorderClass = bottomBorderYn ? 'border-b-gray-300 border-solid border-b' : '';
   return (
-    <View className="flex flex-col gap-[10px] pb-[24px] border-b-gray-300 border-solid border-b">
+    <View className={cn("flex flex-col gap-[10px] pb-[24px]", bottomBorderClass)}>
       {title && (
         <AppText variant="caption1" className="text-gray-400">
           {title}
