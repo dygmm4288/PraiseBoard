@@ -1,17 +1,21 @@
-import { BoardCardData } from "@/features/board/types/board-card.type";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { BoardProvider } from "../../hooks";
 import BoardCard from "./board-card";
 
-type BoardCardStoryProps = BoardCardData & {
+type BoardCardStoryProps = {
+  totalCount: number;
+  completedCount: number;
   columns?: number;
 };
 
+const DEFAULT_BOARD_CARD_DATA = {
+  id: "board-story-1",
+  title: "아침에 물 한 잔",
+  rewardMemo: "새로운 화분 구매",
+} as const;
+
 const BoardCardStory = ({
-  id,
-  title,
-  rewardMemo,
   totalCount,
   completedCount,
   columns = 10,
@@ -23,9 +27,7 @@ const BoardCardStory = ({
         errorMessage: null,
         collectSticker: async () => undefined,
         boardData: {
-          id,
-          title,
-          rewardMemo,
+          ...DEFAULT_BOARD_CARD_DATA,
           totalCount,
           completedCount,
         },
@@ -47,20 +49,11 @@ const meta = {
     ),
   ],
   args: {
-    id: "board-story-1",
-    title: "아침에 물 한 잔",
-    rewardMemo: "새로운 화분 구매",
     totalCount: 100,
     completedCount: 1,
     columns: 10,
   },
   argTypes: {
-    title: {
-      control: "text",
-    },
-    rewardMemo: {
-      control: "text",
-    },
     totalCount: {
       control: "number",
     },
