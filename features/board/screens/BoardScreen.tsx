@@ -40,17 +40,29 @@ const BoardScreenShell = ({ children }: { children: ReactNode }) => {
 };
 
 export const BoardScreenContent = () => {
-  const { boardSheetState, setBoardSheetState } = useBoardUI();
-  const { collectSticker } = useBoard();
+  const { boardSheetState, setBoardSheetState, titleMode } = useBoardUI();
+  const { collectSticker, boardData } = useBoard();
 
   return (
     <BoardScreenShell>
       <View className="flex-1 px-[6px] pt-[30px]">
         <View className="flex-1 justify-between">
-          <ChatBubble
-            side="center"
-            message="안녕! 오늘의 구슬을 모아볼까? 푸우~🐳"
-          />
+          <View className="flex flex-col gap-[30px]">
+            {titleMode === "main" && (
+              <View className="w-full flex flex-col items-center gap-[3px]">
+                <AppText variant="title3" className="text-gray-700">
+                  {boardData?.title}
+                </AppText>
+                <AppText variant="body3" className="text-gray-500">
+                  {boardData?.rewardMemo ?? "보상을 비워뒀어요."}
+                </AppText>
+              </View>
+            )}
+            <ChatBubble
+              side="center"
+              message="안녕! 오늘의 구슬을 모아볼까? 푸우~🐳"
+            />
+          </View>
           <View className="items-center pb-[30px]">
             <AppButton
               variant="primary"

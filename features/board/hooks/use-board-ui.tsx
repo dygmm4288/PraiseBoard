@@ -16,6 +16,11 @@ type BoardUIProviderProps = PropsWithChildren<{
 }>;
 
 export const BoardUIProvider = ({ children, value }: BoardUIProviderProps) => {
+  const [boardSheetState, setBoardSheetState] =
+    useState<BoardSheetState>("peek");
+  const isBoardExpanded = boardSheetState !== "peek";
+  const titleMode = "main";
+
   if (value) {
     return (
       <BoardUIContext.Provider value={value}>
@@ -23,10 +28,6 @@ export const BoardUIProvider = ({ children, value }: BoardUIProviderProps) => {
       </BoardUIContext.Provider>
     );
   }
-
-  const [boardSheetState, setBoardSheetState] = useState<BoardSheetState>("peek");
-  const isBoardExpanded = boardSheetState !== "peek";
-  const titleMode = "header";
 
   const resolvedValue = {
     boardSheetState,
