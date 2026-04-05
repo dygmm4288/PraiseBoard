@@ -1,6 +1,7 @@
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useBoard } from "../../hooks";
 import { BoardCardProps } from "../../types/board-card.type";
@@ -10,12 +11,17 @@ import BoardStickerGrid from "./board-sticker-grid";
 
 const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
   const { boardData } = useBoard();
+  const router = useRouter();
   if (!boardData) return null;
 
   const progress = getBoardProgress(
     boardData.totalCount,
     boardData.completedCount,
   );
+
+  const handleGotoBoardEdit = () => {
+    router.push("/(modals)/board-edit");
+  };
 
   return (
     <View
@@ -53,6 +59,7 @@ const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
       <AppText
         variant="caption1"
         className="text-gray-400 w-full text-center shrink-0"
+        onPress={handleGotoBoardEdit}
       >
         편집
       </AppText>

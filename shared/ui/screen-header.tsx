@@ -10,16 +10,16 @@ type ScreenHeaderProps = {
 
 const ScreenHeader = ({ title, left, right }: ScreenHeaderProps) => {
   return (
-    <View className="flex flex-row justify-between items-center h-[24px]">
-      {/* Left 없을 경우 dummy data */}
-      {left || <View className="w-[24px] h-[24px]"></View>}
-      {title && (
-        <AppText variant="button1" className="text-gray-700 flex-1 text-center">
-          {title}
-        </AppText>
-      )}
-      {/* Right 없을 경우 dummy data */}
-      {right || <View className="w-[24px] h-[24px]"></View>}
+    <View className="flex flex-row justify-between items-center h-[24px] py-[20px] w-full">
+      <View className="w-min-[24px] h-[24px]">{left}</View>
+      <View className="flex-1">
+        {title && (
+          <AppText variant="button1" className="text-gray-700 text-center">
+            {title}
+          </AppText>
+        )}
+      </View>
+      <View className="w-min-[24px] h-[24px]">{right}</View>
     </View>
   );
 };
