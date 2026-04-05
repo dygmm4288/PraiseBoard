@@ -56,7 +56,7 @@ export const BUTTON_TEXT_STYLES: Record<
 };
 
 export const BUTTON_SIZE_STYLES: Record<ButtonSize, string> = {
-  sm: "min-h-10 px-3 py-2 rounded-lg", // TODO
+  sm: "min-h-[38px] px-[12px] py-[7px] rounded-[9px]", // TODO
   md: "min-h-[56px] px-[20px] py-[15px] rounded-[14px]",
   lg: "min-h-14 px-5 py-4 rounded-2xl", // TODO
 };

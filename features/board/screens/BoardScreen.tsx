@@ -66,6 +66,7 @@ export const BoardScreenContent = () => {
           <View className="items-center pb-[30px]">
             <AppButton
               variant="primary"
+              size="sm"
               className="w-max self-center"
               onPress={collectSticker}
             >

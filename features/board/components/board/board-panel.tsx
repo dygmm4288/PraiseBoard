@@ -17,7 +17,7 @@ type BoardPanelProps = PropsWithChildren<{
 }>;
 
 const PANEL_HEIGHT_RATIO: Record<BoardSheetState, number> = {
-  peek: 0.3,
+  peek: 0.2,
   half: 0.4,
   full: 0.61,
 };

@@ -14,10 +14,8 @@ const BoardStickerGrid = ({
   className,
 }: BoardStickerGridProps) => {
   const safeColumns = normalizeColumns(columns);
-  const {
-    totalCount: safeTotalCount,
-    completedCount: safeCompletedCount,
-  } = getBoardProgress(totalCount, completedCount);
+  const { totalCount: safeTotalCount, completedCount: safeCompletedCount } =
+    getBoardProgress(totalCount, completedCount);
   const rowCount = Math.ceil(safeTotalCount / safeColumns);
 
   const rows = useMemo(
@@ -26,7 +24,10 @@ const BoardStickerGrid = ({
         const start = rowIndex * safeColumns;
         const end = Math.min(start + safeColumns, safeTotalCount);
 
-        return Array.from({ length: end - start }, (_, offset) => start + offset);
+        return Array.from(
+          { length: end - start },
+          (_, offset) => start + offset,
+        );
       }),
     [rowCount, safeColumns, safeTotalCount],
   );
@@ -34,7 +35,10 @@ const BoardStickerGrid = ({
   return (
     <View className={cn("w-full gap-[8px]", className)}>
       {rows.map((row, rowIndex) => (
-        <View key={`board-row-${rowIndex}`} className="flex-row gap-[8px]">
+        <View
+          key={`board-row-${rowIndex}`}
+          className="flex-row gap-[8px] justify-between"
+        >
           {row.map((stickerIndex) => (
             <BoardSticker
               key={`board-sticker-${stickerIndex}`}
