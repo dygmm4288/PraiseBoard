@@ -74,7 +74,7 @@ export type Database = {
           push_enabled: boolean
           push_enabled_updated_at: string | null
           push_permission_granted_at: string | null
-          push_permission_status: string
+          push_permission_status: string | null
           push_permission_updated_at: string | null
           push_token: string | null
           updated_at: string
@@ -88,7 +88,7 @@ export type Database = {
           push_enabled?: boolean
           push_enabled_updated_at?: string | null
           push_permission_granted_at?: string | null
-          push_permission_status?: string
+          push_permission_status?: string | null
           push_permission_updated_at?: string | null
           push_token?: string | null
           updated_at?: string
@@ -102,7 +102,7 @@ export type Database = {
           push_enabled?: boolean
           push_enabled_updated_at?: string | null
           push_permission_granted_at?: string | null
-          push_permission_status?: string
+          push_permission_status?: string | null
           push_permission_updated_at?: string | null
           push_token?: string | null
           updated_at?: string
