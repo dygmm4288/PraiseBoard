@@ -1,9 +1,17 @@
 import { Icon } from "@/assets/icons";
 import { UserProvider, useUser } from "@/services/user";
 import { toastConfig } from "@/shared/toasts/toast";
+import NetInfo from "@react-native-community/netinfo";
+import {
+  focusManager,
+  onlineManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Pressable, View } from "react-native";
+import { useEffect } from "react";
+import { AppState, Platform, Pressable, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -12,6 +20,36 @@ import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
 const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+    },
+  },
+});
+
+const useReactQueryAppLifecycle = () => {
+  // app 백그라운드 갔다가 다시 켜졌을 때, Tanstack Query가 "다시 활성화됨"을 알게 하는 것
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (status) => {
+      if (Platform.OS !== "web") {
+        focusManager.setFocused(status === "active");
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    // 오프라인었다가 온라인으로 돌아왔을 때, stale query를 다시 가져올 수 있게 하는 것.
+    return onlineManager.setEventListener((setOnline) => {
+      return NetInfo.addEventListener((state) => {
+        setOnline(Boolean(state.isConnected));
+      });
+    });
+  });
+};
 
 const DebugSettingsShortcut = () => {
   const pathname = usePathname();
@@ -54,6 +92,7 @@ const RootLayoutNav = () => {
           name="(modals)"
           options={{ presentation: "modal", headerShown: false }}
         />
+        <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
       </Stack>
       <DebugSettingsShortcut />
@@ -62,19 +101,22 @@ const RootLayoutNav = () => {
 };
 
 export default function RootLayout() {
+  useReactQueryAppLifecycle();
   if (isStorybookEnabled) {
     return <StorybookUIRoot />;
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardProvider>
-        <UserProvider>
-          <RootLayoutNav />
-          <Toast config={toastConfig} />
-          <StatusBar style="auto" />
-        </UserProvider>
-      </KeyboardProvider>
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <KeyboardProvider>
+          <UserProvider>
+            <RootLayoutNav />
+            <Toast config={toastConfig} />
+            <StatusBar style="auto" />
+          </UserProvider>
+        </KeyboardProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }
