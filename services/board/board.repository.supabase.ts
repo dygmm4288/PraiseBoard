@@ -55,6 +55,41 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(data);
   },
 
+  async getBoardActivitySummary(boardId) {
+    const now = new Date();
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+    const [
+      { count, error: countError },
+      { data: latestData, error: latestError },
+    ] = await Promise.all([
+      supabase
+        .from("sticker_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("board_id", boardId)
+        .gte("created_at", todayStart.toISOString())
+        .lt("created_at", tomorrowStart.toISOString()),
+      supabase
+        .from("sticker_logs")
+        .select("created_at")
+        .eq("board_id", boardId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    if (countError) throw countError;
+    if (latestError) throw latestError;
+
+    return {
+      todayStickerCount: count ?? 0,
+      latestStickerCollectedAt: latestData?.created_at ?? null,
+    };
+  },
+
   async getBoard(profileId, boardId) {
     const { data, error } = await supabase
       .from("boards")
@@ -76,5 +111,15 @@ export const boardRepository: IBoardRepository = {
     if (error) throw error;
 
     return toBoardRecord(data);
+  },
+
+  async getBoards(profileId) {
+    const { data, error } = await supabase
+      .from("boards")
+      .select(BOARD_FIELDS)
+      .eq("profile_id", profileId);
+    if (error) throw error;
+
+    return data.map(toBoardRecord);
   },
 };

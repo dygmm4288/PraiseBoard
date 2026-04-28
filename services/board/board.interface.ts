@@ -13,6 +13,11 @@ export type BoardRecord = {
   status: BoardStatus;
 };
 
+export type BoardActivitySummary = {
+  todayStickerCount: number;
+  latestStickerCollectedAt: string | null;
+};
+
 export type CreateBoardInput = {
   profileId: string;
   title: string;
@@ -23,6 +28,8 @@ export type CreateBoardInput = {
 export type IBoardRepository = {
   createBoard: (input: CreateBoardInput) => Promise<BoardRecord>;
   getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
+  getBoardActivitySummary: (boardId: string) => Promise<BoardActivitySummary>;
+  getBoards: (profileId: string) => Promise<BoardRecord[] | null>;
   collectSticker: (
     boardId: string,
     source: Database["public"]["Enums"]["sticker_source"],
@@ -35,7 +42,9 @@ export type IBoardService = {
     profileId: string,
     payload: BoardSetupPayload,
   ) => Promise<BoardRecord>;
+  getBoards: (profileId: string) => Promise<BoardRecord[] | null>;
   getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
+  getBoardActivitySummary: (boardId: string) => Promise<BoardActivitySummary>;
   collectSticker: (
     boardId: string,
     source: Database["public"]["Enums"]["sticker_source"],

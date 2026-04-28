@@ -1,6 +1,7 @@
 -- 2. Devices (기기 정보)
 create table devices (
-    device_id text primary key, -- 기기 고유 식별자
+    id uuid primary key default gen_random_uuid(),
+    device_id text not null, -- 기기 고유 식별자
     profile_id uuid not null references profiles(id) on delete cascade,
 
     -- Expo push token (알림 등록 전에는 null 허용)
@@ -20,6 +21,10 @@ create table devices (
 
 -- 프로필이 소유한 기기들을 빠르게 찾기 위한 인덱스
 create index idx_devices_profile_id on devices(profile_id);
+
+-- 같은 프로필 안에서만 기기 식별자를 유일하게 유지
+create unique index idx_devices_profile_device_unique
+on devices(profile_id, device_id);
 
 -- 푸시 토큰은 디바이스 단위로 유일하게 유지
 create unique index idx_devices_push_token_unique
