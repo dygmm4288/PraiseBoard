@@ -1,24 +1,32 @@
 import { supabase } from "@/shared/lib/supabase";
-import { BoardRecord, IBoardRepository } from "./board.interface";
+import { BoardRecord, BoardStatus, IBoardRepository } from "./board.interface";
 
 const BOARD_FIELDS =
-  "id, profile_id, title, reward_memo, target_count, current_count, status";
+  "id, title, reward_memo, target_count, current_count, status";
 
 const toBoardRecord = (row: {
   id: string;
-  profile_id: string;
   title: string;
-  reward_memo: string | null;
   target_count: number;
   current_count: number;
-  status: BoardRecord["status"];
+  today_sticker_count?: number;
+  latest_sticker_collected_at?: string | null;
+  current_streak?: number;
+  max_streak?: number;
+  today_success?: boolean;
+  reward_memo: string | null;
+  status: BoardStatus;
 }): BoardRecord => ({
   id: row.id,
-  profileId: row.profile_id,
   title: row.title,
-  rewardMemo: row.reward_memo,
   targetCount: row.target_count,
   currentCount: row.current_count,
+  todayStickerCount: row.today_sticker_count ?? 0,
+  latestStickerCollectedAt: row.latest_sticker_collected_at || null,
+  currentStreak: row.current_streak ?? 0,
+  maxStreak: row.max_streak ?? 0,
+  todaySuccess: row.today_success ?? false,
+  rewardMemo: row.reward_memo,
   status: row.status,
 });
 
@@ -40,69 +48,8 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(data);
   },
 
-  async getLatestBoard(profileId) {
-    const { data, error } = await supabase
-      .from("boards")
-      .select(BOARD_FIELDS)
-      .eq("profile_id", profileId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (error) throw error;
-    if (!data) return null;
-
-    return toBoardRecord(data);
-  },
-
-  async getBoardActivitySummary(boardId) {
-    const now = new Date();
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const tomorrowStart = new Date(todayStart);
-    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-
-    const [
-      { count, error: countError },
-      { data: latestData, error: latestError },
-    ] = await Promise.all([
-      supabase
-        .from("sticker_logs")
-        .select("id", { count: "exact", head: true })
-        .eq("board_id", boardId)
-        .gte("created_at", todayStart.toISOString())
-        .lt("created_at", tomorrowStart.toISOString()),
-      supabase
-        .from("sticker_logs")
-        .select("created_at")
-        .eq("board_id", boardId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-    ]);
-
-    if (countError) throw countError;
-    if (latestError) throw latestError;
-
-    return {
-      todayStickerCount: count ?? 0,
-      latestStickerCollectedAt: latestData?.created_at ?? null,
-    };
-  },
-
-  async getBoard(profileId, boardId) {
-    const { data, error } = await supabase
-      .from("boards")
-      .select(BOARD_FIELDS)
-      .eq("id", boardId)
-      .eq("profile_id", profileId)
-      .single();
-    if (error) throw error;
-    return toBoardRecord(data);
-  },
-
   async collectSticker(boardId, source) {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .rpc(`collect_sticker_${source}`, {
         board_id: boardId,
       })
@@ -110,14 +57,18 @@ export const boardRepository: IBoardRepository = {
 
     if (error) throw error;
 
+    const { data, error: boardError } = await supabase
+      .rpc("get_boards_with_stats")
+      .eq("id", boardId)
+      .single();
+    if (boardError) throw boardError;
+
     return toBoardRecord(data);
   },
 
-  async getBoards(profileId) {
-    const { data, error } = await supabase
-      .from("boards")
-      .select(BOARD_FIELDS)
-      .eq("profile_id", profileId);
+  async getBoards() {
+    const { data, error } = await supabase.rpc("get_boards_with_stats");
+
     if (error) throw error;
 
     return data.map(toBoardRecord);

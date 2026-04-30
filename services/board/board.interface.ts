@@ -5,17 +5,16 @@ export type BoardStatus = Database["public"]["Enums"]["board_status"];
 
 export type BoardRecord = {
   id: string;
-  profileId: string;
   title: string;
-  rewardMemo: string | null;
   targetCount: number;
   currentCount: number;
-  status: BoardStatus;
-};
-
-export type BoardActivitySummary = {
   todayStickerCount: number;
   latestStickerCollectedAt: string | null;
+  currentStreak: number;
+  maxStreak: number;
+  todaySuccess: boolean;
+  rewardMemo: string | null;
+  status: BoardStatus;
 };
 
 export type CreateBoardInput = {
@@ -27,14 +26,11 @@ export type CreateBoardInput = {
 
 export type IBoardRepository = {
   createBoard: (input: CreateBoardInput) => Promise<BoardRecord>;
-  getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
-  getBoardActivitySummary: (boardId: string) => Promise<BoardActivitySummary>;
-  getBoards: (profileId: string) => Promise<BoardRecord[] | null>;
+  getBoards: () => Promise<BoardRecord[] | null>;
   collectSticker: (
     boardId: string,
     source: Database["public"]["Enums"]["sticker_source"],
   ) => Promise<BoardRecord>;
-  getBoard: (profileId: string, boardId: string) => Promise<BoardRecord>;
 };
 
 export type IBoardService = {
@@ -42,9 +38,7 @@ export type IBoardService = {
     profileId: string,
     payload: BoardSetupPayload,
   ) => Promise<BoardRecord>;
-  getBoards: (profileId: string) => Promise<BoardRecord[] | null>;
-  getLatestBoard: (profileId: string) => Promise<BoardRecord | null>;
-  getBoardActivitySummary: (boardId: string) => Promise<BoardActivitySummary>;
+  getBoards: () => Promise<BoardRecord[] | null>;
   collectSticker: (
     boardId: string,
     source: Database["public"]["Enums"]["sticker_source"],

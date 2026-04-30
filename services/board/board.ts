@@ -12,16 +12,8 @@ export const board: IBoardService = {
     });
   },
 
-  async getBoards(profileId) {
-    return boardRepository.getBoards(profileId);
-  },
-
-  async getLatestBoard(profileId) {
-    return boardRepository.getLatestBoard(profileId);
-  },
-
-  async getBoardActivitySummary(boardId) {
-    return boardRepository.getBoardActivitySummary(boardId);
+  async getBoards() {
+    return boardRepository.getBoards();
   },
 
   async collectSticker(boardId, source) {

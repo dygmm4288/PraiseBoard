@@ -189,6 +189,29 @@ export type Database = {
         }
         Relationships: []
       }
+      sticker_daily: {
+        Row: {
+          board_id: string
+          d: string
+        }
+        Insert: {
+          board_id: string
+          d: string
+        }
+        Update: {
+          board_id?: string
+          d?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sticker_daily_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sticker_logs: {
         Row: {
           board_id: string
@@ -279,6 +302,23 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      get_board_streak: { Args: { p_board_id: string }; Returns: Json }
+      get_boards_with_stats: {
+        Args: never
+        Returns: {
+          current_count: number
+          current_streak: number
+          id: string
+          latest_sticker_collected_at: string
+          max_streak: number
+          reward_memo: string
+          status: Database["public"]["Enums"]["board_status"]
+          target_count: number
+          title: string
+          today_sticker_count: number
+          today_success: boolean
+        }[]
       }
       refresh_board_progress_for: {
         Args: { p_board_id: string }

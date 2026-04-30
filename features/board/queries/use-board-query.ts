@@ -9,7 +9,7 @@ export const useBoardsQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getBoards(profileId);
+      return board.getBoards();
     },
 
     enabled: !!profileId,

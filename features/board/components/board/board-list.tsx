@@ -1,6 +1,6 @@
 import { useUser } from "@/services/user";
 import { View } from "react-native";
-import { useBoardsQuery } from "../../queries/board.query";
+import { useBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "./board-item";
 
 const BoardList = () => {
