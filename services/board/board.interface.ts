@@ -2,6 +2,7 @@ import { BoardSetupPayload } from "@/entities/board/board.schema";
 import { Database } from "@/shared/types/supabase.types";
 
 export type BoardStatus = Database["public"]["Enums"]["board_status"];
+export type BoardStickerSource = Database["public"]["Enums"]["sticker_source"];
 
 export type BoardRecord = {
   id: string;
@@ -29,7 +30,7 @@ export type IBoardRepository = {
   getBoards: () => Promise<BoardRecord[] | null>;
   collectSticker: (
     boardId: string,
-    source: Database["public"]["Enums"]["sticker_source"],
+    source: BoardStickerSource,
   ) => Promise<BoardRecord>;
 };
 
@@ -41,6 +42,6 @@ export type IBoardService = {
   getBoards: () => Promise<BoardRecord[] | null>;
   collectSticker: (
     boardId: string,
-    source: Database["public"]["Enums"]["sticker_source"],
+    source: BoardStickerSource,
   ) => Promise<BoardRecord>;
 };

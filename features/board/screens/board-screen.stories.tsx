@@ -1,4 +1,4 @@
-import { BoardCardData } from "@/features/board/types/board-card.type";
+import { BoardCardData } from "@/features/board/types/board.type";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { BoardProvider, BoardUIProvider } from "../hooks";
@@ -12,6 +12,8 @@ const DEFAULT_BOARD_STORY_DATA: BoardScreenStoryProps = {
   rewardMemo: "새로운 화분 구매",
   totalCount: 100,
   completedCount: 1,
+  todayStickerCount: 1,
+  latestStickerCollectedAt: new Date().toISOString(),
 };
 
 const BoardScreenStory = ({
@@ -20,6 +22,8 @@ const BoardScreenStory = ({
   rewardMemo,
   totalCount,
   completedCount,
+  todayStickerCount,
+  latestStickerCollectedAt,
 }: BoardScreenStoryProps) => {
   return (
     <BoardProvider
@@ -33,6 +37,8 @@ const BoardScreenStory = ({
           rewardMemo,
           totalCount,
           completedCount,
+          todayStickerCount,
+          latestStickerCollectedAt,
         },
       }}
     >
@@ -72,6 +78,9 @@ const meta = {
       control: "number",
     },
     completedCount: {
+      control: "number",
+    },
+    todayStickerCount: {
       control: "number",
     },
   },

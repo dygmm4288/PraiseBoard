@@ -4,6 +4,8 @@ export type BoardCardData = {
   rewardMemo?: string | null;
   totalCount: number;
   completedCount: number;
+  todayStickerCount: number;
+  latestStickerCollectedAt: string | null;
 };
 
 export type BoardCardProps = {

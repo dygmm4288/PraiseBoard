@@ -21,6 +21,8 @@ const HeaderStory = ({ title, showTitle }: HeaderStoryProps) => {
           rewardMemo: null,
           totalCount: 100,
           completedCount: 1,
+          todayStickerCount: 1,
+          latestStickerCollectedAt: new Date().toISOString(),
         },
       }}
     >

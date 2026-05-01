@@ -1,7 +1,7 @@
 import { cn } from "@/shared/utils/cn";
 import { useMemo } from "react";
 import { View } from "react-native";
-import { BoardStickerGridProps } from "../../types/board-card.type";
+import { BoardStickerGridProps } from "../../types/board.type";
 import { getBoardProgress } from "../../utils/board-progress";
 import BoardSticker from "./board-sticker";
 

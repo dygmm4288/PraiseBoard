@@ -1,6 +1,5 @@
 import { toSafeInteger } from "@/shared/utils/number";
-import { BoardProgress } from "../types/board-card.type";
-
+import { BoardProgress } from "../types/board.type";
 
 export const getBoardProgress = (
   totalCount: number,

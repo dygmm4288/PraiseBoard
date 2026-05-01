@@ -30,6 +30,8 @@ const BoardCardStory = ({
           ...DEFAULT_BOARD_CARD_DATA,
           totalCount,
           completedCount,
+          todayStickerCount: 1,
+          latestStickerCollectedAt: new Date().toISOString(),
         },
       }}
     >

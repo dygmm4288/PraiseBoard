@@ -1,13 +1,15 @@
 import { images } from "@/assets/images";
-import { ChatBubble } from "@/features/onboarding/components/chat/chat-bubble";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import { type ReactNode } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import BoardCard from "../components/board/board-card";
+import BoardList from "../components/board/board-list";
 import BoardPanel from "../components/board/board-panel";
+import BoardTodayAchievement from "../components/board/board-today-achievement";
+import BoardWhaleMessage from "../components/board/board-whale-message";
 import Header from "../components/header/header";
-import { BoardUIProvider, useBoard, useBoardUI } from "../hooks";
+import { useBoard, useBoardUI } from "../hooks";
 
 const SHELL_GRADIENT_COLORS = ["#F1F2F4", "#E8DEFF", "#F1F2F4"] as const;
 
@@ -58,10 +60,15 @@ export const BoardScreenContent = () => {
                 </AppText>
               </View>
             )}
-            <ChatBubble
-              side="center"
-              message="안녕! 오늘의 구슬을 모아볼까? 푸우~🐳"
-            />
+            {boardData ? (
+              <View className="gap-[10px] px-[10px]">
+                <BoardWhaleMessage
+                  todayStickerCount={boardData.todayStickerCount}
+                  latestStickerCollectedAt={boardData.latestStickerCollectedAt}
+                />
+                <BoardTodayAchievement count={boardData.todayStickerCount} />
+              </View>
+            ) : null}
           </View>
           <View className="items-center pb-[30px]">
             <AppButton
@@ -82,33 +89,11 @@ export const BoardScreenContent = () => {
   );
 };
 
-const BoardScreenStatus = ({ message }: { message: string }) => {
-  return (
-    <BoardScreenShell>
-      <View className="flex-1 items-center justify-center px-10">
-        <AppText variant="body3" className="text-center text-gray-500">
-          {message}
-        </AppText>
-      </View>
-    </BoardScreenShell>
-  );
-};
-
 const BoardScreen = () => {
-  const { isLoading, errorMessage, boardData } = useBoard();
-
   return (
-    <BoardUIProvider>
-      {isLoading ? (
-        <BoardScreenStatus message="보드를 불러오는 중이에요." />
-      ) : errorMessage ? (
-        <BoardScreenStatus message={errorMessage} />
-      ) : !boardData ? (
-        <BoardScreenStatus message="아직 받은 보드가 없어요. 온보딩을 완료해 주세요." />
-      ) : (
-        <BoardScreenContent />
-      )}
-    </BoardUIProvider>
+    <Screen>
+      <BoardList />
+    </Screen>
   );
 };
 
