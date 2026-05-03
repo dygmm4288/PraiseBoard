@@ -12,9 +12,6 @@ module.exports = {
     extend: {
       colors: {
         ...COLOR,
-        secondary: {
-          // TODO 추가 예정
-        },
       },
       fontFamily: {
         pretendard: ["Pretendard", "ui-sans-serif", "system-ui", "sans-serif"],
