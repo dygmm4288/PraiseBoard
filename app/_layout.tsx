@@ -1,4 +1,5 @@
 import { Icon } from "@/assets/icons";
+import { FnbContainer } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { toastConfig } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
@@ -80,8 +81,13 @@ const DebugSettingsShortcut = () => {
 
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
+  const pathname = usePathname();
 
   if (!isInitialized) return null;
+
+  const hiddenRoutes = ["login"];
+
+  const shouldShowFnb = !hiddenRoutes.includes(pathname);
 
   return (
     <View className="flex-1">
@@ -94,7 +100,10 @@ const RootLayoutNav = () => {
         />
         <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="stats" options={{ headerShown: false }} />
+        <Stack.Screen name="archive" options={{ headerShown: false }} />
       </Stack>
+      {shouldShowFnb && <FnbContainer />}
       <DebugSettingsShortcut />
     </View>
   );
