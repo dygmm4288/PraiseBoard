@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useBoard } from "../../hooks";
-import { BoardCardProps } from "../../types/board.type";
+import { BoardCardProps } from "../../types";
 import { getBoardProgress } from "../../utils/board-progress";
 import BoardProgress from "./board-progress";
 import BoardStickerGrid from "./board-sticker-grid";

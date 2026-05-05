@@ -1,4 +1,4 @@
-import { BoardRecord } from "@/services/board";
+import { BoardRecord } from "@/features/board/types";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";

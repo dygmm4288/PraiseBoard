@@ -1,4 +1,4 @@
-import { BoardCardData } from "@/features/board/types/board.type";
+import { BoardCardData } from "@/features/board/types";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { BoardProvider, BoardUIProvider } from "../hooks";

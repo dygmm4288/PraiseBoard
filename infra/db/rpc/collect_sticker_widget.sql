@@ -1,19 +1,10 @@
 create or replace function collect_sticker_widget(board_id uuid)
-returns boards
+returns jsonb
 language plpgsql
 as $$
-declare
-    v_board boards;
 begin
-    insert into sticker_logs (board_id, profile_id, source)
-    select b.id, b.profile_id, 'widget'
-    from boards b
-    where b.id = board_id;
-
-    select * into v_board
-    from boards
-    where id = board_id;
-
-    return v_board;
+    return collect_sticker(board_id, 'widget');
 end;
 $$;
+
+grant execute on function collect_sticker_widget(uuid) to authenticated;

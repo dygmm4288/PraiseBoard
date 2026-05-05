@@ -1,13 +1,20 @@
 import { supabase } from "@/shared/lib/supabase";
-import { BoardRecord, BoardStatus, IBoardRepository } from "./board.interface";
+import {
+  BoardRecord,
+  BoardStatus,
+  CollectStickerRpcResult,
+  IBoardRepository,
+} from "./types";
 
 const BOARD_FIELDS =
-  "id, title, reward_memo, target_count, current_count, status";
+  "id, title, emoji, reward_memo, target_count, limit_count, current_count, status";
 
 const toBoardRecord = (row: {
   id: string;
   title: string;
+  emoji?: string | null;
   target_count: number;
+  limit_count?: number;
   current_count: number;
   today_sticker_count?: number;
   latest_sticker_collected_at?: string | null;
@@ -19,7 +26,9 @@ const toBoardRecord = (row: {
 }): BoardRecord => ({
   id: row.id,
   title: row.title,
+  emoji: row.emoji ?? "🐋",
   targetCount: row.target_count,
+  limitCount: row.limit_count ?? 10,
   currentCount: row.current_count,
   todayStickerCount: row.today_sticker_count ?? 0,
   latestStickerCollectedAt: row.latest_sticker_collected_at || null,
@@ -31,14 +40,23 @@ const toBoardRecord = (row: {
 });
 
 export const boardRepository: IBoardRepository = {
-  async createBoard({ profileId, title, targetCount, rewardMemo }) {
+  async createBoard({
+    profileId,
+    title,
+    emoji,
+    targetCount,
+    rewardMemo,
+    limitCount,
+  }) {
     const { data, error } = await supabase
       .from("boards")
       .insert({
         profile_id: profileId,
         title,
+        emoji,
         target_count: targetCount,
         reward_memo: rewardMemo,
+        limit_count: limitCount,
       })
       .select(BOARD_FIELDS)
       .single();
@@ -49,13 +67,27 @@ export const boardRepository: IBoardRepository = {
   },
 
   async collectSticker(boardId, source) {
-    const { error } = await supabase
-      .rpc(`collect_sticker_${source}`, {
-        board_id: boardId,
-      })
-      .select(BOARD_FIELDS);
+    const { data: result, error } = await supabase.rpc("collect_sticker", {
+      p_board_id: boardId,
+      p_source: source,
+    });
 
     if (error) throw error;
+
+    const collectResult = result as CollectStickerRpcResult | null;
+
+    if (!collectResult?.success) {
+      const collectError = Object.assign(
+        new Error(collectResult?.reason ?? "COLLECT_STICKER_FAILED"),
+        {
+          reason: collectResult?.reason,
+          currentCount: collectResult?.current_count,
+          limitCount: collectResult?.limit_count,
+        },
+      );
+
+      throw collectError;
+    }
 
     const { data, error: boardError } = await supabase
       .rpc("get_boards_with_stats")

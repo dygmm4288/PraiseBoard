@@ -1,7 +1,7 @@
 import {
   BOARD_SETUP_DEFAULT_VALUES,
   type BoardSetupFormValues,
-} from "@/entities/board/board.schema";
+} from "@/features/board/schema";
 import { Stepper } from "@/shared/components";
 import { Screen } from "@/shared/ui";
 import { ReactNode } from "react";

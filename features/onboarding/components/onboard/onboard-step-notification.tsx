@@ -1,6 +1,6 @@
-import { normalizePayload } from "@/entities/board/board.schema";
+import { normalizePayload } from "@/features/board/schema";
 import { notification } from "@/services/notification";
-import { board } from "@/services/board";
+import { board } from "@/features/board/service";
 import { useUser, userRepository } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useRouter } from "expo-router";

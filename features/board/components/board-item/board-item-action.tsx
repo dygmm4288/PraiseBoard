@@ -1,4 +1,4 @@
-import { BoardRecord } from "@/services/board";
+import { BoardRecord } from "@/features/board/types";
 import { AppText } from "@/shared/ui";
 import AppCheckbox from "@/shared/ui/checkbox";
 import { useState } from "react";

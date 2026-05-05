@@ -1,4 +1,4 @@
-import { board } from "@/services/board";
+import { board } from "@/features/board/service";
 import { useQuery } from "@tanstack/react-query";
 import { boardKeys } from "./board.query.key";
 

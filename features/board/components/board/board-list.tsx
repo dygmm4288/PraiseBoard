@@ -3,6 +3,7 @@ import { AppText } from "@/shared/ui";
 import { View } from "react-native";
 import { useBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "../board-item/board-item";
+import BoardEmptyItem from "./board-empty-item";
 
 const BoardList = () => {
   const { profileId } = useUser();
@@ -29,6 +30,7 @@ const BoardList = () => {
       {data.map((board) => (
         <BoardItem key={board.id} board={board} />
       ))}
+      {data.length === 0 && <BoardEmptyItem />}
     </View>
   );
 };

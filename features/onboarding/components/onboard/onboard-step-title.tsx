@@ -1,4 +1,4 @@
-import { BoardSetupFormValues } from "@/entities/board/board.schema";
+import { BoardSetupFormValues } from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import { useEffect, useState } from "react";

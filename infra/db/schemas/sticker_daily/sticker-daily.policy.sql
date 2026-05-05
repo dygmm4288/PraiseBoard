@@ -19,3 +19,10 @@ create policy "no direct insert"
 on sticker_daily
 for insert
 with check (false);
+
+drop policy if exists "no direct update" on sticker_daily;
+create policy "no direct update"
+on sticker_daily
+for update
+using (false)
+with check (false);

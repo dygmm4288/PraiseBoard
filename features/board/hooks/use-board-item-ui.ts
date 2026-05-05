@@ -1,6 +1,6 @@
-import { BoardRecord } from "@/services/board";
+import { BoardRecord } from "@/features/board/types";
 import { toSafeInteger } from "@/shared/utils/number";
-import { BoardProgress } from "../types/board.type";
+import { BoardProgress } from "../types";
 
 type Props = {
   board: BoardRecord;

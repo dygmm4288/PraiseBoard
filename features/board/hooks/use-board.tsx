@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext } from "react";
-import { BoardCardData } from "../types/board.type";
+import { BoardCardData } from "../types";
 
 export interface BoardContextType {
   isLoading: boolean;

@@ -1,5 +1,6 @@
 export * from "./button";
 export * from "./input";
+export * from "./selectable-option";
 export * from "./text";
 export { default as Screen } from "./Screen";
 export { HapticTab } from "./haptic-tab";

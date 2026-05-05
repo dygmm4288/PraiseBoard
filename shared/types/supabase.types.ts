@@ -19,7 +19,9 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           current_count: number
+          emoji: string
           id: string
+          limit_count: number
           profile_id: string
           reward_enabled: boolean
           reward_memo: string | null
@@ -32,7 +34,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_count?: number
+          emoji: string
           id?: string
+          limit_count?: number
           profile_id: string
           reward_enabled?: boolean
           reward_memo?: string | null
@@ -45,7 +49,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_count?: number
+          emoji?: string
           id?: string
+          limit_count?: number
           profile_id?: string
           reward_enabled?: boolean
           reward_memo?: string | null
@@ -192,14 +198,17 @@ export type Database = {
       sticker_daily: {
         Row: {
           board_id: string
+          count: number
           d: string
         }
         Insert: {
           board_id: string
+          count?: number
           d: string
         }
         Update: {
           board_id?: string
+          count?: number
           d?: string
         }
         Relationships: [
@@ -259,50 +268,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      collect_sticker_app: {
-        Args: { board_id: string }
-        Returns: {
-          completed_at: string | null
-          created_at: string | null
-          current_count: number
-          id: string
-          profile_id: string
-          reward_enabled: boolean
-          reward_memo: string | null
-          status: Database["public"]["Enums"]["board_status"]
-          target_count: number
-          title: string
-          updated_at: string | null
+      collect_sticker: {
+        Args: {
+          p_board_id: string
+          p_source?: Database["public"]["Enums"]["sticker_source"]
         }
-        SetofOptions: {
-          from: "*"
-          to: "boards"
-          isOneToOne: true
-          isSetofReturn: false
-        }
+        Returns: Json
       }
-      collect_sticker_widget: {
-        Args: { board_id: string }
-        Returns: {
-          completed_at: string | null
-          created_at: string | null
-          current_count: number
-          id: string
-          profile_id: string
-          reward_enabled: boolean
-          reward_memo: string | null
-          status: Database["public"]["Enums"]["board_status"]
-          target_count: number
-          title: string
-          updated_at: string | null
-        }
-        SetofOptions: {
-          from: "*"
-          to: "boards"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
+      collect_sticker_app: { Args: { board_id: string }; Returns: Json }
+      collect_sticker_widget: { Args: { board_id: string }; Returns: Json }
       get_board_streak: { Args: { p_board_id: string }; Returns: Json }
       get_boards_with_stats: {
         Args: never

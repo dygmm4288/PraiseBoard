@@ -27,6 +27,20 @@ export const boardSetupDraftSchema = z.object({
       .trim()
       .max(REWARD_MEMO_LENGTH, "보상은 20자까지 입력할 수 있어요.")
       .nullable(),
+    emoji: z
+      .string()
+      .min(1, "대표 이모지를 선택해 주세요.")
+      .refine((value) => {
+        const segments = [
+          ...new Intl.Segmenter("ko", { granularity: "grapheme" }).segment(
+            value,
+          ),
+        ];
+        return (
+          segments.length === 1 &&
+          /\p{Extended_Pictographic}/u.test(segments[0].segment)
+        );
+      }, "하나의 이모지만 선택해 주세요."),
   }),
   profiles: z.object({
     nickname: z
@@ -53,8 +67,10 @@ export const normalizePayload = (
   return {
     boards: {
       title: boards.title,
+      emoji: boards.emoji,
       target_count: Number(boards.target_count),
       reward_memo: boards.reward_memo ? boards.reward_memo : null,
+      limit_count: 10,
     },
     profiles: {
       nickname: profiles.nickname ? profiles.nickname : null,
@@ -63,16 +79,28 @@ export const normalizePayload = (
 };
 
 export type BoardSetupFormValues = z.input<typeof boardSetupDraftSchema>;
+export type BoardCreateFormValues = BoardSetupFormValues;
 
 export type BoardSetupPayload = {
   boards: {
     title: string;
+    emoji: string;
     target_count: number;
     reward_memo: string | null;
+    limit_count: number;
   };
   profiles: {
     nickname: string | null;
   };
+};
+
+export type BoardCreatePayload = {
+  title: string;
+  emoji: string;
+  targetCount: number;
+  rewardMemo: string | null;
+  limitCount: number;
+  profileId: string;
 };
 
 export const BOARD_SETUP_DEFAULT_VALUES: BoardSetupFormValues = {
@@ -80,6 +108,7 @@ export const BOARD_SETUP_DEFAULT_VALUES: BoardSetupFormValues = {
     title: "",
     target_count: "",
     reward_memo: "",
+    emoji: "🐋",
   },
   profiles: {
     nickname: "",

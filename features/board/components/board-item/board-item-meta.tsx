@@ -1,4 +1,4 @@
-import { BoardRecord } from "@/services/board";
+import { BoardRecord } from "@/features/board/types";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { View } from "react-native";

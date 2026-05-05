@@ -8,8 +8,10 @@ create table boards (
     profile_id uuid not null references profiles(id) on delete cascade,
     
     title text not null,
+    emoji text not null,
     target_count int not null check (target_count > 0),
     current_count int not null default 0,
+    limit_count int not null default 10 check (limit_count > 0),
     completed_at timestamptz null default now(),
     reward_memo text null default null,
     

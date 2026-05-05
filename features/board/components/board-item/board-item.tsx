@@ -1,4 +1,4 @@
-import { BoardRecord } from "@/services/board";
+import { BoardRecord } from "@/features/board/types";
 import BoardItemAction from "./board-item-action";
 import BoardItemContainer from "./board-item-container";
 import BoardItemMeta from "./board-item-meta";

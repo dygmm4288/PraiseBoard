@@ -1,32 +1,13 @@
 create table sticker_daily (
     board_id uuid not null references boards(id) on delete cascade,
     d date not null,
+    count int not null default 0 check (count >= 0),
 
     primary key(board_id, d)
 );
 
 create index index_idx_sticker_daily_board_date
 on sticker_daily (board_id, d);
-
-create or replace function fn_upsert_sticker_daily()
-returns trigger as $$
-begin
-    insert into sticker_daily (board_id, d)
-    values (
-        new.board_id,
-        (new.created_at at time zone 'Asia/Seoul')::date
-    )
-    on conflict do nothing;
-
-    return new;
-end;
-$$ language plpgsql;
-
-create trigger trg_sticker_logs_daily
-after insert on sticker_logs
-for each row
-execute function fn_upsert_sticker_daily();
-
 
 create or replace function get_board_streak(p_board_id uuid)
 returns json as $$
@@ -41,6 +22,7 @@ begin
       d - (row_number() over (order by d))::int as grp
     from sticker_daily
     where board_id = p_board_id
+      and count > 0
   ),
 
   streaks as (
@@ -56,6 +38,7 @@ begin
     select d
     from sticker_daily
     where board_id = p_board_id
+      and count > 0
     order by d desc
   ),
 
@@ -75,6 +58,7 @@ begin
     from sticker_daily
     where board_id = p_board_id
       and d = (now() at time zone 'Asia/Seoul')::date
+      and count > 0
   ) into today_success;
   return json_build_object(
     'maxStreak', coalesce(max_streak, 0),
