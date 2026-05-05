@@ -98,7 +98,7 @@ export type BoardCreatePayload = {
   title: string;
   emoji: string;
   targetCount: number;
-  rewardMemo: string | null;
+  rewardMemo: string | null | undefined;
   limitCount: number;
   profileId: string;
 };

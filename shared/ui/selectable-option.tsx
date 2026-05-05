@@ -2,26 +2,33 @@ import { cn } from "@/shared/utils/cn";
 import { Pressable, PressableProps } from "react-native";
 import { AppText } from "./text";
 
-export type SelectableOptionProps = {
+export type SelectableOptionProps<T = string> = {
   label: string;
+  value?: T;
   selected?: boolean;
   className?: string;
   textClassName?: string;
+  onSelect?: (value: T) => void;
 } & Omit<PressableProps, "children">;
 
-export const SelectableOption = ({
+export const SelectableOption = <T = string,>({
   label,
+  value,
   selected = false,
   disabled = false,
   className,
   textClassName,
   ...props
-}: SelectableOptionProps) => {
+}: SelectableOptionProps<T>) => {
   const isDisabled = !!disabled;
 
   return (
     <Pressable
       {...props}
+      onPress={(e) => {
+        props.onPress?.(e);
+        props.onSelect?.((value ?? label) as T);
+      }}
       disabled={isDisabled}
       accessibilityRole="radio"
       accessibilityState={{ selected, disabled: isDisabled }}

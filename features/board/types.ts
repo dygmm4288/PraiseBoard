@@ -85,6 +85,7 @@ export type IBoardRepository = {
 };
 
 export type IBoardService = {
+  createBoard: (payload: BoardCreatePayload) => Promise<BoardRecord>;
   createBoardFromSetup: (
     profileId: string,
     payload: BoardSetupPayload,

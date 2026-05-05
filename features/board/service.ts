@@ -3,6 +3,10 @@ import { boardRepository } from "./repository";
 import { IBoardService } from "./types";
 
 export const board: IBoardService = {
+  async createBoard(payload) {
+    return boardRepository.createBoard(payload);
+  },
+
   async createBoardFromSetup(profileId, payload: BoardSetupPayload) {
     return boardRepository.createBoard({
       profileId,
