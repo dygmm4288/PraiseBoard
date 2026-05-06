@@ -11,7 +11,7 @@ export type SelectableOptionProps<T = string> = {
   onSelect?: (value: T) => void;
 } & Omit<PressableProps, "children">;
 
-export const SelectableOption = <T = string,>({
+export function SelectableOption<T = string>({
   label,
   value,
   selected = false,
@@ -19,13 +19,14 @@ export const SelectableOption = <T = string,>({
   className,
   textClassName,
   ...props
-}: SelectableOptionProps<T>) => {
+}: SelectableOptionProps<T>) {
   const isDisabled = !!disabled;
 
   return (
     <Pressable
       {...props}
       onPress={(e) => {
+        console.log("press", props.onSelect, value);
         props.onPress?.(e);
         props.onSelect?.((value ?? label) as T);
       }}
@@ -53,6 +54,6 @@ export const SelectableOption = <T = string,>({
       </AppText>
     </Pressable>
   );
-};
+}
 
 export default SelectableOption;
