@@ -1,11 +1,18 @@
 import { board } from "@/features/board/service";
-import { BoardStickerSource, CollectStickerError } from "@/features/board/types";
+import {
+  BoardRecord,
+  BoardStickerSource,
+  BoardTodayAchievement,
+  CollectStickerError,
+} from "@/features/board/types";
+import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardKeys } from "../queries/board.query.key";
 
 export const useCollectSticker = () => {
   const queryClient = useQueryClient();
+  const { profileId } = useUser();
 
   return useMutation({
     mutationFn: ({
@@ -17,8 +24,31 @@ export const useCollectSticker = () => {
     }) => {
       return board.collectSticker(boardId, source);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: boardKeys.all });
+    onSuccess: async (updatedBoard) => {
+      if (profileId) {
+        queryClient.setQueryData<BoardRecord[] | null>(
+          boardKeys.lists(profileId),
+          (boards) => {
+            if (!boards) return boards;
+
+            return boards.map((board) =>
+              board.id === updatedBoard.id ? updatedBoard : board,
+            );
+          },
+        );
+
+        queryClient.setQueryData<BoardTodayAchievement>(
+          boardKeys.todayAchievement(profileId),
+          (achievement) => ({
+            count: (achievement?.count ?? 0) + 1,
+          }),
+        );
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: boardKeys.all,
+        refetchType: "active",
+      });
     },
     onError: (error: CollectStickerError) => {
       if (error.reason === "DAILY_LIMIT_EXCEEDED") {
