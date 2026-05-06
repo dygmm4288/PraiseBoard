@@ -4,7 +4,7 @@ import AppCheckbox from "@/shared/ui/checkbox";
 import { useState } from "react";
 import { View } from "react-native";
 import { useBoardItemUi } from "../../hooks/use-board-item-ui";
-import { useCollectSticker } from "../../mutations/use-collect-sticker";
+import { useCollectSticker } from "../../hooks/use-collect-sticker";
 import BoardItemBubbleBurst from "./board-item-bubble-burst";
 
 type Props = {
