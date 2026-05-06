@@ -9,6 +9,7 @@ import BoardList from "../components/board/board-list";
 import BoardPanel from "../components/board/board-panel";
 import BoardTodayAchievement from "../components/board/board-today-achievement";
 import BoardWhaleMessage from "../components/board/board-whale-message";
+import BoardToday from "../components/board-today/board-today";
 import Header from "../components/header/header";
 import { useBoard, useBoardUI } from "../hooks";
 
@@ -97,6 +98,7 @@ const BoardScreen = () => {
       <AppButton onPress={() => router.push("/boards/create")}>
         create
       </AppButton>
+      <BoardToday className="mx-[16px] mt-[16px]" />
       <BoardList />
     </Screen>
   );

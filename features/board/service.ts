@@ -22,6 +22,10 @@ export const board: IBoardService = {
     return boardRepository.getBoards();
   },
 
+  async getTodayAchievement(profileId) {
+    return boardRepository.getTodayAchievement(profileId);
+  },
+
   async collectSticker(boardId, source) {
     return boardRepository.collectSticker(boardId, source);
   },

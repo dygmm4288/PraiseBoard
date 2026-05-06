@@ -1,5 +1,6 @@
 import { supabase } from "@/shared/lib/supabase";
 import {
+  BoardTodayAchievement,
   BoardRecord,
   BoardStatus,
   CollectStickerRpcResult,
@@ -8,6 +9,20 @@ import {
 
 const BOARD_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, status";
+
+const getTodayRange = () => {
+  const now = new Date();
+  const start = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), -9, 0, 0),
+  );
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+
+  return {
+    start,
+    end,
+  };
+};
 
 const toBoardRecord = (row: {
   id: string;
@@ -104,5 +119,22 @@ export const boardRepository: IBoardRepository = {
     if (error) throw error;
 
     return data.map(toBoardRecord);
+  },
+
+  async getTodayAchievement(profileId): Promise<BoardTodayAchievement> {
+    const { start, end } = getTodayRange();
+
+    const { count, error } = await supabase
+      .from("sticker_logs")
+      .select("*", { count: "exact", head: true })
+      .eq("profile_id", profileId)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString());
+
+    if (error) throw error;
+
+    return {
+      count: count ?? 0,
+    };
   },
 };

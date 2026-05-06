@@ -38,6 +38,10 @@ export type BoardCardData = {
   latestStickerCollectedAt: string | null;
 };
 
+export type BoardTodayAchievement = {
+  count: number;
+};
+
 export type BoardCardProps = {
   className?: string;
   columns?: number;
@@ -78,6 +82,7 @@ export type CollectStickerError = Error & {
 export type IBoardRepository = {
   createBoard: (input: BoardCreatePayload) => Promise<BoardRecord>;
   getBoards: () => Promise<BoardRecord[] | null>;
+  getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
   collectSticker: (
     boardId: string,
     source: BoardStickerSource,
@@ -91,6 +96,7 @@ export type IBoardService = {
     payload: BoardSetupPayload,
   ) => Promise<BoardRecord>;
   getBoards: () => Promise<BoardRecord[] | null>;
+  getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
   collectSticker: (
     boardId: string,
     source: BoardStickerSource,
