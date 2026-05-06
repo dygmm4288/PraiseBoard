@@ -26,7 +26,6 @@ export function SelectableOption<T = string>({
     <Pressable
       {...props}
       onPress={(e) => {
-        console.log("press", props.onSelect, value);
         props.onPress?.(e);
         props.onSelect?.((value ?? label) as T);
       }}
