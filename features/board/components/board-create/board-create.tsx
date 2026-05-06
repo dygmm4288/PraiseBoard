@@ -1,4 +1,5 @@
 import { AppButton, AppInput, AppText, SelectableOption } from "@/shared/ui";
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useCreateBoard } from "../../hooks/use-create-board";
 
@@ -17,6 +18,13 @@ const dailyLimitOptions = [
 
 const BoardCreate = () => {
   const { changeFormData, createBoard, formData } = useCreateBoard();
+  const router = useRouter();
+
+  const handleCreateBoard = () => {
+    createBoard()?.then(() => {
+      router.push("/");
+    });
+  };
 
   return (
     <View className="flex-1 justify-between">
@@ -65,6 +73,7 @@ const BoardCreate = () => {
                 key={label}
                 label={label}
                 value={value}
+                selected={value === formData["targetCount"]}
                 onSelect={changeFormData("targetCount")}
               />
             ))}
@@ -81,6 +90,7 @@ const BoardCreate = () => {
                 key={label}
                 label={label}
                 value={value}
+                selected={value === formData["limitCount"]}
                 onSelect={changeFormData("limitCount")}
               />
             ))}
@@ -107,7 +117,7 @@ const BoardCreate = () => {
         label="확인"
         variant="primary"
         className="opacity-100"
-        onPress={createBoard}
+        onPress={handleCreateBoard}
       />
     </View>
   );

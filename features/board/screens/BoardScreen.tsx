@@ -1,6 +1,7 @@
 import { images } from "@/assets/images";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { type ReactNode } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import BoardCard from "../components/board/board-card";
@@ -90,8 +91,12 @@ export const BoardScreenContent = () => {
 };
 
 const BoardScreen = () => {
+  const router = useRouter();
   return (
     <Screen>
+      <AppButton onPress={() => router.push("/boards/create")}>
+        create
+      </AppButton>
       <BoardList />
     </Screen>
   );

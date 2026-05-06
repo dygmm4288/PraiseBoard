@@ -1,4 +1,4 @@
-import { normalizePayload } from "@/features/board/schema";
+import { normalizeBoardSetupPayload } from "@/features/board/schema";
 import { notification } from "@/services/notification";
 import { board } from "@/features/board/service";
 import { useUser, userRepository } from "@/services/user";
@@ -23,7 +23,7 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
       throw new Error("profileId is required to create a board.");
     }
 
-    const payload = normalizePayload(form.getValues());
+    const payload = normalizeBoardSetupPayload(form.getValues());
     if (!payload) {
       throw new Error("Onboarding payload is invalid.");
     }
