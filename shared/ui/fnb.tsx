@@ -29,12 +29,12 @@ const Fnb = <T extends string>({
   return (
     <View
       className={cn(
-        "w-full items-center px-[25px] pb-[25px] pt-[16px]",
+        "fixed bottom-[25px] w-full left-[25px] right-[25px]",
         className,
       )}
     >
       <View
-        className="w-full max-w-[352px] flex-row items-start justify-center rounded-[296px] bg-white px-[2px] py-[4px]"
+        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[5px] py-[4px]"
         style={styles.container}
       >
         {items.map((item) => {
@@ -47,11 +47,11 @@ const Fnb = <T extends string>({
               key={item.key}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
-              className="relative min-w-0 flex-1 items-center justify-center gap-[1px] rounded-[100px] px-[8px] pb-[7px] pt-[6px]"
+              className="relative min-w-0 flex-1 items-center justify-center gap-[1px] rounded-[100px] px-[7px] pb-[7px] pt-[7px]"
               onPress={() => onPress(item.key)}
             >
               {isActive ? (
-                <View className="absolute inset-x-[-2px] inset-y-0 rounded-[100px] bg-primary-500/10" />
+                <View className="absolute inset-x-[-2px] inset-y-[-0.5px] rounded-[100px] bg-primary-500/10" />
               ) : null}
 
               <Icon width={28} height={28} color={color} stroke={color} />
