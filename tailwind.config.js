@@ -66,6 +66,13 @@ module.exports = {
             letterSpacing: "0em",
           },
         ],
+        button2: [
+          "12px",
+          {
+            lineHeight: "normal",
+            letterSpacing: "0em",
+          },
+        ],
         caption1: [
           "15px",
           {

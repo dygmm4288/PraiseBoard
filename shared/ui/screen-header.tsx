@@ -4,22 +4,18 @@ import { AppText } from "./text";
 
 type ScreenHeaderProps = {
   title?: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
 };
 
-const ScreenHeader = ({ title, left, right }: ScreenHeaderProps) => {
+const ScreenHeader = ({ title }: ScreenHeaderProps) => {
   return (
-    <View className="flex flex-row justify-between items-center h-[24px] py-[20px] w-full">
-      <View className="w-min-[24px] h-[24px]">{left}</View>
+    <View className="flex flex-row h-[45px] px-[24px] w-full">
       <View className="flex-1">
         {title && (
-          <AppText variant="button1" className="text-gray-700 text-center">
+          <AppText variant="button1" className="text-gray-850 text-left">
             {title}
           </AppText>
         )}
       </View>
-      <View className="w-min-[24px] h-[24px]">{right}</View>
     </View>
   );
 };
