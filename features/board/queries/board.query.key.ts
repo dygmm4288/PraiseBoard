@@ -1,6 +1,13 @@
+import { BoardListParams } from "../types";
+
 export const boardKeys = {
   all: ["board"] as const,
-  lists: (profileId: string) => [...boardKeys.all, "list", profileId] as const,
+  lists: (profileId: string, params?: BoardListParams) =>
+    [...boardKeys.all, "list", profileId, params] as const,
+  activeLists: (profileId: string, params?: BoardListParams) =>
+    [boardKeys.lists(profileId, params), "active-list"] as const,
+  completedLists: (profileId: string, params?: BoardListParams) =>
+    [boardKeys.lists(profileId, params), "completed-list"] as const,
   detail: (boardId: string) => [...boardKeys.all, "detail", boardId] as const,
   todayAchievement: (profileId: string) =>
     [...boardKeys.all, "today-achievement", profileId] as const,

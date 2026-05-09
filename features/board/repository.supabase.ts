@@ -1,8 +1,8 @@
 import { supabase } from "@/shared/lib/supabase";
 import {
-  BoardTodayAchievement,
   BoardRecord,
   BoardStatus,
+  BoardTodayAchievement,
   CollectStickerRpcResult,
   IBoardRepository,
 } from "./types";
@@ -113,12 +113,33 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(data);
   },
 
-  async getBoards() {
-    const { data, error } = await supabase.rpc("get_boards_with_stats");
+  async getBoards(params) {
+    const res = supabase.rpc("get_boards_with_stats", undefined, {
+      count: "exact",
+    });
+
+    if (params.status) res.eq("status", params.status);
+    if (params.page) {
+      const limit = params.limit ?? 10;
+      const page = params.page ?? 1;
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+
+      res.range(from, to);
+    }
+
+    const { data, error, count } = await res;
 
     if (error) throw error;
 
-    return data.map(toBoardRecord);
+    return {
+      items: data.map(toBoardRecord),
+      pageInfo: {
+        page: params.page,
+        limit: params.limit,
+        totalCount: count ?? undefined,
+      },
+    };
   },
 
   async getTodayAchievement(profileId): Promise<BoardTodayAchievement> {

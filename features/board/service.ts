@@ -18,8 +18,8 @@ export const board: IBoardService = {
     });
   },
 
-  async getBoards() {
-    return boardRepository.getBoards();
+  async getBoards(params) {
+    return boardRepository.getBoards(params);
   },
 
   async getTodayAchievement(profileId) {
@@ -28,5 +28,14 @@ export const board: IBoardService = {
 
   async collectSticker(boardId, source) {
     return boardRepository.collectSticker(boardId, source);
+  },
+
+  async getActiveBoards() {
+    return boardRepository.getBoards({status: 'active'});
+    
+  },
+
+  async getCompletedBoards() {
+    return boardRepository.getBoards({status: 'completed'});
   },
 };
