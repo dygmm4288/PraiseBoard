@@ -12,10 +12,10 @@ interface Props extends PropsWithChildren {
  */
 const Screen = ({ children, className = "" }: Props) => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className={cn("px-section pt-section flex-1", className)}>
-        {children}
-      </View>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#FFF", position: "relative" }}
+    >
+      <View className={cn("px-screen flex-1", className)}>{children}</View>
     </SafeAreaView>
   );
 };

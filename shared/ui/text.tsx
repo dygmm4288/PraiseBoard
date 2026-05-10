@@ -12,7 +12,8 @@ type TextCoreVariant =
   | "caption1"
   | "caption2"
   | "button1"
-  | "button2";
+  | "button2"
+  | "custom";
 
 type TextAliasVariant = "title" | "body" | "caption" | "label";
 
@@ -36,6 +37,7 @@ export const TEXT_VARIANT_STYLES: Record<TextCoreVariant, string> = {
   caption2: "text-caption2",
   button1: "text-button1",
   button2: "text-button2",
+  custom: "",
 };
 
 export const TEXT_VARIANT_ALIASES: Record<TextAliasVariant, TextCoreVariant> = {
@@ -63,6 +65,7 @@ const TEXT_DEFAULT_WEIGHT_BY_VARIANT: Record<TextCoreVariant, TextWeight> = {
   caption2: "regular",
   button1: "semibold",
   button2: "regular",
+  custom: "medium",
 };
 
 const resolveTextVariant = (variant: TextVariant): TextCoreVariant =>

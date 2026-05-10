@@ -2,7 +2,6 @@ import { useUser } from "@/services/user";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
 import { useBoardsQuery } from "../../queries/use-board-query";
-import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
 
 const BoardList = () => {
@@ -21,16 +20,13 @@ const BoardList = () => {
     return <BoardListStatus message="보드를 불러오는 중 오류가 발생했어요." />;
   }
 
-  if (!data?.length) {
-    return <BoardListStatus message="아직 받은 보드가 없어요." />;
-  }
-
   return (
-    <View className="px-[16px] py-[20px]">
-      {data.map((board) => (
+    <View className="px-[16px] py-[20px] flex-grow">
+      {/* {data?.map((board) => (
         <BoardItem key={board.id} board={board} />
       ))}
-      {data.length === 0 && <BoardEmptyItem />}
+      {data?.length === 0 && <BoardEmptyItem />} */}
+      <BoardEmptyItem />
     </View>
   );
 };

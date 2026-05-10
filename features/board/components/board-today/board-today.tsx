@@ -17,7 +17,7 @@ const BoardToday = ({ className }: BoardTodayProps) => {
   return (
     <View
       className={cn(
-        "flex-row items-center justify-between rounded-[20px] bg-[#FEF5E0] px-[20px] py-[16px]",
+        "flex-row items-center justify-between rounded-[20px] bg-[#FEF5E0] px-[20px] py-[16px] h-[75px]",
         className,
       )}
     >
@@ -37,7 +37,10 @@ const BoardToday = ({ className }: BoardTodayProps) => {
           다시 확인해 주세요
         </AppText>
       ) : count === 0 ? (
-        <AppText variant="caption2" className="text-right italic text-[#B8900A]">
+        <AppText
+          variant="caption2"
+          className="text-right italic text-[#B8900A]"
+        >
           오늘의 성취를 기다리고 있어요
         </AppText>
       ) : (
