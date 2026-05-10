@@ -7,6 +7,7 @@ export const images: {
   android: ImageGroup;
   logos: ImageGroup;
   illustrations: ImageGroup;
+  whaleMessages: ImageGroup;
 } = {
   brand: {
     icon: require("./icon.png"),
@@ -27,6 +28,9 @@ export const images: {
     spoutingWhale: require("./spouting-whale_1f433 1.png"),
     onboardWhale: require("./onboard-intro-whale.png"),
   },
+  whaleMessages: {
+    whale: require("./whale_message_doing.png"),
+  },
 };
 
 export const onboardImages: ImageSourcePropType[] = [
@@ -37,4 +41,8 @@ export const onboardImages: ImageSourcePropType[] = [
 
 export const boardImages: ImageSourcePropType[] = [
   images.illustrations.onboardWhale,
-]
+];
+
+export const whaleMessageImages: ImageSourcePropType[] = [
+  images.whaleMessages.whale,
+];
