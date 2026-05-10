@@ -1,5 +1,4 @@
 import { AppButton, AppInput, AppText, SelectableOption } from "@/shared/ui";
-import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useCreateBoard } from "../../hooks/use-create-board";
 
@@ -16,18 +15,21 @@ const dailyLimitOptions = [
   { label: "5개", value: 5 },
 ];
 
-const BoardCreate = () => {
+type BoardCreateProps = {
+  onCreated?: () => void;
+};
+
+const BoardCreate = ({ onCreated }: BoardCreateProps) => {
   const { changeFormData, createBoard, formData } = useCreateBoard();
-  const router = useRouter();
 
   const handleCreateBoard = () => {
     createBoard()?.then(() => {
-      router.push("/");
+      onCreated?.();
     });
   };
 
   return (
-    <View className="flex-1 justify-between">
+    <View className="flex-1 justify-between gap-[28px]">
       <View className="gap-[30px]">
         <AppText variant="title3" className="text-gray-700">
           새로운 습관 만들기

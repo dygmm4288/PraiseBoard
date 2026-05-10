@@ -1,4 +1,8 @@
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import {
   PropsWithChildren,
   useCallback,
@@ -15,6 +19,7 @@ type Props = {
   onChangeState: (state: SheetState) => void;
   snapPoints?: Array<string | number>;
   enablePanDownToClose?: boolean;
+  enableBackdrop?: boolean;
 } & PropsWithChildren;
 
 const STATE_TO_INDEX = {
@@ -39,6 +44,7 @@ const AppBottomSheet = ({
   children,
   snapPoints = [...DEFAULT_SNAP_POINTS],
   enablePanDownToClose = true,
+  enableBackdrop = true,
 }: Props) => {
   const sheetRef = useRef<BottomSheet>(null);
   const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
@@ -64,6 +70,20 @@ const AppBottomSheet = ({
     [onChangeState],
   );
 
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) =>
+      enableBackdrop ? (
+        <BottomSheetBackdrop
+          {...props}
+          appearsOnIndex={0}
+          disappearsOnIndex={-1}
+          opacity={0.45}
+          pressBehavior="close"
+        />
+      ) : null,
+    [enableBackdrop],
+  );
+
   return (
     <BottomSheet
       ref={sheetRef}
@@ -74,8 +94,10 @@ const AppBottomSheet = ({
       enablePanDownToClose={enablePanDownToClose}
       onChange={handleChange}
       handleComponent={BottomSheetHandle}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={{ borderRadius: 30 }}
     >
-      <BottomSheetView>{children}</BottomSheetView>
+      <BottomSheetView className="flex-1">{children}</BottomSheetView>
     </BottomSheet>
   );
 };

@@ -2,9 +2,14 @@ import { useUser } from "@/services/user";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
 import { useBoardsQuery } from "../../queries/use-board-query";
+import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
 
-const BoardList = () => {
+type BoardListProps = {
+  onCreateBoardPress: () => void;
+};
+
+const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
   const { profileId } = useUser();
   const { isLoading, data, error } = useBoardsQuery(profileId);
 
@@ -22,11 +27,12 @@ const BoardList = () => {
 
   return (
     <View className="px-[16px] py-[20px] flex-grow">
-      {/* {data?.map((board) => (
+      {data?.map((board) => (
         <BoardItem key={board.id} board={board} />
       ))}
-      {data?.length === 0 && <BoardEmptyItem />} */}
-      <BoardEmptyItem />
+      {data?.length === 0 && (
+        <BoardEmptyItem onCreateBoardPress={onCreateBoardPress} />
+      )}
     </View>
   );
 };

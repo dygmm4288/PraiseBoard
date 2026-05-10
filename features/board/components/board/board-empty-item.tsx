@@ -1,14 +1,11 @@
 import { AppText } from "@/shared/ui";
-import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 
-const BoardEmptyItem = () => {
-  const router = useRouter();
+type BoardEmptyItemProps = {
+  onCreateBoardPress: () => void;
+};
 
-  const gotoNewBoard = () => {
-    router.push("/boards/create");
-  };
-
+const BoardEmptyItem = ({ onCreateBoardPress }: BoardEmptyItemProps) => {
   return (
     <View className="flex-grow flex-col items-center justify-center gap-[30px]">
       <View className="flex-col items-center justify-center gap-[12px]">
@@ -29,7 +26,7 @@ const BoardEmptyItem = () => {
       </View>
       <Pressable
         className="rounded-[100px] bg-primary-500 px-[9px] py-[5px]"
-        onPress={gotoNewBoard}
+        onPress={onCreateBoardPress}
       >
         <AppText variant="button2" weight="medium" className="text-white">
           + 새로운 습관 추가하기
