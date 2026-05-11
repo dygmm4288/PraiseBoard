@@ -28,7 +28,7 @@ const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
   return (
     <View className="px-[16px] py-[20px] flex-grow">
       {data?.map((board) => (
-        <BoardItem key={board.id} board={board} />
+        <BoardItem key={board.id} board={board} actionType="collect" />
       ))}
       {data?.length === 0 && (
         <BoardEmptyItem onCreateBoardPress={onCreateBoardPress} />

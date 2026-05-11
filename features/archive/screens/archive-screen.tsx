@@ -44,12 +44,12 @@ const ArchiveScreen = () => {
           action={<ArchiveActionBtn label="+ 추가" onPress={openCreateBoard} />}
         >
           {activeBoards.map((board) => (
-            <BoardItem board={board} key={board.id} />
+            <BoardItem board={board} key={board.id} actionType="goto" />
           ))}
         </ArchiveSection>
         <ArchiveSection title={`완료 습관 ${completedBoards.length}개`}>
           {completedBoards.map((board) => (
-            <BoardItem board={board} key={board.id} />
+            <BoardItem board={board} key={board.id} actionType="goto" />
           ))}
         </ArchiveSection>
       </ScrollView>

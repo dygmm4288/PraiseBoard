@@ -11,7 +11,7 @@ type Props = {
   board: BoardRecord;
 };
 
-const BoardItemAction = ({ board }: Props) => {
+const BoardItemCollectAction = ({ board }: Props) => {
   const [burstKey, setBurstKey] = useState(0);
   const { progressColor, progressPercent, boardDisabled } = useBoardItemUi({
     board,
@@ -44,4 +44,4 @@ const BoardItemAction = ({ board }: Props) => {
   );
 };
 
-export default BoardItemAction;
+export default BoardItemCollectAction;

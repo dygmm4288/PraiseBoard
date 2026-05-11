@@ -101,7 +101,7 @@ const RootLayoutNav = () => {
         <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="stats" options={{ headerShown: false }} />
-        <Stack.Screen name="archive" options={{ headerShown: false }} />
+        <Stack.Screen name="archives" options={{ headerShown: false }} />
       </Stack>
       {shouldShowFnb && <FnbContainer />}
       <DebugSettingsShortcut />

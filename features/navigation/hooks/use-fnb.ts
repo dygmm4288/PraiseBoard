@@ -2,7 +2,7 @@ import { ICONS } from "@/assets/icons";
 import { type Href, usePathname, useRouter } from "expo-router";
 import { useMemo } from "react";
 
-export type FnbKey = "home" | "stats" | "archive" | "setting";
+export type FnbKey = "home" | "stats" | "archives" | "setting";
 export type FnbItem = {
   key: FnbKey;
   icon: React.ReactNode;
@@ -12,7 +12,7 @@ export type FnbItem = {
 const pathMap = {
   home: "/",
   stats: "/stats",
-  archive: "/archive",
+  archives: "/archives",
   setting: "/settings",
 } as const satisfies Record<FnbKey, Href>;
 
@@ -30,7 +30,7 @@ export const useFnb = () => {
     () => [
       { key: "home" as const, label: "홈", icon: ICONS.Home },
       { key: "stats" as const, label: "통계", icon: ICONS.Chart },
-      { key: "archive" as const, label: "보관함", icon: ICONS.Folder },
+      { key: "archives" as const, label: "보관함", icon: ICONS.Folder },
       { key: "setting" as const, label: "설정", icon: ICONS.Setting },
     ],
     [],

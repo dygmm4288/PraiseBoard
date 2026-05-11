@@ -1,11 +1,10 @@
 import { Stack } from "expo-router";
 
-export default function ArchiveLayout() {
+export default function ArchivesLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: "#FFF" },
       }}
     />
   );
