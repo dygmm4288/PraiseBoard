@@ -14,7 +14,8 @@ type DetailCardProps = PropsWithChildren<{
 }>;
 
 const CARD_SHADOW_COLOR = "#4B3C71";
-const PROGRESS_CELL_COUNT = 30;
+const DEFAULT_PROGRESS_CELL_COUNT = 30;
+const PROGRESS_GRID_COLUMNS = 10;
 
 const getMonthDate = (month?: string) => {
   if (!month) return new Date();
@@ -47,11 +48,28 @@ const formatKoreanDate = (date?: string) => {
   return `${parsedDate.getMonth() + 1}월 ${parsedDate.getDate()}일`;
 };
 
+const getProgressCellCount = (detail?: ArchiveDetail) => {
+  return detail?.progressGrid.totalCount || DEFAULT_PROGRESS_CELL_COUNT;
+};
+
 const getProgressCellState = (index: number, detail?: ArchiveDetail) => {
   if (!detail) return "empty";
   if (index < detail.progressGrid.completedCount) return "completed";
   if (index < detail.progressGrid.totalCount) return "remaining";
   return "empty";
+};
+
+const getProgressGridRows = (detail?: ArchiveDetail) => {
+  const cellCount = getProgressCellCount(detail);
+  const cells = Array.from({ length: cellCount }, (_, index) => index);
+  const rowCount = Math.ceil(cellCount / PROGRESS_GRID_COLUMNS);
+
+  return Array.from({ length: rowCount }, (_, rowIndex) =>
+    cells.slice(
+      rowIndex * PROGRESS_GRID_COLUMNS,
+      rowIndex * PROGRESS_GRID_COLUMNS + PROGRESS_GRID_COLUMNS,
+    ),
+  );
 };
 
 const DetailCard = ({ children, className }: DetailCardProps) => {
@@ -206,6 +224,8 @@ const ArchiveDetailStreakSummary = ({ detail }: Props) => {
 };
 
 const ArchiveDetailProgressGrid = ({ detail }: Props) => {
+  const rows = getProgressGridRows(detail);
+
   return (
     <DetailCard className="gap-[24px] px-[20px] pb-[20px] pt-[24px]">
       <View className="flex-row items-center justify-between">
@@ -221,22 +241,34 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
         </AppText>
       </View>
 
-      <View className="flex-row flex-wrap justify-between gap-y-[5px]">
-        {Array.from({ length: PROGRESS_CELL_COUNT }, (_, index) => {
-          const state = getProgressCellState(index, detail);
+      <View className="gap-[5px]">
+        {rows.map((row, rowIndex) => (
+          <View
+            key={`progress-row-${rowIndex}`}
+            className="flex-row items-center justify-between"
+          >
+            {Array.from({ length: PROGRESS_GRID_COLUMNS }, (_, columnIndex) => {
+              const cellIndex = row[columnIndex];
+              const isPlaceholder = cellIndex === undefined;
+              const state = isPlaceholder
+                ? "empty"
+                : getProgressCellState(cellIndex, detail);
 
-          return (
-            <View
-              key={index}
-              className={cn(
-                "h-[28px] w-[28px] rounded-[6px] border",
-                state === "completed" && "border-primary-100 bg-primary-300",
-                state === "remaining" && "border-[#F4F2FD] bg-[#F9F8FF]",
-                state === "empty" && "border-[#F4F2FD] bg-[#F9F8FF]",
-              )}
-            />
-          );
-        })}
+              return (
+                <View
+                  key={`${rowIndex}-${columnIndex}`}
+                  className={cn(
+                    "h-[28px] w-[28px] rounded-[6px] border",
+                    state === "completed" &&
+                      "border-primary-100 bg-primary-300",
+                    state !== "completed" && "border-[#F4F2FD] bg-[#F9F8FF]",
+                    isPlaceholder && "opacity-0",
+                  )}
+                />
+              );
+            })}
+          </View>
+        ))}
       </View>
     </DetailCard>
   );
