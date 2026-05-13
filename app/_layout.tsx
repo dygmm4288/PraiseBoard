@@ -5,6 +5,7 @@ import { toastConfig } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
   focusManager,
+  MutationCache,
   onlineManager,
   QueryClient,
   QueryClientProvider,
@@ -29,6 +30,11 @@ const queryClient = new QueryClient({
       retry: 1,
     },
   },
+  mutationCache: new MutationCache({
+    onError: (error, variables, context) => {
+      // TODO: Global Error Handling
+    },
+  }),
 });
 
 const useReactQueryAppLifecycle = () => {
@@ -102,6 +108,7 @@ const RootLayoutNav = () => {
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="stats" options={{ headerShown: false }} />
         <Stack.Screen name="archives" options={{ headerShown: false }} />
+        <Stack.Screen name="(boards)" options={{ headerShown: false }} />
       </Stack>
       {shouldShowFnb && <FnbContainer />}
       <DebugSettingsShortcut />

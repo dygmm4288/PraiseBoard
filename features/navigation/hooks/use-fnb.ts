@@ -17,7 +17,9 @@ const pathMap = {
 } as const satisfies Record<FnbKey, Href>;
 
 const mapPathnameToKey = (pathName: string): FnbKey => {
-  const entry = Object.entries(pathMap).find(([, value]) => value === pathName);
+  const entry = Object.entries(pathMap).find(([, value]) =>
+    value === "/" ? pathName === value : pathName.startsWith(value),
+  );
 
   return (entry?.[0] as FnbKey) ?? "home";
 };
