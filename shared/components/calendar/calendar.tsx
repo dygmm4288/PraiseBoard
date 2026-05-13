@@ -1,7 +1,7 @@
 import { Icon } from "@/assets/icons";
 import { AppText } from "@/shared/ui";
-import { getLastDate } from "@/shared/utils/date";
 import { cn } from "@/shared/utils/cn";
+import { getLastDate } from "@/shared/utils/date";
 import { useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 
@@ -19,6 +19,7 @@ type CalendarCell = {
 type CalendarProps = {
   className?: string;
   defaultDate?: Date;
+  onMonthChange?: (date: Date) => void;
   stickerCounts?: CalendarStickerCount[];
 };
 
@@ -85,6 +86,7 @@ const chunkWeeks = (cells: CalendarCell[]) =>
 const Calendar = ({
   className,
   defaultDate = new Date(),
+  onMonthChange,
   stickerCounts = [],
 }: CalendarProps) => {
   const [date, setDate] = useState<Date>(() => getMonthDate(defaultDate));
@@ -118,7 +120,13 @@ const Calendar = ({
           accessibilityLabel="이전 달"
           className="h-[24px] w-[24px] items-start justify-center"
           hitSlop={10}
-          onPress={() => setDate((currentDate) => addMonths(currentDate, -1))}
+          onPress={() =>
+            setDate((currentDate) => {
+              const nextDate = addMonths(currentDate, -1);
+              onMonthChange?.(nextDate);
+              return nextDate;
+            })
+          }
         >
           <Icon name="ChevronLeft" size={18} />
         </Pressable>
@@ -136,7 +144,13 @@ const Calendar = ({
           accessibilityLabel="다음 달"
           className="h-[24px] w-[24px] items-end justify-center"
           hitSlop={10}
-          onPress={() => setDate((currentDate) => addMonths(currentDate, 1))}
+          onPress={() =>
+            setDate((currentDate) => {
+              const nextDate = addMonths(currentDate, 1);
+              onMonthChange?.(nextDate);
+              return nextDate;
+            })
+          }
         >
           <Icon name="ChevronRightSmall" width={6} height={11} />
         </Pressable>
@@ -151,7 +165,7 @@ const Calendar = ({
                 weight="semibold"
                 className={cn(
                   "text-center",
-                  index === 0 && "text-primary-300",
+                  index === 0 && "text-red",
                   index > 0 && index < 6 && "text-gray-400",
                   index === 6 && "text-tertiary-500",
                 )}

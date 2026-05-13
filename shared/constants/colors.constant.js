@@ -71,6 +71,9 @@ const COLOR = {
     50: "#F6EFF7",
     0: "#FFFFFF",
   },
+  red: {
+    DEFAULT: "#FA7074",
+  },
 };
 
 module.exports = { COLOR };

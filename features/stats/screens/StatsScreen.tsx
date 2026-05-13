@@ -1,171 +1,50 @@
-import { Calendar, CalendarStickerCount } from "@/shared/components";
+import { useUser } from "@/services/user";
+import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
-import { cn } from "@/shared/utils/cn";
+import { useState } from "react";
 import { ScrollView, View } from "react-native";
-
-type StatBoardItem = {
-  id: string;
-  emoji: string;
-  title: string;
-  currentCount: number;
-  targetCount: number;
-};
-
-const CARD_SHADOW_COLOR = "#4B3C71";
-
-const MONTH_DATE = new Date(2026, 4, 1);
-
-const MONTH_STICKER_COUNTS: CalendarStickerCount[] = [
-  { date: "2026-05-03", count: 2 },
-  { date: "2026-05-05", count: 5 },
-  { date: "2026-05-06", count: 2 },
-  { date: "2026-05-07", count: 2 },
-  { date: "2026-05-08", count: 3 },
-  { date: "2026-05-09", count: 5 },
-];
-
-const MONTH_BOARD_ITEMS: StatBoardItem[] = [
-  {
-    id: "guitar",
-    emoji: "🎸",
-    title: "퇴근 후 악기 연습",
-    currentCount: 3,
-    targetCount: 28,
-  },
-  {
-    id: "board-1",
-    emoji: "🌱",
-    title: "#보드 제목",
-    currentCount: 0,
-    targetCount: 0,
-  },
-  {
-    id: "board-2",
-    emoji: "🌱",
-    title: "#보드 제목",
-    currentCount: 0,
-    targetCount: 0,
-  },
-  {
-    id: "board-3",
-    emoji: "🌱",
-    title: "#보드 제목",
-    currentCount: 0,
-    targetCount: 0,
-  },
-];
+import MonthAchievementCard from "../components/month-achievement-card";
+import MonthStreakCard from "../components/month-streak-card";
+import StatsCard from "../components/stats-card";
+import { useStatsMonthQuery } from "../queries/use-stats-month-query";
 
 const getMonthTitle = (date: Date) =>
   `${date.getFullYear()}년 ${date.getMonth() + 1}월 통계`;
 
-const getMonthTotal = (items: StatBoardItem[]) =>
-  items.reduce((total, item) => total + item.currentCount, 0);
+const formatMonthKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
-const formatBoardCount = ({ currentCount, targetCount }: StatBoardItem) => {
-  if (!targetCount) return "N/N";
-  return `${currentCount}/${targetCount}`;
-};
-
-const StatsCard = ({
-  children,
-  className,
-}: React.PropsWithChildren<{ className?: string }>) => {
+const StatsStatusText = ({ message }: { message: string }) => {
   return (
-    <View
-      className={cn("rounded-[20px] bg-white px-[20px] py-[16px]", className)}
-      style={{
-        shadowColor: CARD_SHADOW_COLOR,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 3,
-      }}
-    >
-      {children}
-    </View>
-  );
-};
-
-const StatsSectionHeader = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) => {
-  return (
-    <View className="flex-row items-center justify-between">
-      <AppText variant="caption1" weight="semibold" className="text-[#8E8E95]">
-        {label}
-      </AppText>
-      <AppText variant="title3" weight="bold" className="text-primary-500">
-        {value}
-      </AppText>
-    </View>
-  );
-};
-
-const MonthAchievementRow = ({
-  item,
-  showBorder,
-}: {
-  item: StatBoardItem;
-  showBorder: boolean;
-}) => {
-  return (
-    <View
-      className={cn(
-        "flex-row items-center justify-between",
-        showBorder && "border-t border-[#EFF1F5] pt-[16px]",
-      )}
-    >
-      <View className="min-w-0 flex-1 flex-row items-center gap-[3px]">
-        <AppText variant="body3" weight="semibold" className="shrink-0">
-          {item.emoji}
-        </AppText>
-        <AppText variant="body3" className="min-w-0 flex-1 text-gray-900" numberOfLines={1}>
-          {item.title}
-        </AppText>
-      </View>
-      <AppText variant="body3" className="shrink-0 text-gray-900">
-        {formatBoardCount(item)}
-      </AppText>
-    </View>
-  );
-};
-
-const MonthAchievementCard = () => {
-  return (
-    <StatsCard className="gap-[15px]">
-      <StatsSectionHeader
-        label="이번 달 성취"
-        value={`총 ${getMonthTotal(MONTH_BOARD_ITEMS)}번`}
-      />
-      {MONTH_BOARD_ITEMS.map((item, index) => (
-        <MonthAchievementRow
-          key={item.id}
-          item={item}
-          showBorder={index > 0}
-        />
-      ))}
-    </StatsCard>
-  );
-};
-
-const MonthStreakCard = () => {
-  return (
-    <StatsCard>
-      <StatsSectionHeader label="이번 달 연속 성취 기록" value="N일" />
-    </StatsCard>
+    <AppText variant="body3" className="text-center text-gray-500">
+      {message}
+    </AppText>
   );
 };
 
 const StatsScreen = () => {
+  const { profileId } = useUser();
+  const [monthDate, setMonthDate] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const { data, isLoading, error } = useStatsMonthQuery(
+    profileId,
+    formatMonthKey(monthDate),
+  );
+
+  const getAchievementStatusMessage = () => {
+    if (isLoading) return "성취를 불러오는 중이에요.";
+    if (error) return "성취를 불러오는 중 오류가 발생했어요.";
+    if (!data?.boardItems.length) return "아직 표시할 보드가 없어요.";
+    return null;
+  };
+
   return (
-    <Screen className="pb-[120px]">
+    <Screen>
       <View className="h-[45px] justify-center px-[8px]">
         <AppText variant="button1" className="text-gray-850">
-          {getMonthTitle(MONTH_DATE)}
+          {getMonthTitle(monthDate)}
         </AppText>
       </View>
 
@@ -175,11 +54,24 @@ const StatsScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <Calendar
-          defaultDate={MONTH_DATE}
-          stickerCounts={MONTH_STICKER_COUNTS}
+          defaultDate={monthDate}
+          onMonthChange={setMonthDate}
+          stickerCounts={data?.stickerCounts ?? []}
         />
-        <MonthAchievementCard />
-        <MonthStreakCard />
+        {!profileId ? (
+          <StatsCard>
+            <StatsStatusText message="프로필 정보를 확인할 수 없어요." />
+          </StatsCard>
+        ) : (
+          <>
+            <MonthAchievementCard
+              items={data?.boardItems ?? []}
+              totalCount={data?.totalCount ?? 0}
+              statusMessage={getAchievementStatusMessage()}
+            />
+            <MonthStreakCard streakDays={data?.maxStreak ?? 0} />
+          </>
+        )}
       </ScrollView>
     </Screen>
   );
