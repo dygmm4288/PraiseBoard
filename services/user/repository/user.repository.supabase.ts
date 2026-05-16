@@ -1,5 +1,5 @@
 import { supabase } from "@/shared/lib/supabase";
-import { IUserRepository } from "./user.interface";
+import { IUserRepository } from "../model/user.interface";
 
 const PROFILE_SELECT =
   "id, auth_user_id, nickname, mbti, created_at, updated_at, last_login_at";
@@ -72,7 +72,7 @@ export const userRepository: IUserRepository = {
         profile_id: profileId,
       },
       {
-        onConflict: "device_id",
+        onConflict: "profile_id,device_id",
       },
     );
     if (error) throw error;
@@ -85,7 +85,8 @@ export const userRepository: IUserRepository = {
         supabase
           .from("devices")
           .update({ last_login_at: timestamp })
-          .eq("device_id", deviceId),
+          .eq("device_id", deviceId)
+          .eq("profile_id", profileId),
         supabase
           .from("profiles")
           .update({ last_login_at: timestamp })

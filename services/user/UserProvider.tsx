@@ -1,9 +1,9 @@
 import { notification } from "@/services/notification";
 import React, { createContext, useContext, useEffect } from "react";
 import { AppState } from "react-native";
-import { useUserBootstrap } from "./use-user-bootstrap";
-import { UserFlowOverrideMode, useUserFlow } from "./use-user-flow";
-import { AuthState } from "./user.interface";
+import { useUserBootstrap } from "./hooks/use-user-bootstrap";
+import { UserFlowOverrideMode, useUserFlow } from "./hooks/use-user-flow";
+import { AuthState } from "./model/user.interface";
 
 interface UserContextType {
   isInitialized: boolean;

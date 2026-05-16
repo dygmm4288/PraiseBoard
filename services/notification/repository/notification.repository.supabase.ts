@@ -4,7 +4,7 @@ import {
   PushPermissionStatus,
   PushState,
   SavePushTokenInput,
-} from "./notification.interface";
+} from "../model/notification.interface";
 
 export const notificationRepository: INotificationRepository = {
   async getPushEnabled(deviceId: string) {

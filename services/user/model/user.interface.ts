@@ -1,6 +1,6 @@
 import { Database } from "@/shared/types/supabase.types";
 
-export type AuthState = 'public' | 'anonymous' | 'member';
+export type AuthState = "public" | "anonymous" | "member";
 
 export type CurrentAuthUser = {
   authUserId: string | null;
@@ -30,3 +30,5 @@ export interface IUserRepository {
     input: UpdateProfileInput,
   ): Promise<UserProfile>;
 }
+
+export type IUserService = Record<string, never>;

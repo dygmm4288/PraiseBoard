@@ -1,8 +1,8 @@
 // 책임. profiles rows 조회와 갱신 후 동기화.
 
-import { useEffect, useState } from "react";
-import { UpdateProfileInput, UserProfile } from "./user.interface";
-import { userRepository } from "./user.repository.impl";
+import { useCallback, useEffect, useState } from "react";
+import { UpdateProfileInput, UserProfile } from "../model/user.interface";
+import { userRepository } from "../repository/user.repository";
 
 type UseCurrentProfileResult = {
   profile: UserProfile | null;
@@ -20,7 +20,7 @@ export const useCurrentProfile = (
   const [isLoading, setIsLoading] = useState(Boolean(profileId));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (!profileId) {
       setProfile(null);
       setErrorMessage("프로필 정보를 확인할 수 없어요.");
@@ -45,7 +45,7 @@ export const useCurrentProfile = (
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [profileId]);
 
   const updateProfile = async (input: UpdateProfileInput) => {
     if (!profileId) throw new Error("profileId is required to update profile");
@@ -68,7 +68,7 @@ export const useCurrentProfile = (
 
   useEffect(() => {
     void refreshProfile();
-  }, [profileId]);
+  }, [refreshProfile]);
 
   return {
     profile,

@@ -1,8 +1,8 @@
 import { localStorage } from "@/infra/storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
-import { AuthState } from "./user.interface";
-import { userRepository } from "./user.repository.impl";
+import { AuthState } from "../model/user.interface";
+import { userRepository } from "../repository/user.repository";
 
 type UserBootstrapState = {
   isInitialized: boolean;

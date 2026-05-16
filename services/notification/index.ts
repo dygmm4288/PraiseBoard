@@ -1,2 +1,2 @@
-export * from "./notification";
-export * from "./notification.interface";
+export * from "./model/notification.interface";
+export * from "./service/notification.service";

@@ -6,8 +6,8 @@ import { Platform } from "react-native";
 import {
   INotificationService,
   PushPermissionStatus,
-} from "./notification.interface";
-import { notificationRepository } from "./notification.repository.impl";
+} from "../model/notification.interface";
+import { notificationRepository } from "../repository/notification.repository";
 
 const getDeviceId = async () => {
   const deviceId = await localStorage.getItem("device_id");
