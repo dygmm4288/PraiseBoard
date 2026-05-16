@@ -1,12 +1,26 @@
-import { BoardRecord } from "@/features/board/types";
+import { BoardProgress, BoardRecord } from "@/features/board/types";
+import { getCalendarDateDiff } from "@/shared/utils/date";
 import { toSafeInteger } from "@/shared/utils/number";
-import { BoardProgress } from "../types";
 
 type Props = {
   board: BoardRecord;
 };
 
 const DAILY_STICKER_LIMIT = 3;
+const MAX_BOARD_D_DAY = 99;
+
+const getBoardDDay = (createdAt: string | null) => {
+  if (!createdAt) return "0";
+
+  const createdDate = new Date(createdAt);
+
+  if (Number.isNaN(createdDate.getTime())) return "0";
+
+  const diffDays = getCalendarDateDiff(createdDate, new Date());
+  const safeDiffDays = Math.max(0, Math.min(diffDays, MAX_BOARD_D_DAY));
+
+  return diffDays > MAX_BOARD_D_DAY ? `${MAX_BOARD_D_DAY}+` : `${safeDiffDays}`;
+};
 
 export const useBoardItemUi = ({ board }: Props) => {
   const isCompleted = board.status === "completed";
@@ -18,6 +32,7 @@ export const useBoardItemUi = ({ board }: Props) => {
     board.targetCount,
     board.currentCount,
   );
+  const boardDDay = getBoardDDay(board.createdAt);
 
   return {
     title: board.title,
@@ -32,6 +47,7 @@ export const useBoardItemUi = ({ board }: Props) => {
     rewardText: board.rewardMemo || "보상이 아직 정해지지 않았어요",
     opacity: isCompleted ? 0.6 : isTodayDone ? 0.58 : 1,
     boardDisabled,
+    boardDDay,
   };
 };
 

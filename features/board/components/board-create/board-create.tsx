@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useCreateBoard } from "../../hooks/use-create-board";
 
 const targetCountOptions = [
-  { label: "28개", value: 28 },
+  { label: "30개", value: 30 },
   { label: "50개", value: 50 },
   { label: "100개", value: 100 },
 ];

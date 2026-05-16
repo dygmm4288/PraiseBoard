@@ -12,7 +12,7 @@ create table boards (
     target_count int not null check (target_count > 0),
     current_count int not null default 0,
     limit_count int not null default 10 check (limit_count > 0),
-    completed_at timestamptz null default now(),
+    completed_at timestamptz null default null,
     reward_memo text null default null,
     
     reward_enabled boolean not null default false,

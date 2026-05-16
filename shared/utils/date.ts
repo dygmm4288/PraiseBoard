@@ -13,7 +13,31 @@ export const getLastDate = (date: Date) => {
   return new Date(year, month, 0).getDate();
 };
 
+export const getDateDiff = (source: Date, target: Date) => {
+  const diffMs = target.getTime() - source.getTime();
+
+  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+};
+
+export const getCalendarDateDiff = (source: Date, target: Date) => {
+  const sourceDate = new Date(
+    source.getFullYear(),
+    source.getMonth(),
+    source.getDate(),
+  );
+  const targetDate = new Date(
+    target.getFullYear(),
+    target.getMonth(),
+    target.getDate(),
+  );
+  const diffMs = targetDate.getTime() - sourceDate.getTime();
+
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};
+
 export default {
   getLastDate,
   extractDate,
+  getDateDiff,
+  getCalendarDateDiff,
 };

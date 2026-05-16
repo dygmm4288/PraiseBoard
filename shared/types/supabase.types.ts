@@ -74,6 +74,7 @@ export type Database = {
         Row: {
           created_at: string
           device_id: string
+          id: string
           last_login_at: string
           platform: string | null
           profile_id: string
@@ -88,6 +89,7 @@ export type Database = {
         Insert: {
           created_at?: string
           device_id: string
+          id?: string
           last_login_at?: string
           platform?: string | null
           profile_id: string
@@ -102,6 +104,7 @@ export type Database = {
         Update: {
           created_at?: string
           device_id?: string
+          id?: string
           last_login_at?: string
           platform?: string | null
           profile_id?: string
@@ -281,12 +284,16 @@ export type Database = {
       get_boards_with_stats: {
         Args: never
         Returns: {
+          completed_at: string | null
+          created_at: string | null
           current_count: number
           current_streak: number
+          emoji: string
           id: string
-          latest_sticker_collected_at: string
+          latest_sticker_collected_at: string | null
+          limit_count: number
           max_streak: number
-          reward_memo: string
+          reward_memo: string | null
           status: Database["public"]["Enums"]["board_status"]
           target_count: number
           title: string

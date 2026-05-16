@@ -63,7 +63,7 @@ export const boardCreateDraftSchema = z.object({
     .number()
     .int("목표 개수는 정수만 입력할 수 있어요.")
     .refine(
-      (value) => [28, 50, 100].includes(value),
+      (value) => [30, 50, 100].includes(value),
       "목표 개수를 선택해 주세요",
     ),
   rewardMemo: z
@@ -158,7 +158,7 @@ export const BOARD_SETUP_DEFAULT_VALUES: BoardSetupFormValues = {
 export const BOARD_CREATE_DEFAULT_VALUES: BoardCreateFormValues = {
   title: "",
   emoji: "🐋",
-  targetCount: 28,
+  targetCount: 30,
   rewardMemo: "",
   limitCount: 1,
 };

@@ -14,6 +14,8 @@ export type Board = {
 
 export type BoardRecord = {
   id: string;
+  createdAt: string | null;
+  completedAt: string | null;
   title: string;
   emoji: string;
   targetCount: number;

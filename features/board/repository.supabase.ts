@@ -8,7 +8,7 @@ import {
 } from "./types";
 
 const BOARD_FIELDS =
-  "id, title, emoji, reward_memo, target_count, limit_count, current_count, status";
+  "id, title, emoji, reward_memo, target_count, limit_count, current_count, status, created_at, completed_at";
 
 const getTodayRange = () => {
   const now = new Date();
@@ -38,8 +38,12 @@ const toBoardRecord = (row: {
   today_success?: boolean;
   reward_memo: string | null;
   status: BoardStatus;
+  created_at?: string | null;
+  completed_at?: string | null;
 }): BoardRecord => ({
   id: row.id,
+  createdAt: row.created_at ?? null,
+  completedAt: row.completed_at ?? null,
   title: row.title,
   emoji: row.emoji ?? "🐋",
   targetCount: row.target_count,
