@@ -1,4 +1,5 @@
 import { Icon } from "@/assets/icons";
+import { BoardCreateSheetProvider } from "@/features/board/components/board-create/board-create-sheet-provider";
 import { FnbContainer } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { toastConfig } from "@/shared/toasts/toast";
@@ -97,21 +98,23 @@ const RootLayoutNav = () => {
 
   return (
     <View className="flex-1">
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(modals)"
-          options={{ presentation: "modal", headerShown: false }}
-        />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
-        <Stack.Screen name="stats" options={{ headerShown: false }} />
-        <Stack.Screen name="archives" options={{ headerShown: false }} />
-        <Stack.Screen name="(boards)" options={{ headerShown: false }} />
-      </Stack>
-      {shouldShowFnb && <FnbContainer />}
-      <DebugSettingsShortcut />
+      <BoardCreateSheetProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(modals)"
+            options={{ presentation: "modal", headerShown: false }}
+          />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="stats" options={{ headerShown: false }} />
+          <Stack.Screen name="archives" options={{ headerShown: false }} />
+          <Stack.Screen name="(boards)" options={{ headerShown: false }} />
+        </Stack>
+        {shouldShowFnb && <FnbContainer />}
+        <DebugSettingsShortcut />
+      </BoardCreateSheetProvider>
     </View>
   );
 };

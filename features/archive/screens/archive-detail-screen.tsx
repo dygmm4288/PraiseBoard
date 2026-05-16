@@ -14,18 +14,16 @@ const ArchiveDetailScreen = () => {
   const params = useLocalSearchParams();
   const boardId = typeof params.id === "string" ? params.id : null;
   const month = getCurrentMonth();
-  const { data: detail, isLoading, error } = useArchiveDetailQuery(
-    boardId,
-    month,
-  );
+  const {
+    data: detail,
+    isLoading,
+    error,
+  } = useArchiveDetailQuery(boardId, month);
 
   return (
     <Screen>
       <ScreenHeader title="상세보기" />
       <ScrollView className="pt-[12px]">
-        <AppText variant="caption1" className="mb-[12px] text-gray-500">
-          ArchiveId: {boardId}
-        </AppText>
         {isLoading ? (
           <AppText>ArchiveDetailLoading</AppText>
         ) : error ? (

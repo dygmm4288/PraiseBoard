@@ -26,7 +26,7 @@ const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
   }
 
   return (
-    <View className="px-[16px] py-[20px] flex-grow">
+    <View className="flex-grow">
       {data?.map((board) => (
         <BoardItem key={board.id} board={board} actionType="collect" />
       ))}
