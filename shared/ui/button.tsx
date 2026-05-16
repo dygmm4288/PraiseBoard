@@ -3,7 +3,7 @@ import React from "react";
 import { Pressable, PressableProps, View } from "react-native";
 import { AppText } from "./text";
 
-type ButtonVariant = "primary" | "secondary" | "tertiary";
+type ButtonVariant = "primary" | "secondary" | "tertiary" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 type ButtonState = "enabled" | "disabled";
 
@@ -35,6 +35,10 @@ export const BUTTON_CONTAINER_STYLES: Record<
     enabled: "bg-white border border-gray-200",
     disabled: "", // TODO
   },
+  danger: {
+    enabled: "bg-red border border-red",
+    disabled: "",
+  },
 };
 
 export const BUTTON_TEXT_STYLES: Record<
@@ -52,6 +56,10 @@ export const BUTTON_TEXT_STYLES: Record<
   tertiary: {
     enabled: "text-gray-700",
     disabled: "", // TODO
+  },
+  danger: {
+    enabled: "text-white",
+    disabled: "",
   },
 };
 
