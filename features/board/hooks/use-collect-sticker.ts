@@ -1,6 +1,6 @@
 import { board } from "@/features/board/service";
 import {
-  BoardRecord,
+  BoardListResult,
   BoardStickerSource,
   BoardTodayAchievement,
   CollectStickerError,
@@ -26,14 +26,17 @@ export const useCollectSticker = () => {
     },
     onSuccess: async (updatedBoard) => {
       if (profileId) {
-        queryClient.setQueryData<BoardRecord[] | null>(
+        queryClient.setQueryData<BoardListResult | null>(
           boardKeys.lists(profileId),
-          (boards) => {
-            if (!boards) return boards;
+          (boardList) => {
+            if (!boardList) return boardList;
 
-            return boards.map((board) =>
-              board.id === updatedBoard.id ? updatedBoard : board,
-            );
+            return {
+              ...boardList,
+              items: boardList.items.map((board) =>
+                board.id === updatedBoard.id ? updatedBoard : board,
+              ),
+            };
           },
         );
 
@@ -56,6 +59,7 @@ export const useCollectSticker = () => {
         return;
       }
 
+      console.log(error);
       toast.chatError("실패했습니다");
     },
   });
