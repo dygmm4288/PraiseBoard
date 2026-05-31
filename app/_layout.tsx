@@ -1,7 +1,7 @@
-import { Icon } from "@/assets/icons";
 import { BoardCreateSheetProvider } from "@/features/board/components/board-create/board-create-sheet-provider";
 import { FnbContainer } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
+import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { toastConfig } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
@@ -11,10 +11,10 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { Stack, usePathname, useRouter } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { AppState, Platform, Pressable, View } from "react-native";
+import { AppState, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -59,33 +59,6 @@ const useReactQueryAppLifecycle = () => {
   });
 };
 
-const DebugSettingsShortcut = () => {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { isDebugUserFlowEnabled } = useUser();
-
-  if (!isDebugUserFlowEnabled || pathname === "/debug-settings") {
-    return null;
-  }
-
-  return (
-    <Pressable
-      accessibilityLabel="디버그 설정 열기"
-      className="absolute bottom-7 right-5 z-50 h-[54px] w-[54px] items-center justify-center rounded-full bg-white"
-      onPress={() => router.push("/debug-settings")}
-      style={{
-        shadowColor: "#111111",
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
-        shadowOffset: { width: 0, height: 8 },
-        elevation: 8,
-      }}
-    >
-      <Icon name="Setting" />
-    </Pressable>
-  );
-};
-
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
@@ -98,23 +71,27 @@ const RootLayoutNav = () => {
 
   return (
     <View className="flex-1">
-      <BoardCreateSheetProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(modals)"
-            options={{ presentation: "modal", headerShown: false }}
-          />
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-          <Stack.Screen name="stats" options={{ headerShown: false }} />
-          <Stack.Screen name="archives" options={{ headerShown: false }} />
-          <Stack.Screen name="(boards)" options={{ headerShown: false }} />
-        </Stack>
-        {shouldShowFnb && <FnbContainer />}
-        <DebugSettingsShortcut />
-      </BoardCreateSheetProvider>
+      <TopLevelSheetProvider>
+        <BoardCreateSheetProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(onboarding)"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(modals)"
+              options={{ presentation: "modal", headerShown: false }}
+            />
+            <Stack.Screen name="signup" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
+            <Stack.Screen name="stats" options={{ headerShown: false }} />
+            <Stack.Screen name="archives" options={{ headerShown: false }} />
+            <Stack.Screen name="(boards)" options={{ headerShown: false }} />
+          </Stack>
+          {shouldShowFnb && <FnbContainer />}
+        </BoardCreateSheetProvider>
+      </TopLevelSheetProvider>
     </View>
   );
 };

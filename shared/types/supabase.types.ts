@@ -14,12 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          created_at: string
+          id: number
+          latest_version: string
+          maintenance: boolean
+          maintenance_message: string | null
+          min_version: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          latest_version: string
+          maintenance?: boolean
+          maintenance_message?: string | null
+          min_version: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          latest_version?: string
+          maintenance?: boolean
+          maintenance_message?: string | null
+          min_version?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       boards: {
         Row: {
           completed_at: string | null
           created_at: string | null
           current_count: number
-          emoji: string
+          emoji: string | null
           id: string
           limit_count: number
           profile_id: string
@@ -34,7 +64,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_count?: number
-          emoji: string
+          emoji?: string | null
           id?: string
           limit_count?: number
           profile_id: string
@@ -49,7 +79,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           current_count?: number
-          emoji?: string
+          emoji?: string | null
           id?: string
           limit_count?: number
           profile_id?: string
@@ -284,16 +314,15 @@ export type Database = {
       get_boards_with_stats: {
         Args: never
         Returns: {
-          completed_at: string | null
-          created_at: string | null
+          created_at: string
           current_count: number
           current_streak: number
           emoji: string
           id: string
-          latest_sticker_collected_at: string | null
+          latest_sticker_collected_at: string
           limit_count: number
           max_streak: number
-          reward_memo: string | null
+          reward_memo: string
           status: Database["public"]["Enums"]["board_status"]
           target_count: number
           title: string

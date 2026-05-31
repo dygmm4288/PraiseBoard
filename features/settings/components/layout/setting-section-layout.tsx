@@ -1,29 +1,43 @@
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type Props = {
   title?: string;
   bottomBorderYn?: boolean;
 } & PropsWithChildren;
 
-const SettingSectionLayout = ({
-  title,
-  children,
-  bottomBorderYn = true,
-}: Props) => {
-  const bottomBorderClass = bottomBorderYn ? 'border-b-gray-300 border-solid border-b' : '';
+const SettingSectionLayout = ({ title, children }: Props) => {
   return (
-    <View className={cn("flex flex-col gap-[10px] pb-[24px]", bottomBorderClass)}>
+    <View className="w-full gap-[12px]">
       {title && (
-        <AppText variant="caption1" className="text-gray-400">
+        <AppText
+          variant="custom"
+          weight="semibold"
+          className="px-[8px] text-[12px] leading-[20px] text-[#8E8E95]"
+        >
           {title}
         </AppText>
       )}
-      {children}
+      <View
+        className={cn("w-full overflow-hidden rounded-[20px] bg-white py-[16px]")}
+        style={styles.card}
+      >
+        {children}
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    shadowColor: "#4B3C71",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+});
 
 export default SettingSectionLayout;

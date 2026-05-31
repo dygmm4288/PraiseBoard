@@ -111,7 +111,7 @@ export const archiveRepository: IArchiveRepository = {
       board: {
         id: boardRow.id,
         title: boardRow.title,
-        emoji: boardRow.emoji,
+        emoji: boardRow.emoji ?? "",
         rewardMemo: boardRow.reward_memo,
         targetCount: boardRow.target_count,
         limitCount: boardRow.limit_count,

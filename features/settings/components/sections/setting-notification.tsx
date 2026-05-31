@@ -3,7 +3,7 @@ import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
-import { AppState, View } from "react-native";
+import { AppState, Pressable } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingInfoBox from "../setting-info-box";
 import SettingToggle from "../setting-toggle";
@@ -17,7 +17,15 @@ const NoSettingNotification = () => {
   );
 };
 
-const SettingNotification = () => {
+type SettingNotificationProps = {
+  alarmTimeLabel: string;
+  onEditAlarmTime: () => void;
+};
+
+const SettingNotification = ({
+  alarmTimeLabel,
+  onEditAlarmTime,
+}: SettingNotificationProps) => {
   const [isNotifications, setIsNotifications] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,21 +102,31 @@ const SettingNotification = () => {
 
   return (
     <SettingSectionLayout title="알림">
-      <View className="flex-row items-center justify-between">
-        {!isLoading && hasPermission && (
-          <View className="w-full flex flex-col gap-[6px] items-stretch">
-            <SettingToggle
-              label="정기알림"
-              value={isNotifications}
-              onToggle={handleToggle}
-              disabled={isLoading || isUpdating}
-            />
-            <AppText variant="caption2" className="text-gray-400">
-              설정한 시간에 알림을 보내드려요
-            </AppText>
-          </View>
-        )}
-      </View>
+      {!isLoading && hasPermission && (
+        <SettingToggle
+          label="정기 알림"
+          description="설정한 시간에 알림을 보내드려요"
+          value={isNotifications}
+          onToggle={handleToggle}
+          disabled={isLoading || isUpdating}
+          accessory={
+            isNotifications ? (
+              <Pressable
+                className="mt-[9px] h-[26px] self-start rounded-[100px] bg-[#F1ECFC] px-[9px] py-[3px]"
+                onPress={onEditAlarmTime}
+              >
+                <AppText
+                  variant="custom"
+                  weight="medium"
+                  className="text-[12px] leading-[20px] text-[#7F5ADD]"
+                >
+                  {alarmTimeLabel}
+                </AppText>
+              </Pressable>
+            ) : null
+          }
+        />
+      )}
       {!isLoading && !hasPermission && <NoSettingNotification />}
     </SettingSectionLayout>
   );
