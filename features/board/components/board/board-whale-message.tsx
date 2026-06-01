@@ -1,39 +1,39 @@
 import { images } from "@/assets/images";
+import type { WhaleMessage } from "@/services/whale-message";
+import { resolveWhaleMessage } from "@/services/whale-message";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, View } from "react-native";
-import type { WhaleMessage } from "../../domain/whale-message-policy";
-import { resolveWhaleMessage } from "../../domain/whale-message-policy";
 import { BoardRecord } from "../../types";
 
 type BoardWhaleMessageProps = {
   message?: WhaleMessage;
   todayStickerCount?: number;
-  latestStickerCollectedAt?: string | null;
+  latestMessageCreatedAt?: string | null;
   nickname?: string | null;
   boards?: BoardRecord[];
   lastLoginAt?: string | null;
   className?: string;
 };
 
-const formatCollectedTime = (value: string | null) => {
-  if (!value) return "오늘의 첫 성취를 기다리는 중";
+const formatLatestMessageLabel = (value: string | null) => {
+  if (!value) return "마지막 메시지";
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime()))
-    return "마지막 성취 시각을 확인할 수 없어요";
+  if (Number.isNaN(date.getTime())) return "마지막 메시지";
 
-  return `마지막 성취 · ${date.toLocaleTimeString("ko-KR", {
-    hour: "numeric",
+  return `마지막 메시지 - ${date.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
     minute: "2-digit",
+    hour12: true,
   })}`;
 };
 
 const BoardWhaleMessage = ({
   message,
   todayStickerCount = 0,
-  latestStickerCollectedAt = null,
+  latestMessageCreatedAt = null,
   nickname,
   boards,
   lastLoginAt,
@@ -63,8 +63,13 @@ const BoardWhaleMessage = ({
         }}
       >
         <View className="flex flex-row gap-[8px] pb-[12px] border-b border-b-[#C9BDF4]">
-          <View className="h-[33px] w-[33px] rounded-full bg-primary-200 flex justify-center items-center">
-            <Image height={33} width={33} source={images.whaleMessages.whale} />
+          <View className="h-[33px] w-[33px] rounded-full bg-primary-200 flex items-center overflow-hidden">
+            <Image
+              className="w-[51px] h-[53px]"
+              height={53}
+              width={51}
+              source={images.whaleMessages.whale}
+            />
           </View>
           <View className="flex-col gap-[3px]">
             <AppText variant="button2" weight="bold" className="text-[#8775cc]">
@@ -75,7 +80,7 @@ const BoardWhaleMessage = ({
               weight="regular"
               className="text-[#8f7ed0]"
             >
-              마지막 메시지
+              {formatLatestMessageLabel(latestMessageCreatedAt)}
             </AppText>
           </View>
         </View>

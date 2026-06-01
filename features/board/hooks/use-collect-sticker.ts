@@ -5,6 +5,7 @@ import {
   BoardTodayAchievement,
   CollectStickerError,
 } from "@/features/board/types";
+import { whaleMessageKeys, whaleMessageService } from "@/services/whale-message";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,19 +27,31 @@ export const useCollectSticker = () => {
     },
     onSuccess: async (updatedBoard) => {
       if (profileId) {
+        let nextBoards = queryClient.getQueryData<BoardListResult | null>(
+          boardKeys.lists(profileId),
+        )?.items;
+
         queryClient.setQueryData<BoardListResult | null>(
           boardKeys.lists(profileId),
           (boardList) => {
             if (!boardList) return boardList;
 
+            nextBoards = boardList.items.map((board) =>
+              board.id === updatedBoard.id ? updatedBoard : board,
+            );
+
             return {
               ...boardList,
-              items: boardList.items.map((board) =>
-                board.id === updatedBoard.id ? updatedBoard : board,
-              ),
+              items: nextBoards,
             };
           },
         );
+
+        const currentTodayAchievement =
+          queryClient.getQueryData<BoardTodayAchievement>(
+            boardKeys.todayAchievement(profileId),
+          );
+        const nextTodayStickerCount = (currentTodayAchievement?.count ?? 0) + 1;
 
         queryClient.setQueryData<BoardTodayAchievement>(
           boardKeys.todayAchievement(profileId),
@@ -46,6 +59,24 @@ export const useCollectSticker = () => {
             count: (achievement?.count ?? 0) + 1,
           }),
         );
+
+        if (nextBoards) {
+          await whaleMessageService.onStickerCollected({
+            profileId,
+            boards: nextBoards,
+            todayStickerCount: nextTodayStickerCount,
+          });
+
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: whaleMessageKeys.latest(profileId),
+            }),
+            queryClient.invalidateQueries({
+              queryKey: whaleMessageKeys.all,
+              refetchType: "active",
+            }),
+          ]);
+        }
       }
 
       await queryClient.invalidateQueries({

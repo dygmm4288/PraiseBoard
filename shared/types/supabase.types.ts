@@ -158,37 +158,39 @@ export type Database = {
       }
       notification_logs: {
         Row: {
-          board_id: string
+          channel: string
+          created_at: string
           id: string
+          message_body: string | null
+          message_trigger: string
           open_at: string | null
           profile_id: string
           sent_at: string
           type: string
         }
         Insert: {
-          board_id: string
+          channel?: string
+          created_at?: string
           id?: string
+          message_body?: string | null
+          message_trigger: string
           open_at?: string | null
           profile_id: string
           sent_at?: string
           type: string
         }
         Update: {
-          board_id?: string
+          channel?: string
+          created_at?: string
           id?: string
+          message_body?: string | null
+          message_trigger?: string
           open_at?: string | null
           profile_id?: string
           sent_at?: string
           type?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "notification_logs_board_id_fkey"
-            columns: ["board_id"]
-            isOneToOne: false
-            referencedRelation: "boards"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "notification_logs_profile_id_fkey"
             columns: ["profile_id"]

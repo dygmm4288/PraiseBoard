@@ -1,33 +1,8 @@
-import { BoardRecord } from "../types";
-import { getBoardProgress } from "../utils/board-progress";
-
-export type WhaleMessageTrigger =
-  | "default_morning"
-  | "default_afternoon"
-  | "default_night"
-  | "random_transition"
-  | "inactive_3_days"
-  | "sticker_first"
-  | "sticker_acceleration"
-  | "daily_limit_reached"
-  | "evening_reminder"
-  | "board_half"
-  | "board_three_quarters"
-  | "board_complete";
-
-export type WhaleMessage = {
-  trigger: WhaleMessageTrigger;
-  body: string;
-  pushEnabled: boolean;
-};
-
-type ResolveWhaleMessageInput = {
-  nickname?: string | null;
-  now?: Date;
-  todayStickerCount: number;
-  boards?: BoardRecord[];
-  lastLoginAt?: string | null;
-};
+import {
+  ResolveWhaleMessageInput,
+  WhaleMessage,
+  WhaleMessageBoardInput,
+} from "../model/whale-message.interface";
 
 const FALLBACK_NICKNAME = "고래친구";
 const RANDOM_TRANSITION_MESSAGES = [
@@ -125,22 +100,22 @@ const resolveDefaultEntryMessage = (
 };
 
 const resolveBoardMilestoneMessage = (
-  boards: BoardRecord[],
+  boards: WhaleMessageBoardInput[],
   displayName: string,
 ): WhaleMessage | null => {
   const milestoneBoard = boards
     .map((board) => ({
       board,
-      progress: getBoardProgress(board.targetCount, board.currentCount),
+      progressPercent: getProgressPercent(board.targetCount, board.currentCount),
     }))
-    .sort((a, b) => b.progress.progressPercent - a.progress.progressPercent)[0];
+    .sort((a, b) => b.progressPercent - a.progressPercent)[0];
 
   if (!milestoneBoard) return null;
 
-  const { board, progress } = milestoneBoard;
+  const { board, progressPercent } = milestoneBoard;
   const reward = board.rewardMemo || "보상";
 
-  if (progress.progressPercent >= 100 || board.status === "completed") {
+  if (progressPercent >= 100 || board.status === "completed") {
     return {
       trigger: "board_complete",
       body: `우와 ${displayName} 축하해 ! 드디어 다 모았어!\n성실히 완주한 너가 너무 자랑스러워\n완료 습관은 보관함에서 볼 수 있어 🏆`,
@@ -148,7 +123,7 @@ const resolveBoardMilestoneMessage = (
     };
   }
 
-  if (progress.progressPercent >= 75) {
+  if (progressPercent >= 75) {
     return {
       trigger: "board_three_quarters",
       body: `거의 다 채웠어! ${reward}이 널 기다리고 있어. 곁에서 끝까지 응원할게`,
@@ -156,7 +131,7 @@ const resolveBoardMilestoneMessage = (
     };
   }
 
-  if (progress.progressPercent >= 50) {
+  if (progressPercent >= 50) {
     return {
       trigger: "board_half",
       body: "절반이나 채웠어! 네 속도는 지금 딱 좋아.\n조급해하지 말고 우리 끝까지 가보자.",
@@ -177,7 +152,7 @@ export const resolveRandomTransitionWhaleMessage = (): WhaleMessage => {
   };
 };
 
-const getDailyLimit = (boards: BoardRecord[]) => {
+const getDailyLimit = (boards: WhaleMessageBoardInput[]) => {
   const limits = boards
     .map((board) => board.limitCount)
     .filter((limit) => limit > 0);
@@ -199,4 +174,16 @@ const isInactiveForThreeDays = (
   const inactiveMs = now.getTime() - lastLoginDate.getTime();
 
   return inactiveMs >= 1000 * 60 * 60 * 24 * 3;
+};
+
+const getProgressPercent = (totalCount: number, completedCount: number) => {
+  const safeTotalCount = Math.max(0, Math.trunc(totalCount));
+  const safeCompletedCount = Math.min(
+    Math.max(0, Math.trunc(completedCount)),
+    safeTotalCount,
+  );
+
+  return safeTotalCount === 0
+    ? 0
+    : Math.round((safeCompletedCount / safeTotalCount) * 100);
 };

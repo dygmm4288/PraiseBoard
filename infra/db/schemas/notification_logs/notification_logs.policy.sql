@@ -11,10 +11,8 @@ to authenticated
 using (
   exists (
     select 1
-    from boards b
-    join profiles p on p.id = b.profile_id
-    where b.id = notification_logs.board_id
-      and b.profile_id = notification_logs.profile_id
+    from profiles p
+    where p.id = notification_logs.profile_id
       and p.auth_user_id = auth.uid()
   )
 );
@@ -30,10 +28,8 @@ to authenticated
 with check (
   exists (
     select 1
-    from boards b
-    join profiles p on p.id = b.profile_id
-    where b.id = notification_logs.board_id
-      and b.profile_id = notification_logs.profile_id
+    from profiles p
+    where p.id = notification_logs.profile_id
       and p.auth_user_id = auth.uid()
   )
 );
@@ -49,20 +45,16 @@ to authenticated
 using (
   exists (
     select 1
-    from boards b
-    join profiles p on p.id = b.profile_id
-    where b.id = notification_logs.board_id
-      and b.profile_id = notification_logs.profile_id
+    from profiles p
+    where p.id = notification_logs.profile_id
       and p.auth_user_id = auth.uid()
   )
 )
 with check (
   exists (
     select 1
-    from boards b
-    join profiles p on p.id = b.profile_id
-    where b.id = notification_logs.board_id
-      and b.profile_id = notification_logs.profile_id
+    from profiles p
+    where p.id = notification_logs.profile_id
       and p.auth_user_id = auth.uid()
   )
 );
@@ -78,10 +70,8 @@ to authenticated
 using (
   exists (
     select 1
-    from boards b
-    join profiles p on p.id = b.profile_id
-    where b.id = notification_logs.board_id
-      and b.profile_id = notification_logs.profile_id
+    from profiles p
+    where p.id = notification_logs.profile_id
       and p.auth_user_id = auth.uid()
   )
 );
