@@ -1,5 +1,5 @@
-import { localStorage } from "@/infra/storage";
 import { ensureAndroidChannels } from "@/infra/notification/channel";
+import { localStorage } from "@/infra/storage";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
@@ -54,7 +54,7 @@ const savePushState = async ({
     pushPermissionStatus: permissionStatus,
     pushPermissionGrantedAt:
       permissionStatus === "granted"
-        ? currentState.pushPermissionGrantedAt ?? now
+        ? (currentState.pushPermissionGrantedAt ?? now)
         : currentState.pushPermissionGrantedAt,
     pushPermissionUpdatedAt:
       currentState.pushPermissionStatus === permissionStatus
@@ -67,7 +67,8 @@ const getExpoPushToken = async () => {
   if (Platform.OS === "web") return null;
 
   const projectId =
-    Constants.easConfig?.projectId ?? Constants.expoConfig?.extra?.eas?.projectId;
+    Constants.easConfig?.projectId ??
+    Constants.expoConfig?.extra?.eas?.projectId;
 
   if (!projectId) {
     console.warn("푸시 토큰 발급을 위한 EAS projectId를 찾을 수 없습니다.");
@@ -161,7 +162,9 @@ export const notification: INotificationService = {
       return;
     }
 
-    const pushToken = currentState.pushEnabled ? await getExpoPushToken() : null;
+    const pushToken = currentState.pushEnabled
+      ? await getExpoPushToken()
+      : null;
     await savePushState({
       pushEnabled: currentState.pushEnabled,
       pushToken,

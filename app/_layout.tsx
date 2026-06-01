@@ -97,7 +97,9 @@ const RootLayoutNav = () => {
 };
 
 export default function RootLayout() {
+  // 앱 활성화/네트워크 상태를 React Query에 동기화
   useReactQueryAppLifecycle();
+
   if (isStorybookEnabled) {
     return <StorybookUIRoot />;
   }
