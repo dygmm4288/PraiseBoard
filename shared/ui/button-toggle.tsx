@@ -111,7 +111,7 @@ const ButtonToggle = <T,>({
             left: TRACK_PADDING,
             borderRadius: INDICATOR_RADIUS,
             backgroundColor: INDICATOR_BACKGROUND,
-            shadowColor: "#000000",
+            shadowColor: COLOR.black,
             shadowOffset: {
               width: 0,
               height: 3,

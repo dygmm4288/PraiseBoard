@@ -42,7 +42,7 @@ const BoardItemCollectAction = ({ board }: Props) => {
         weight="bold"
         className={[
           "text-[17px] leading-[17px]",
-          isCompleted ? "text-[#C8920A]" : progressColor,
+          isCompleted ? "text-secondary-50" : progressColor,
         ].join(" ")}
       >
         {progressPercent}%

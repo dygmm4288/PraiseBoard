@@ -294,7 +294,7 @@ const Fnb = <T extends string>({
 const styles = StyleSheet.create({
   container: {
     elevation: 12,
-    shadowColor: "#000000",
+    shadowColor: COLOR.black,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 40,

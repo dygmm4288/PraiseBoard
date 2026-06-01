@@ -1,5 +1,6 @@
 import { ArchiveDetail } from "@/features/archive/types";
 import { Calendar } from "@/shared/components";
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
@@ -13,7 +14,7 @@ type DetailCardProps = PropsWithChildren<{
   className?: string;
 }>;
 
-const CARD_SHADOW_COLOR = "#4B3C71";
+const CARD_SHADOW_COLOR = COLOR.textDarkPurple;
 const DEFAULT_PROGRESS_CELL_COUNT = 30;
 const PROGRESS_GRID_COLUMNS = 10;
 
@@ -98,7 +99,7 @@ const ArchiveDetailRow = ({
 }) => {
   return (
     <View className="flex-row items-center justify-between">
-      <AppText variant="caption1" weight="semibold" className="text-[#8E8E95]">
+      <AppText variant="caption1" weight="semibold" className="text-labelGray">
         {label}
       </AppText>
       <AppText variant="body3" className="text-gray-900">
@@ -113,7 +114,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
 
   return (
     <DetailCard className="px-[20px] py-[16px]">
-      <View className="flex-row items-center gap-[12px] border-b border-[#EFF1F5] pb-[16px]">
+      <View className="flex-row items-center gap-[12px] border-b border-line pb-[16px]">
         <View className="h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px] bg-primary-25">
           <AppText className="text-[20px] leading-[24px]">
             {board?.emoji ?? "🌱"}
@@ -184,7 +185,7 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
 
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-25 px-[20px]">
-      <AppText variant="caption1" weight="semibold" className="text-[#8E8E95]">
+      <AppText variant="caption1" weight="semibold" className="text-labelGray">
         {formatKoreanDate(detail?.selectedDay.date)}
       </AppText>
 
@@ -232,7 +233,7 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
         <AppText
           variant="caption1"
           weight="semibold"
-          className="text-[#8E8E95]"
+          className="text-labelGray"
         >
           전체 진행률
         </AppText>
@@ -261,7 +262,7 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
                     "h-[28px] w-[28px] rounded-[6px] border",
                     state === "completed" &&
                       "border-primary-100 bg-primary-300",
-                    state !== "completed" && "border-[#F4F2FD] bg-[#F9F8FF]",
+                    state !== "completed" && "border-primary-10 bg-primary-10",
                     isPlaceholder && "opacity-0",
                   )}
                 />

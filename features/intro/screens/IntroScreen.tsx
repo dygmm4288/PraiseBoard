@@ -34,7 +34,7 @@ export const IntroScreenContent = ({
           direction={direction}
           visual={
             <View
-              className="w-full bg-[#E3E3E6]"
+              className="w-full bg-surface-disabled"
               style={{
                 height: visualHeight,
               }}

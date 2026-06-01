@@ -112,13 +112,13 @@ const SettingNotification = ({
           accessory={
             isNotifications ? (
               <Pressable
-                className="mt-[9px] h-[26px] self-start rounded-[100px] bg-[#F1ECFC] px-[9px] py-[3px]"
+                className="mt-[9px] h-[26px] self-start rounded-[100px] bg-primary-10 px-[9px] py-[3px]"
                 onPress={onEditAlarmTime}
               >
                 <AppText
                   variant="custom"
                   weight="medium"
-                  className="text-[12px] leading-[20px] text-[#7F5ADD]"
+                  className="text-[12px] leading-[20px] text-primary-50"
                 >
                   {alarmTimeLabel}
                 </AppText>

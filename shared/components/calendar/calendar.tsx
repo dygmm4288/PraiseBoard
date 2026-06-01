@@ -1,4 +1,5 @@
 import { Icon } from "@/assets/icons";
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { getLastDate } from "@/shared/utils/date";
@@ -24,7 +25,7 @@ type CalendarProps = {
 };
 
 const WEEK_DAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
-const CALENDAR_SHADOW_COLOR = "#260060";
+const CALENDAR_SHADOW_COLOR = COLOR.primary[900];
 
 const getMonthDate = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), 1);

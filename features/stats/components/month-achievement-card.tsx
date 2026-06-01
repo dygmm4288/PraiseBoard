@@ -29,7 +29,7 @@ const MonthAchievementRow = ({
     <View
       className={cn(
         "flex-row items-center justify-between",
-        showBorder && "border-t border-[#EFF1F5] pt-[16px]",
+        showBorder && "border-t border-line pt-[16px]",
       )}
     >
       <View className="min-w-0 flex-1 flex-row items-center gap-[3px]">

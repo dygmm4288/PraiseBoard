@@ -84,7 +84,7 @@ const Toggle = ({
             height: KNOB_SIZE,
             borderRadius: KNOB_SIZE / 2,
             backgroundColor: COLOR.white,
-            shadowColor: "#000000",
+            shadowColor: COLOR.black,
             shadowOpacity: 0.12,
             shadowRadius: 4,
             shadowOffset: {

@@ -11,7 +11,7 @@ const BoardSticker = ({ filled = false, className }: BoardStickerProps) => {
     <View
       className={cn(
         "h-[26px] w-[26px] rounded-full",
-        filled ? "bg-primary-300" : "bg-[#E3E3E6]",
+        filled ? "bg-primary-300" : "bg-surface-disabled",
         className,
       )}
     />

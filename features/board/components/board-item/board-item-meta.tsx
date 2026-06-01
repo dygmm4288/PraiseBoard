@@ -19,7 +19,7 @@ const BoardItemMeta = ({ board }: Props) => {
         className={cn(
           "h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px]",
           isCompleted
-            ? "bg-primary-100"
+            ? "bg-primary-10"
             : isTodayDone
               ? "bg-gray-100"
               : "bg-primary-100",
@@ -38,11 +38,11 @@ const BoardItemMeta = ({ board }: Props) => {
             </AppText>
           </View>
           {board.currentStreak > 0 ? (
-            <View className="rounded-[10px] bg-[#FFF6DD] px-[6px] py-[2px]">
+            <View className="rounded-[10px] bg-secondary-20 px-[6px] py-[2px]">
               <AppText
                 variant="custom"
                 weight="semibold"
-                className="text-[9px] leading-[12px] text-[#C8920A]"
+                className="text-[9px] leading-[12px] text-secondary-50"
               >
                 🔥 연속 {board.currentStreak}일
               </AppText>

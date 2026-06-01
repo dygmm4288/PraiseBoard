@@ -67,7 +67,7 @@ const SettingInfo = () => {
         right={
           <AppText
             variant="custom"
-            className="text-[14px] leading-[20px] text-[#1C1B1F]"
+            className="text-[14px] leading-[20px] text-black"
           >
             whaledone26@gmail.com
           </AppText>
@@ -80,7 +80,7 @@ const SettingInfo = () => {
           <View
             className={[
               "rounded-[30px] px-[9px] py-[3px]",
-              needsUpdate ? "bg-[#FFE7E8]" : "bg-[#F0EFF2]",
+              needsUpdate ? "bg-danger-surface" : "bg-bgLightGray",
             ].join(" ")}
           >
             <AppText
@@ -88,7 +88,7 @@ const SettingInfo = () => {
               weight="semibold"
               className={[
                 "text-[12px] leading-[20px]",
-                needsUpdate || error ? "text-[#FA7074]" : "text-[#8E8E95]",
+                needsUpdate || error ? "text-jinoRed" : "text-labelGray",
               ].join(" ")}
             >
               {versionStatusLabel}

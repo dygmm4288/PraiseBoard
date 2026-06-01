@@ -1,3 +1,4 @@
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
@@ -45,7 +46,7 @@ const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
         </View>
         <LinearGradient
           pointerEvents="none"
-          colors={["rgba(255,255,255,0)", "rgba(255,255,255,0.88)", "#FFFFFF"]}
+          colors={["rgba(255,255,255,0)", "rgba(255,255,255,0.88)", COLOR.white]}
           locations={[0, 0.6, 1]}
           style={{
             position: "absolute",

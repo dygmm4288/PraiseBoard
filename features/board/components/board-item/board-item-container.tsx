@@ -14,7 +14,7 @@ const BoardItemContainer = ({ board, children }: Props) => {
     <View
       className={cn(
         "mb-[9px] rounded-[20px] px-[16px] py-[14px]",
-        isCompleted ? "border border-[#fbe5c7] bg-[#fffbf4]" : "bg-white",
+        isCompleted ? "border border-secondary-30 bg-secondary-10" : "bg-white",
       )}
       style={{
         opacity: isTodayDone ? 0.58 : 1,

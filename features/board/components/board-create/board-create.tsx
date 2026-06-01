@@ -1,3 +1,4 @@
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppButton, AppInput, AppText, SelectableOption } from "@/shared/ui";
 import { View } from "react-native";
 import { useCreateBoard } from "../../hooks/use-create-board";
@@ -44,7 +45,7 @@ const BoardCreate = ({ onCreated }: BoardCreateProps) => {
               value={formData.title}
               onChangeText={changeFormData("title")}
               placeholder="hint text"
-              placeholderTextColor="#8E8E95"
+              placeholderTextColor={COLOR.labelGray}
               className="h-[38px] min-h-[38px] rounded-[10px] px-[12px] py-[6px]"
               inputClassName="text-[14px] leading-[20px] text-gray-400"
             />
@@ -58,7 +59,7 @@ const BoardCreate = ({ onCreated }: BoardCreateProps) => {
               value={formData.emoji}
               onChangeText={changeFormData("emoji")}
               placeholder="emoji"
-              placeholderTextColor="#8E8E95"
+              placeholderTextColor={COLOR.labelGray}
               className="h-[38px] min-h-[38px] rounded-[10px] px-[12px] py-[6px]"
               inputClassName="text-[14px] leading-[20px] text-gray-400"
             />
@@ -107,7 +108,7 @@ const BoardCreate = ({ onCreated }: BoardCreateProps) => {
             value={formData.rewardMemo ?? ""}
             onChangeText={changeFormData("rewardMemo")}
             placeholder="hint text"
-            placeholderTextColor="#8E8E95"
+            placeholderTextColor={COLOR.labelGray}
             className="h-[38px] min-h-[38px] rounded-[10px] px-[12px] py-[6px]"
             inputClassName="text-[14px] leading-[20px] text-gray-400"
           />

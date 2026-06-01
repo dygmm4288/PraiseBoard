@@ -37,7 +37,7 @@ const SheetIconButton = ({
       accessibilityRole="button"
       className={[
         "h-[39px] w-[39px] items-center justify-center rounded-full",
-        variant === "primary" ? "bg-[#F1ECFC]" : "bg-[#F0EFF2]",
+        variant === "primary" ? "bg-primary-10" : "bg-bgLightGray",
       ].join(" ")}
       onPress={onPress}
     >
@@ -46,7 +46,7 @@ const SheetIconButton = ({
         weight="medium"
         className={[
           "text-[22px] leading-[24px]",
-          variant === "primary" ? "text-[#7F5ADD]" : "text-[#1C1B1F]",
+          variant === "primary" ? "text-primary-50" : "text-black",
         ].join(" ")}
       >
         {label}
@@ -70,7 +70,7 @@ const SheetHeader = ({
       <AppText
         variant="custom"
         weight="bold"
-        className="text-[18px] leading-[32px] text-[#1C1B1F]"
+        className="text-[18px] leading-[32px] text-black"
       >
         {title}
       </AppText>
@@ -92,7 +92,7 @@ const PickerCell = ({
     <Pressable
       className={[
         "h-[42px] w-full items-center justify-center rounded-[9px] px-[12px]",
-        selected ? "bg-[#F1ECFC]" : "bg-white",
+        selected ? "bg-primary-10" : "bg-white",
       ].join(" ")}
       onPress={onPress}
     >
@@ -101,7 +101,7 @@ const PickerCell = ({
         weight="medium"
         className={[
           "text-center text-[15px] leading-[25px]",
-          selected ? "text-[#7F5ADD]" : "text-[#BBBBBC]",
+          selected ? "text-primary-50" : "text-textGray",
         ].join(" ")}
       >
         {label}
@@ -189,13 +189,13 @@ const SettingsScreen = () => {
               <AppText
                 variant="custom"
                 weight="semibold"
-                className="mb-[6px] text-[12px] leading-[20px] text-[#8E8E95]"
+                className="mb-[6px] text-[12px] leading-[20px] text-labelGray"
               >
                 이름
               </AppText>
-              <View className="h-[42px] flex-row items-center rounded-[12px] border border-[#7F5ADD] px-[12px]">
+              <View className="h-[42px] flex-row items-center rounded-[12px] border border-primary-50 px-[12px]">
                 <TextInput
-                  className="min-w-0 flex-1 p-0 font-pretendard text-[14px] leading-[20px] text-[#1C1B1F]"
+                  className="min-w-0 flex-1 p-0 font-pretendard text-[14px] leading-[20px] text-black"
                   value={draftName}
                   maxLength={20}
                   editable={!isSavingName}
@@ -207,7 +207,7 @@ const SettingsScreen = () => {
                     className="h-[22px] w-[22px] items-center justify-center"
                     onPress={() => setDraftName("")}
                   >
-                    <AppText className="text-[18px] leading-[20px] text-[#8E8E95]">
+                    <AppText className="text-[18px] leading-[20px] text-labelGray">
                       ×
                     </AppText>
                   </Pressable>

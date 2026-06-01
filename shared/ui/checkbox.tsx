@@ -23,9 +23,9 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
       className={[
         "h-[34px] w-[34px] items-center justify-center rounded-[9px] border-[1.5px]",
         isCompleted
-          ? "border-[#FBE5C7] bg-[#FFF6DD]"
+          ? "border-secondary-30 bg-secondary-20"
           : isTodayDone
-          ? "border-[#BBA6EE] bg-[#F1ECFC]"
+          ? "border-primary-20 bg-primary-10"
           : disabled
           ? "border-gray-300 bg-gray-100"
           : [
@@ -39,9 +39,9 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
         className={[
           "text-[15px] leading-[15px]",
           isCompleted
-            ? "text-[#C8920A]"
+            ? "text-secondary-50"
             : isTodayDone
-            ? "text-[#7F5ADD]"
+            ? "text-primary-50"
             : disabled
             ? "text-gray-300"
             : isInteractiveHover

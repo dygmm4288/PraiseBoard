@@ -33,7 +33,7 @@ const SettingLink = ({
           <AppText
             variant="custom"
             weight="semibold"
-            className="text-[12px] leading-[20px] text-[#8E8E95]"
+            className="text-[12px] leading-[20px] text-labelGray"
           >
             {label}
           </AppText>
@@ -41,7 +41,7 @@ const SettingLink = ({
         {typeof resolvedValue === "string" ? (
           <AppText
             variant="custom"
-            className="text-[14px] leading-[20px] text-[#1C1B1F]"
+            className="text-[14px] leading-[20px] text-black"
             numberOfLines={1}
           >
             {resolvedValue}

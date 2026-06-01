@@ -1,3 +1,4 @@
+import { COLOR } from "@/shared/constants/colors.constant";
 import { PropsWithChildren, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
@@ -20,7 +21,7 @@ export function Collapsible({
           name='chevron.right'
           size={18}
           weight='medium'
-          color='#6b7280'
+          color={COLOR.labelGray}
           style={{ transform: [{ rotate: isOpen ? "90deg" : "0deg" }] }}
         />
 

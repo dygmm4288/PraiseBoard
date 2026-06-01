@@ -1,6 +1,7 @@
 import { images } from "@/assets/images";
 import type { WhaleMessage } from "@/services/whale-message";
 import { resolveWhaleMessage } from "@/services/whale-message";
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
@@ -51,7 +52,7 @@ const BoardWhaleMessage = ({
   return (
     <View className={cn("overflow-hidden rounded-[20px]", className)}>
       <LinearGradient
-        colors={["#C5B3FA", "#EBE6FF"]}
+        colors={[COLOR.whale.gradientStart, COLOR.whale.gradientEnd]}
         start={{ x: 0.5, y: 0 }}
         locations={[0, 0.9038]}
         end={{ x: 0.5, y: 1 }}
@@ -62,8 +63,8 @@ const BoardWhaleMessage = ({
           gap: 12,
         }}
       >
-        <View className="flex flex-row gap-[8px] pb-[12px] border-b border-b-[#C9BDF4]">
-          <View className="h-[33px] w-[33px] rounded-full bg-primary-200 flex items-center overflow-hidden">
+        <View className="flex flex-row gap-[8px] pb-[12px] border-b border-b-primary-15">
+          <View className="h-[33px] w-[33px] rounded-full bg-primary-20 flex items-center overflow-hidden">
             <Image
               className="w-[51px] h-[53px]"
               height={53}
@@ -72,13 +73,13 @@ const BoardWhaleMessage = ({
             />
           </View>
           <View className="flex-col gap-[3px]">
-            <AppText variant="button2" weight="bold" className="text-[#8775cc]">
+            <AppText variant="button2" weight="bold" className="text-primary-50">
               두잉
             </AppText>
             <AppText
               variant="button2"
               weight="regular"
-              className="text-[#8f7ed0]"
+              className="text-textLightPurple"
             >
               {formatLatestMessageLabel(latestMessageCreatedAt)}
             </AppText>
@@ -88,7 +89,7 @@ const BoardWhaleMessage = ({
           <AppText
             variant="caption1"
             weight="medium"
-            className="text-[#4b3c71] leading-[25px]"
+            className="text-textDarkPurple leading-[25px]"
           >
             {whaleMessage.body}
           </AppText>

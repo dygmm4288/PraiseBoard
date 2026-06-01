@@ -41,7 +41,7 @@ const ConfirmModalButton = ({
       disabled={disabled}
       className={cn(
         "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[9px] px-[12px]",
-        isConfirm ? "bg-[#7F5ADD]" : "bg-[#F1ECFC]",
+        isConfirm ? "bg-primary-50" : "bg-primary-10",
         disabled && "opacity-50",
         className,
       )}
@@ -52,7 +52,7 @@ const ConfirmModalButton = ({
         ellipsizeMode="tail"
         className={cn(
           "w-full text-center text-[15px] leading-[25px]",
-          isConfirm ? "text-white" : "text-[#BBA6EE]",
+          isConfirm ? "text-white" : "text-primary-20",
         )}
         weight={isConfirm ? "medium" : "regular"}
         variant="custom"

@@ -1,3 +1,4 @@
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppInput } from "@/shared/ui";
 import { useMemo } from "react";
 import { View } from "react-native";
@@ -27,7 +28,7 @@ const ChatInput = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={COLOR.labelGray}
       />
       <ChatSend onPress={onSend} disabled={disabled || sendDisabled} />
     </View>

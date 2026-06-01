@@ -1,3 +1,4 @@
+import { COLOR } from "@/shared/constants/colors.constant";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
@@ -6,7 +7,7 @@ type Props = PropsWithChildren<{
   className?: string;
 }>;
 
-const CARD_SHADOW_COLOR = "#4B3C71";
+const CARD_SHADOW_COLOR = COLOR.textDarkPurple;
 
 const StatsCard = ({ children, className }: Props) => {
   return (
