@@ -24,7 +24,10 @@ as $$
   select
     b.id,
     b.created_at,
-    b.completed_at,
+    case
+      when b.status = 'completed'::board_status then b.completed_at
+      else null
+    end as completed_at,
     b.title,
     b.emoji,
     b.target_count,

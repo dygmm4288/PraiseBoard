@@ -9,14 +9,27 @@ type Props = {
 const DAILY_STICKER_LIMIT = 3;
 const MAX_BOARD_D_DAY = 99;
 
-const getBoardDDay = (createdAt: string | null) => {
-  if (!createdAt) return "0";
+const formatShortDate = (dateValue: string | null) => {
+  if (!dateValue) return null;
 
-  const createdDate = new Date(createdAt);
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return null;
 
-  if (Number.isNaN(createdDate.getTime())) return "0";
+  const year = String(date.getFullYear()).slice(2);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
-  const diffDays = getCalendarDateDiff(createdDate, new Date());
+  return `${year}.${month}.${day}`;
+};
+
+const getBoardDDay = (baseDateValue: string | null) => {
+  if (!baseDateValue) return "0";
+
+  const baseDate = new Date(baseDateValue);
+
+  if (Number.isNaN(baseDate.getTime())) return "0";
+
+  const diffDays = getCalendarDateDiff(baseDate, new Date());
   const safeDiffDays = Math.max(0, Math.min(diffDays, MAX_BOARD_D_DAY));
 
   return diffDays > MAX_BOARD_D_DAY ? `${MAX_BOARD_D_DAY}+` : `${safeDiffDays}`;
@@ -32,7 +45,15 @@ export const useBoardItemUi = ({ board }: Props) => {
     board.targetCount,
     board.currentCount,
   );
-  const boardDDay = getBoardDDay(board.createdAt);
+  const boardDDay = getBoardDDay(
+    isCompleted ? board.completedAt : board.createdAt,
+  );
+  const startedAtLabel = formatShortDate(board.createdAt);
+  const completedAtLabel = formatShortDate(board.completedAt);
+  const completedPeriodLabel =
+    isCompleted && startedAtLabel && completedAtLabel
+      ? `${startedAtLabel} ~ ${completedAtLabel}`
+      : null;
 
   return {
     title: board.title,
@@ -48,6 +69,7 @@ export const useBoardItemUi = ({ board }: Props) => {
     opacity: isCompleted ? 0.6 : isTodayDone ? 0.58 : 1,
     boardDisabled,
     boardDDay,
+    completedPeriodLabel,
   };
 };
 

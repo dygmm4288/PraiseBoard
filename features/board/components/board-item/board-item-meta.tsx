@@ -9,8 +9,14 @@ type Props = {
 };
 
 const BoardItemMeta = ({ board }: Props) => {
-  const { boardDisabled, rewardText, isCompleted, isTodayDone, boardDDay } =
-    useBoardItemUi({ board });
+  const {
+    boardDisabled,
+    rewardText,
+    isCompleted,
+    isTodayDone,
+    boardDDay,
+    completedPeriodLabel,
+  } = useBoardItemUi({ board });
 
   return (
     <View className="min-w-0 flex-1 flex-row items-center gap-[11px]">
@@ -32,11 +38,25 @@ const BoardItemMeta = ({ board }: Props) => {
       <View className="min-w-0 flex-1">
         {/* board badges */}
         <View className="mt-[6px] flex-row gap-[5px]">
-          <View className="rounded-full bg-gray-100 px-[7px] py-[2px]">
-            <AppText variant="caption2" className="text-[9.5px] text-gray-400">
-              D+{boardDDay}
-            </AppText>
-          </View>
+          {isCompleted && completedPeriodLabel ? (
+            <View className="px-[7px] py-[2px]">
+              <AppText
+                variant="caption2"
+                className="text-[9.5px] text-textGray"
+              >
+                {completedPeriodLabel}
+              </AppText>
+            </View>
+          ) : (
+            <View className="rounded-full bg-gray-100 px-[7px] py-[2px]">
+              <AppText
+                variant="caption2"
+                className="text-[9.5px] text-gray-400"
+              >
+                D+{boardDDay}
+              </AppText>
+            </View>
+          )}
           {board.currentStreak > 0 ? (
             <View className="rounded-[10px] bg-secondary-20 px-[6px] py-[2px]">
               <AppText
@@ -55,10 +75,7 @@ const BoardItemMeta = ({ board }: Props) => {
           numberOfLines={1}
           variant="body3"
           weight="semibold"
-          className={cn(
-            boardDisabled ? "text-gray-400" : "text-primary-800",
-            isCompleted && "line-through",
-          )}
+          className={cn(isCompleted? 'text-black' :boardDisabled ? "text-gray-400" : "text-black")}
         >
           {board.title}
         </AppText>

@@ -16,5 +16,7 @@ create table boards (
     reward_memo text null default null,
     
     reward_enabled boolean not null default false,
-    status board_status not null default 'active'
+    status board_status not null default 'active',
+    constraint boards_completed_at_requires_completed_status
+        check (completed_at is null or status = 'completed')
 );

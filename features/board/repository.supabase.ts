@@ -34,7 +34,7 @@ const toBoardRecord = (row: {
 }): BoardRecord => ({
   id: row.id,
   createdAt: row.created_at ?? null,
-  completedAt: row.completed_at ?? null,
+  completedAt: row.status === "completed" ? (row.completed_at ?? null) : null,
   title: row.title,
   emoji: row.emoji ?? "🐋",
   targetCount: row.target_count,
