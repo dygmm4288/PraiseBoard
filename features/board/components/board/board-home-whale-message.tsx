@@ -4,7 +4,7 @@ import {
 } from "@/services/whale-message";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { useMemo } from "react";
-import { useBoardsQuery } from "../../queries/use-board-query";
+import { useHomeBoardsQuery } from "../../queries/use-board-query";
 import { useBoardTodayAchievementQuery } from "../../queries/use-board-today-query";
 import BoardWhaleMessage from "./board-whale-message";
 
@@ -23,7 +23,7 @@ const getLatestCreatedAt = (
 const BoardHomeWhaleMessage = ({ className }: BoardHomeWhaleMessageProps) => {
   const { profileId } = useUser();
   const { nickname, profile } = useCurrentProfile(profileId);
-  const { data: boards } = useBoardsQuery(profileId);
+  const { data: boards } = useHomeBoardsQuery(profileId);
   const { data: todayAchievement } = useBoardTodayAchievementQuery(profileId);
   const { data: latestMessageLog } = useLatestWhaleMessageLogQuery(profileId);
 

@@ -4,6 +4,8 @@ export const boardKeys = {
   all: ["board"] as const,
   lists: (profileId: string, params?: BoardListParams) =>
     [...boardKeys.all, "list", profileId, params] as const,
+  homeLists: (profileId: string) =>
+    [...boardKeys.all, "home-list", profileId] as const,
   activeLists: (profileId: string, params?: BoardListParams) =>
     [boardKeys.lists(profileId, params), "active-list"] as const,
   completedLists: (profileId: string, params?: BoardListParams) =>

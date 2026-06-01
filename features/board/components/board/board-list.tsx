@@ -1,7 +1,7 @@
 import { useUser } from "@/services/user";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
-import { useBoardsQuery } from "../../queries/use-board-query";
+import { useHomeBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
 
@@ -11,7 +11,7 @@ type BoardListProps = {
 
 const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
   const { profileId } = useUser();
-  const { isLoading, data, error } = useBoardsQuery(profileId);
+  const { isLoading, data, error } = useHomeBoardsQuery(profileId);
 
   if (!profileId) {
     return <BoardListStatus message="프로필 정보를 확인할 수 없어요." />;

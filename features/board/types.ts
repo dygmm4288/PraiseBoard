@@ -84,6 +84,7 @@ export type CollectStickerError = Error & {
 export type IBoardRepository = {
   createBoard: (input: BoardCreatePayload) => Promise<BoardRecord>;
   getBoards: (params: BoardListParams) => Promise<BoardListResult | null>;
+  getHomeBoards: () => Promise<BoardListResult | null>;
   getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
   collectSticker: (
     boardId: string,
@@ -98,6 +99,7 @@ export type IBoardService = {
     payload: BoardSetupPayload,
   ) => Promise<BoardRecord>;
   getBoards: (params: BoardListParams) => Promise<BoardListResult | null>;
+  getHomeBoards: () => Promise<BoardListResult | null>;
   getActiveBoards: () => Promise<BoardListResult | null>;
   getCompletedBoards: () => Promise<BoardListResult | null>;
   getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;

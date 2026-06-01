@@ -1,5 +1,10 @@
 import { supabase } from "@/shared/lib/supabase";
 import {
+  ensureSupabaseData,
+  throwLoggedSupabaseError,
+} from "@/shared/lib/supabase-error";
+import { getTodayRange } from "@/shared/utils/date";
+import {
   BoardRecord,
   BoardStatus,
   BoardTodayAchievement,
@@ -9,20 +14,6 @@ import {
 
 const BOARD_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, status, created_at, completed_at";
-
-const getTodayRange = () => {
-  const now = new Date();
-  const start = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), -9, 0, 0),
-  );
-  const end = new Date(start);
-  end.setUTCDate(end.getUTCDate() + 1);
-
-  return {
-    start,
-    end,
-  };
-};
 
 const toBoardRecord = (row: {
   id: string;
@@ -80,9 +71,30 @@ export const boardRepository: IBoardRepository = {
       .select(BOARD_FIELDS)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "createBoard",
+        params: {
+          profileId,
+          title,
+          emoji,
+          targetCount,
+          limitCount,
+          hasRewardMemo: Boolean(rewardMemo),
+        },
+      });
+    }
+    const boardData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "createBoard.emptyData",
+      params: {
+        profileId,
+        title,
+      },
+    });
 
-    return toBoardRecord(data);
+    return toBoardRecord(boardData);
   },
 
   async collectSticker(boardId, source) {
@@ -91,7 +103,16 @@ export const boardRepository: IBoardRepository = {
       p_source: source,
     });
 
-    if (error) throw error;
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "collectSticker.rpc.collect_sticker",
+        params: {
+          boardId,
+          source,
+        },
+      });
+    }
 
     const collectResult = result as CollectStickerRpcResult | null;
 
@@ -112,9 +133,24 @@ export const boardRepository: IBoardRepository = {
       .rpc("get_boards_with_stats")
       .eq("id", boardId)
       .single();
-    if (boardError) throw boardError;
+    if (boardError) {
+      throwLoggedSupabaseError(boardError, {
+        domain: "board",
+        operation: "collectSticker.rpc.get_boards_with_stats",
+        params: {
+          boardId,
+        },
+      });
+    }
+    const boardData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "collectSticker.rpc.get_boards_with_stats.emptyData",
+      params: {
+        boardId,
+      },
+    });
 
-    return toBoardRecord(data);
+    return toBoardRecord(boardData);
   },
 
   async getBoards(params) {
@@ -134,13 +170,66 @@ export const boardRepository: IBoardRepository = {
 
     const { data, error, count } = await res;
 
-    if (error) throw error;
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "getBoards",
+        params,
+      });
+    }
+    const boardsData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "getBoards.emptyData",
+      params,
+    });
 
     return {
-      items: data.map(toBoardRecord),
+      items: boardsData.map(toBoardRecord),
       pageInfo: {
         page: params.page,
         limit: params.limit,
+        totalCount: count ?? undefined,
+      },
+    };
+  },
+
+  async getHomeBoards() {
+    const { start, end } = getTodayRange();
+    const res = supabase.rpc("get_boards_with_stats", undefined, {
+      count: "exact",
+    });
+
+    res.or(
+      [
+        "status.eq.active",
+        `and(status.eq.completed,completed_at.gte.${start.toISOString()},completed_at.lt.${end.toISOString()})`,
+      ].join(","),
+    );
+
+    const { data, error, count } = await res;
+
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "getHomeBoards",
+        params: {
+          start: start.toISOString(),
+          end: end.toISOString(),
+        },
+      });
+    }
+    const boardsData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "getHomeBoards.emptyData",
+      params: {
+        start: start.toISOString(),
+        end: end.toISOString(),
+      },
+    });
+
+    return {
+      items: boardsData.map(toBoardRecord),
+      pageInfo: {
         totalCount: count ?? undefined,
       },
     };
@@ -156,7 +245,17 @@ export const boardRepository: IBoardRepository = {
       .gte("created_at", start.toISOString())
       .lt("created_at", end.toISOString());
 
-    if (error) throw error;
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "getTodayAchievement",
+        params: {
+          profileId,
+          start: start.toISOString(),
+          end: end.toISOString(),
+        },
+      });
+    }
 
     return {
       count: count ?? 0,

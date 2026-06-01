@@ -22,6 +22,26 @@ export const useBoardsQuery = (profileId: string | null) => {
   });
 };
 
+export const useHomeBoardsQuery = (profileId: string | null) => {
+  return useQuery({
+    queryKey: profileId ? boardKeys.homeLists(profileId) : ["board", "idle"],
+
+    queryFn: async () => {
+      if (!profileId) throw new Error("profileId required");
+
+      return board.getHomeBoards();
+    },
+
+    enabled: !!profileId,
+
+    staleTime: 1000 * 60 * 5,
+
+    select: (data) => {
+      return data?.items;
+    },
+  });
+};
+
 export const useActiveBoardQuery = (profileId: string | null) => {
   return useQuery({
     queryKey: profileId ? boardKeys.activeLists(profileId) : ["board", "idle"],

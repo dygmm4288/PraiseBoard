@@ -35,9 +35,24 @@ export const getCalendarDateDiff = (source: Date, target: Date) => {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 };
 
+export const getTodayRange = () => {
+  const now = new Date();
+  const start = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), -9, 0, 0),
+  );
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+
+  return {
+    start,
+    end,
+  };
+};
+
 export default {
   getLastDate,
   extractDate,
   getDateDiff,
   getCalendarDateDiff,
+  getTodayRange,
 };

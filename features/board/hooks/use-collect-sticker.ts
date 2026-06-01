@@ -11,6 +11,20 @@ import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardKeys } from "../queries/board.query.key";
 
+const replaceBoardInList = (
+  boardList: BoardListResult | null | undefined,
+  updatedBoard: BoardListResult["items"][number],
+) => {
+  if (!boardList) return boardList;
+
+  return {
+    ...boardList,
+    items: boardList.items.map((board) =>
+      board.id === updatedBoard.id ? updatedBoard : board,
+    ),
+  };
+};
+
 export const useCollectSticker = () => {
   const queryClient = useQueryClient();
   const { profileId } = useUser();
@@ -27,25 +41,41 @@ export const useCollectSticker = () => {
     },
     onSuccess: async (updatedBoard) => {
       if (profileId) {
-        let nextBoards = queryClient.getQueryData<BoardListResult | null>(
-          boardKeys.lists(profileId),
-        )?.items;
-
-        queryClient.setQueryData<BoardListResult | null>(
-          boardKeys.lists(profileId),
-          (boardList) => {
-            if (!boardList) return boardList;
-
-            nextBoards = boardList.items.map((board) =>
-              board.id === updatedBoard.id ? updatedBoard : board,
-            );
-
-            return {
-              ...boardList,
-              items: nextBoards,
-            };
-          },
+        const currentHomeBoardList =
+          queryClient.getQueryData<BoardListResult | null>(
+            boardKeys.homeLists(profileId),
+          );
+        const currentBoardList =
+          queryClient.getQueryData<BoardListResult | null>(
+            boardKeys.lists(profileId),
+          );
+        const nextHomeBoardList = replaceBoardInList(
+          currentHomeBoardList,
+          updatedBoard,
         );
+        const nextBoardList = replaceBoardInList(
+          currentBoardList,
+          updatedBoard,
+        );
+        const nextBoards =
+          nextHomeBoardList?.items ??
+          nextBoardList?.items ??
+          currentHomeBoardList?.items ??
+          currentBoardList?.items;
+
+        if (nextHomeBoardList) {
+          queryClient.setQueryData<BoardListResult | null>(
+            boardKeys.homeLists(profileId),
+            nextHomeBoardList,
+          );
+        }
+
+        if (nextBoardList) {
+          queryClient.setQueryData<BoardListResult | null>(
+            boardKeys.lists(profileId),
+            nextBoardList,
+          );
+        }
 
         const currentTodayAchievement =
           queryClient.getQueryData<BoardTodayAchievement>(
