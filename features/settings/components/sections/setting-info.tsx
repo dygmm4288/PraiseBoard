@@ -95,8 +95,7 @@ const SettingInfo = () => {
             </AppText>
           </View>
         }
-        showChevron={needsUpdate}
-        onLink={needsUpdate ? handleOpenStore : undefined}
+        onLink={handleOpenStore}
       />
     </SettingSectionLayout>
   );
