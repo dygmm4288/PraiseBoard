@@ -97,6 +97,60 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(boardData);
   },
 
+  async updateBoard({ id, title, emoji, targetCount, rewardMemo, limitCount }) {
+    const { data, error } = await supabase
+      .from("boards")
+      .update({
+        title,
+        emoji,
+        target_count: targetCount,
+        reward_memo: rewardMemo,
+        limit_count: limitCount,
+      })
+      .eq("id", id)
+      .select(BOARD_FIELDS)
+      .single();
+
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "updateBoard",
+        params: {
+          id,
+          title,
+          emoji,
+          targetCount,
+          limitCount,
+          hasRewardMemo: Boolean(rewardMemo),
+        },
+      });
+    }
+    const boardData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "updateBoard.emptyData",
+      params: {
+        id,
+        title,
+      },
+    });
+
+    return toBoardRecord(boardData);
+  },
+
+  async deleteBoard(boardId) {
+    const { error } = await supabase.from("boards").delete().eq("id", boardId);
+
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "deleteBoard",
+        params: {
+          boardId,
+        },
+      });
+    }
+  },
+
   async collectSticker(boardId, source) {
     const { data: result, error } = await supabase.rpc("collect_sticker", {
       p_board_id: boardId,

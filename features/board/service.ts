@@ -7,6 +7,14 @@ export const board: IBoardService = {
     return boardRepository.createBoard(payload);
   },
 
+  async updateBoard(payload) {
+    return boardRepository.updateBoard(payload);
+  },
+
+  async deleteBoard(boardId) {
+    return boardRepository.deleteBoard(boardId);
+  },
+
   async createBoardFromSetup(profileId, payload: BoardSetupPayload) {
     return boardRepository.createBoard({
       profileId,

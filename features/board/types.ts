@@ -1,4 +1,8 @@
-import { BoardCreatePayload, BoardSetupPayload } from "@/features/board/schema";
+import {
+  BoardCreatePayload,
+  BoardSetupPayload,
+  BoardUpdatePayload,
+} from "@/features/board/schema";
 import { Database } from "@/shared/types/supabase.types";
 
 export type BoardStatus = Database["public"]["Enums"]["board_status"];
@@ -83,6 +87,8 @@ export type CollectStickerError = Error & {
 
 export type IBoardRepository = {
   createBoard: (input: BoardCreatePayload) => Promise<BoardRecord>;
+  updateBoard: (input: BoardUpdatePayload) => Promise<BoardRecord>;
+  deleteBoard: (boardId: string) => Promise<void>;
   getBoards: (params: BoardListParams) => Promise<BoardListResult | null>;
   getHomeBoards: () => Promise<BoardListResult | null>;
   getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
@@ -94,6 +100,8 @@ export type IBoardRepository = {
 
 export type IBoardService = {
   createBoard: (payload: BoardCreatePayload) => Promise<BoardRecord>;
+  updateBoard: (payload: BoardUpdatePayload) => Promise<BoardRecord>;
+  deleteBoard: (boardId: string) => Promise<void>;
   createBoardFromSetup: (
     profileId: string,
     payload: BoardSetupPayload,

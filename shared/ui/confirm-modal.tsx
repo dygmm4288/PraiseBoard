@@ -12,6 +12,7 @@ import { AppText } from "./text";
 type ConfirmModalButtonProps = Omit<PressableProps, "children"> & {
   label: string;
   variant: "cancel" | "confirm";
+  danger?: boolean;
 };
 
 export type ConfirmModalProps = {
@@ -24,11 +25,13 @@ export type ConfirmModalProps = {
   onConfirm: () => void;
   onRequestClose?: ModalProps["onRequestClose"];
   confirmDisabled?: boolean;
+  confirmVariant?: "primary" | "danger";
 };
 
 const ConfirmModalButton = ({
   label,
   variant,
+  danger = false,
   disabled,
   className,
   ...props
@@ -41,7 +44,7 @@ const ConfirmModalButton = ({
       disabled={disabled}
       className={cn(
         "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[9px] px-[12px]",
-        isConfirm ? "bg-primary-50" : "bg-primary-10",
+        isConfirm ? (danger ? "bg-red" : "bg-primary-50") : "bg-bgLightGray",
         disabled && "opacity-50",
         className,
       )}
@@ -52,7 +55,7 @@ const ConfirmModalButton = ({
         ellipsizeMode="tail"
         className={cn(
           "w-full text-center text-[15px] leading-[25px]",
-          isConfirm ? "text-white" : "text-primary-20",
+          isConfirm ? "text-white" : "text-labelGray",
         )}
         weight={isConfirm ? "medium" : "regular"}
         variant="custom"
@@ -73,6 +76,7 @@ export const ConfirmModal = ({
   onConfirm,
   onRequestClose,
   confirmDisabled = false,
+  confirmVariant = "primary",
 }: ConfirmModalProps) => {
   return (
     <Modal
@@ -113,6 +117,7 @@ export const ConfirmModal = ({
             <ConfirmModalButton
               label={confirmText}
               variant="confirm"
+              danger={confirmVariant === "danger"}
               disabled={confirmDisabled}
               onPress={onConfirm}
             />

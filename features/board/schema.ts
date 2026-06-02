@@ -118,6 +118,22 @@ export const normalizeBoardCreatePayload = (
   };
 };
 
+export const normalizeBoardUpdatePayload = (
+  values: BoardCreateFormValues,
+  boardId: string,
+): BoardUpdatePayload => {
+  const parsed = boardCreateDraftSchema.parse(values);
+
+  return {
+    id: boardId,
+    title: parsed.title,
+    emoji: parsed.emoji,
+    targetCount: parsed.targetCount,
+    rewardMemo: parsed.rewardMemo ? parsed.rewardMemo : null,
+    limitCount: parsed.limitCount,
+  };
+};
+
 export type BoardSetupFormValues = z.input<typeof boardSetupDraftSchema>;
 export type BoardCreateFormValues = z.input<typeof boardCreateDraftSchema>;
 
@@ -141,6 +157,15 @@ export type BoardCreatePayload = {
   rewardMemo: string | null | undefined;
   limitCount: number;
   profileId: string;
+};
+
+export type BoardUpdatePayload = {
+  id: string;
+  title: string;
+  emoji: string;
+  targetCount: number;
+  rewardMemo: string | null | undefined;
+  limitCount: number;
 };
 
 export const BOARD_SETUP_DEFAULT_VALUES: BoardSetupFormValues = {
