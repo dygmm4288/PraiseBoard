@@ -2,9 +2,16 @@ import { Icon } from "@/assets/icons";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
-import { getLastDate } from "@/shared/utils/date";
-import { useMemo, useState } from "react";
+import {
+  addMonths,
+  formatDateKey,
+  getLastDate,
+  getMonthDate,
+} from "@/shared/utils/date";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
+import { useTopLevelSheet } from "../bottom-sheet/top-level-sheet-provider";
+import CalendarMonthPicker from "./calendar-month-picker";
 
 export type CalendarStickerCount = {
   date: string;
@@ -26,20 +33,6 @@ type CalendarProps = {
 
 const WEEK_DAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
 const CALENDAR_SHADOW_COLOR = COLOR.primary[900];
-
-const getMonthDate = (date: Date) =>
-  new Date(date.getFullYear(), date.getMonth(), 1);
-
-const addMonths = (date: Date, amount: number) =>
-  new Date(date.getFullYear(), date.getMonth() + amount, 1);
-
-const formatDateKey = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
 
 const getCalendarCells = (date: Date): CalendarCell[] => {
   const monthDate = getMonthDate(date);
@@ -84,6 +77,35 @@ const chunkWeeks = (cells: CalendarCell[]) =>
     cells.slice(weekIndex * 7, weekIndex * 7 + 7),
   );
 
+type CalendarMonthPickerSheetProps = {
+  currentDate: Date;
+  maxDate: Date;
+  onClose: () => void;
+  onSelectMonth: (date: Date) => void;
+};
+
+const CalendarMonthPickerSheet = ({
+  currentDate,
+  maxDate,
+  onClose,
+  onSelectMonth,
+}: CalendarMonthPickerSheetProps) => {
+  const [year, setYear] = useState(currentDate.getFullYear());
+
+  return (
+    <CalendarMonthPicker
+      year={year}
+      selectedDate={currentDate}
+      maxDate={maxDate}
+      onChangeYear={setYear}
+      onSelectMonth={(nextDate) => {
+        onSelectMonth(nextDate);
+        onClose();
+      }}
+    />
+  );
+};
+
 const Calendar = ({
   className,
   defaultDate = new Date(),
@@ -100,6 +122,32 @@ const Calendar = ({
       new Map(stickerCounts.map((item) => [item.date, item.count] as const)),
     [stickerCounts],
   );
+
+  const { dismissTopLevelSheet, presentTopLevelSheet } = useTopLevelSheet();
+
+  const changeMonth = useCallback(
+    (nextDate: Date) => {
+      const nextMonthDate = getMonthDate(nextDate);
+
+      setDate(nextMonthDate);
+      onMonthChange?.(nextMonthDate);
+    },
+    [onMonthChange],
+  );
+
+  const openMonthPicker = useCallback(() => {
+    presentTopLevelSheet({
+      snapPoints: ["50%"],
+      children: (
+        <CalendarMonthPickerSheet
+          currentDate={date}
+          maxDate={new Date()}
+          onClose={dismissTopLevelSheet}
+          onSelectMonth={changeMonth}
+        />
+      ),
+    });
+  }, [changeMonth, date, dismissTopLevelSheet, presentTopLevelSheet]);
 
   return (
     <View
@@ -121,37 +169,31 @@ const Calendar = ({
           accessibilityLabel="이전 달"
           className="h-[24px] w-[24px] items-start justify-center"
           hitSlop={10}
-          onPress={() =>
-            setDate((currentDate) => {
-              const nextDate = addMonths(currentDate, -1);
-              onMonthChange?.(nextDate);
-              return nextDate;
-            })
-          }
+          onPress={() => changeMonth(addMonths(date, -1))}
         >
           <Icon name="ChevronLeft" size={18} />
         </Pressable>
 
-        <AppText
-          variant="caption1"
-          weight="semibold"
-          className="text-gray-900 underline"
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="날짜 선택"
+          onPress={openMonthPicker}
         >
-          {monthLabel}
-        </AppText>
+          <AppText
+            variant="caption1"
+            weight="semibold"
+            className="text-gray-900"
+          >
+            {monthLabel}
+          </AppText>
+        </Pressable>
 
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="다음 달"
           className="h-[24px] w-[24px] items-end justify-center"
           hitSlop={10}
-          onPress={() =>
-            setDate((currentDate) => {
-              const nextDate = addMonths(currentDate, 1);
-              onMonthChange?.(nextDate);
-              return nextDate;
-            })
-          }
+          onPress={() => changeMonth(addMonths(date, 1))}
         >
           <Icon name="ChevronRightSmall" width={6} height={11} />
         </Pressable>

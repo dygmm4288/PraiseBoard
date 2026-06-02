@@ -49,10 +49,27 @@ export const getTodayRange = () => {
   };
 };
 
+export const getMonthDate = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), 1);
+
+export const addMonths = (date: Date, amount: number) =>
+  new Date(date.getFullYear(), date.getMonth() + amount, 1);
+
+export const formatDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 export default {
   getLastDate,
   extractDate,
   getDateDiff,
   getCalendarDateDiff,
   getTodayRange,
+  getMonthDate,
+  addMonths,
+  formatDateKey,
 };
