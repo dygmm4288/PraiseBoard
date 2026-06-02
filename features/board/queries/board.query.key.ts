@@ -7,9 +7,9 @@ export const boardKeys = {
   homeLists: (profileId: string) =>
     [...boardKeys.all, "home-list", profileId] as const,
   activeLists: (profileId: string, params?: BoardListParams) =>
-    [boardKeys.lists(profileId, params), "active-list"] as const,
+    [...boardKeys.all, "list", profileId, "active", params] as const,
   completedLists: (profileId: string, params?: BoardListParams) =>
-    [boardKeys.lists(profileId, params), "completed-list"] as const,
+    [...boardKeys.all, "list", profileId, "completed", params] as const,
   detail: (boardId: string) => [...boardKeys.all, "detail", boardId] as const,
   todayAchievement: (profileId: string) =>
     [...boardKeys.all, "today-achievement", profileId] as const,
