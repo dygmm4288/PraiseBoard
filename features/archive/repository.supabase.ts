@@ -1,42 +1,17 @@
 import { supabase } from "@/shared/lib/supabase";
+import { getMonthRange } from "@/shared/utils/month";
 import {
-  ArchiveDailyStickerCount,
-  ArchiveDetail,
-  ArchiveDetailRequest,
-  IArchiveRepository,
-} from "./types";
+  ArchiveBoardStatsRow,
+  ArchiveBoardStreakResult,
+  ArchiveStickerDailyRow,
+  resolveArchiveStreak,
+  toArchiveDailyStickerCounts,
+  toArchiveDetail,
+} from "./mapper";
+import { ArchiveDetail, ArchiveDetailRequest, IArchiveRepository } from "./types";
 
 const BOARD_DETAIL_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, created_at";
-
-type BoardStatsRow = {
-  id: string;
-  current_streak?: number | null;
-  max_streak?: number | null;
-  today_sticker_count?: number | null;
-  today_success?: boolean | null;
-};
-
-type BoardStreakResult = {
-  current_streak?: number;
-  max_streak?: number;
-};
-
-const getMonthRange = (month: string) => {
-  const [year, monthIndex] = month.split("-").map(Number);
-
-  if (!year || !monthIndex) {
-    throw new Error("month must be formatted as YYYY-MM");
-  }
-
-  const start = new Date(Date.UTC(year, monthIndex - 1, 1));
-  const end = new Date(Date.UTC(year, monthIndex, 1));
-
-  return {
-    startDate: start.toISOString().slice(0, 10),
-    endDate: end.toISOString().slice(0, 10),
-  };
-};
 
 const getSelectedDate = (month: string) => {
   const now = new Date();
@@ -50,20 +25,6 @@ const getSelectedDate = (month: string) => {
 
   return `${month}-01`;
 };
-
-const getProgressPercent = (currentCount: number, targetCount: number) => {
-  if (targetCount <= 0) return 0;
-  return Math.min(100, Math.round((currentCount / targetCount) * 100));
-};
-
-const resolveStreak = (
-  stats: BoardStatsRow | null,
-  streakResult: BoardStreakResult | null,
-) => ({
-  currentStreak:
-    streakResult?.current_streak ?? stats?.current_streak ?? 0,
-  maxStreak: streakResult?.max_streak ?? stats?.max_streak ?? 0,
-});
 
 export const archiveRepository: IArchiveRepository = {
   async getDetail({
@@ -96,46 +57,21 @@ export const archiveRepository: IArchiveRepository = {
     if (dailyError) throw dailyError;
     if (streakError) throw streakError;
 
-    const dailyStickerCounts: ArchiveDailyStickerCount[] = (dailyRows ?? []).map(
-      (row) => ({
-        date: row.d,
-        count: row.count,
-      }),
+    const dailyStickerCounts = toArchiveDailyStickerCounts(
+      (dailyRows ?? []) as ArchiveStickerDailyRow[],
     );
-    const selectedDayCount =
-      dailyStickerCounts.find((item) => item.date === selectedDate)?.count ?? 0;
-    const stats = statsRow as BoardStatsRow | null;
-    const streak = resolveStreak(stats, streakResult as BoardStreakResult | null);
+    const stats = statsRow as ArchiveBoardStatsRow | null;
+    const streak = resolveArchiveStreak(
+      stats,
+      streakResult as ArchiveBoardStreakResult | null,
+    );
 
-    return {
-      board: {
-        id: boardRow.id,
-        title: boardRow.title,
-        emoji: boardRow.emoji ?? "",
-        rewardMemo: boardRow.reward_memo,
-        targetCount: boardRow.target_count,
-        limitCount: boardRow.limit_count,
-        currentCount: boardRow.current_count,
-        progressPercent: getProgressPercent(
-          boardRow.current_count,
-          boardRow.target_count,
-        ),
-        startedAt: boardRow.created_at,
-      },
-      calendar: {
-        month,
-        dailyStickerCounts,
-      },
-      selectedDay: {
-        date: selectedDate,
-        stickerCount: selectedDayCount,
-        completed: selectedDayCount >= boardRow.limit_count,
-      },
+    return toArchiveDetail({
+      boardRow,
+      month,
+      selectedDate,
+      dailyStickerCounts,
       streak,
-      progressGrid: {
-        totalCount: boardRow.target_count,
-        completedCount: boardRow.current_count,
-      },
-    };
+    });
   },
 };

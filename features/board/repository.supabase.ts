@@ -6,48 +6,14 @@ import {
 import { getTodayRange } from "@/shared/utils/date";
 import {
   BoardRecord,
-  BoardStatus,
   BoardTodayAchievement,
   CollectStickerRpcResult,
   IBoardRepository,
 } from "./types";
+import { toBoardRecord } from "./mapper";
 
 const BOARD_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, status, created_at, completed_at";
-
-const toBoardRecord = (row: {
-  id: string;
-  title: string;
-  emoji?: string | null;
-  target_count: number;
-  limit_count?: number;
-  current_count: number;
-  today_sticker_count?: number;
-  latest_sticker_collected_at?: string | null;
-  current_streak?: number;
-  max_streak?: number;
-  today_success?: boolean;
-  reward_memo: string | null;
-  status: BoardStatus;
-  created_at?: string | null;
-  completed_at?: string | null;
-}): BoardRecord => ({
-  id: row.id,
-  createdAt: row.created_at ?? null,
-  completedAt: row.status === "completed" ? (row.completed_at ?? null) : null,
-  title: row.title,
-  emoji: row.emoji ?? "🐋",
-  targetCount: row.target_count,
-  limitCount: row.limit_count ?? 10,
-  currentCount: row.current_count,
-  todayStickerCount: row.today_sticker_count ?? 0,
-  latestStickerCollectedAt: row.latest_sticker_collected_at || null,
-  currentStreak: row.current_streak ?? 0,
-  maxStreak: row.max_streak ?? 0,
-  todaySuccess: row.today_success ?? false,
-  rewardMemo: row.reward_memo,
-  status: row.status,
-});
 
 export const boardRepository: IBoardRepository = {
   async createBoard({
