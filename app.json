@@ -13,6 +13,7 @@
     },
     "android": {
       "softwareKeyboardLayoutMode": "resize",
+      "package": "com.whaledone.whaledone",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -54,6 +55,7 @@
       "eas": {
         "projectId": "c13a8f3b-ac66-4238-b6aa-1aa85d1e3624"
       }
-    }
+    },
+    "owner": "easyno"
   }
 }
