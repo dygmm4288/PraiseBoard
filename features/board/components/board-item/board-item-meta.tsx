@@ -25,7 +25,7 @@ const BoardItemMeta = ({ board }: Props) => {
         className={cn(
           "h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px]",
           isCompleted
-            ? "bg-primary-10"
+            ? "bg-secondary-20"
             : isTodayDone
               ? "bg-gray-100"
               : "bg-primary-100",
