@@ -115,7 +115,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
   return (
     <DetailCard className="px-[20px] py-[16px]">
       <View className="flex-row items-center gap-[12px] border-b border-line pb-[16px]">
-        <View className="h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px] bg-primary-25">
+        <View className="h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px] bg-primary-10">
           <AppText className="text-[20px] leading-[24px]">
             {board?.emoji ?? "🌱"}
           </AppText>
@@ -128,7 +128,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
             className="text-gray-900"
             numberOfLines={1}
           >
-            #{board?.title ?? "{타이틀}"}
+            {board?.title}
           </AppText>
           <View className="flex-row items-center gap-[3px]">
             <AppText variant="caption2" className="text-gray-500">
@@ -140,7 +140,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
               className="text-gray-500"
               numberOfLines={1}
             >
-              #{board?.rewardMemo ?? "{보상}"}
+              {board?.rewardMemo ?? '-'}
             </AppText>
           </View>
         </View>
@@ -184,7 +184,7 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
   const stickerCount = detail?.selectedDay.stickerCount ?? 0;
 
   return (
-    <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-25 px-[20px]">
+    <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
       <AppText variant="caption1" weight="semibold" className="text-labelGray">
         {formatKoreanDate(detail?.selectedDay.date)}
       </AppText>
@@ -194,7 +194,11 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
           {stickerCount} / {limitCount}
         </AppText>
         <View className="h-[33px] w-[33px] items-center justify-center rounded-[9px] border border-primary-500 bg-white">
-          <AppText variant="body2" weight="semibold" className="text-primary-500">
+          <AppText
+            variant="body2"
+            weight="semibold"
+            className="text-primary-500"
+          >
             ✓
           </AppText>
         </View>
@@ -208,9 +212,7 @@ const ArchiveDetailStreakSummary = ({ detail }: Props) => {
     <DetailCard className="gap-[6px] px-[20px] py-[16px]">
       <ArchiveDetailRow
         label="최다 성취일"
-        value={
-          detail?.streak.maxStreak ? `${detail.streak.maxStreak}일` : "-"
-        }
+        value={detail?.streak.maxStreak ? `${detail.streak.maxStreak}일` : "-"}
       />
       <ArchiveDetailRow
         label="연속 성취"

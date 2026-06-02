@@ -31,7 +31,9 @@ const BoardItemMeta = ({ board }: Props) => {
               : "bg-primary-100",
         )}
       >
-        <AppText className="text-[19px] leading-[23px]">🎸</AppText>
+        <AppText className="text-[19px] leading-[23px]">
+          {board?.emoji ?? "🌱"}
+        </AppText>
       </View>
 
       {/* board meta Wrapper */}
@@ -75,7 +77,13 @@ const BoardItemMeta = ({ board }: Props) => {
           numberOfLines={1}
           variant="body3"
           weight="semibold"
-          className={cn(isCompleted? 'text-black' :boardDisabled ? "text-gray-400" : "text-black")}
+          className={cn(
+            isCompleted
+              ? "text-black"
+              : boardDisabled
+                ? "text-gray-400"
+                : "text-black",
+          )}
         >
           {board.title}
         </AppText>
