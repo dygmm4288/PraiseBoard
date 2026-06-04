@@ -303,6 +303,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_device_push_token: {
+        Args: { p_device_id: string; p_push_token: string }
+        Returns: undefined
+      }
       collect_sticker: {
         Args: {
           p_board_id: string

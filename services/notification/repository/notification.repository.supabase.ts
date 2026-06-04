@@ -6,6 +6,33 @@ import {
   SavePushTokenInput,
 } from "../model/notification.interface";
 
+const releaseDuplicatePushToken = async ({
+  deviceId,
+  pushToken,
+}: {
+  deviceId: string;
+  pushToken: string;
+}) => {
+  const { error: claimError } = await supabase.rpc("claim_device_push_token", {
+    p_device_id: deviceId,
+    p_push_token: pushToken,
+  });
+
+  if (!claimError) return;
+
+  if (claimError.code !== "PGRST202") {
+    throw claimError;
+  }
+
+  const { error: releaseError } = await supabase
+    .from("devices")
+    .update({ push_token: null })
+    .eq("push_token", pushToken)
+    .neq("device_id", deviceId);
+
+  if (releaseError) throw releaseError;
+};
+
 export const notificationRepository: INotificationRepository = {
   async getPushEnabled(deviceId: string) {
     const state = await this.getPushState(deviceId);
@@ -42,6 +69,10 @@ export const notificationRepository: INotificationRepository = {
     pushPermissionGrantedAt,
     pushPermissionUpdatedAt,
   }: SavePushTokenInput) {
+    if (pushToken) {
+      await releaseDuplicatePushToken({ deviceId, pushToken });
+    }
+
     const { error } = await supabase
       .from("devices")
       .update({
