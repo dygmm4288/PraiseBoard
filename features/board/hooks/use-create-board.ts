@@ -5,12 +5,35 @@ import {
   normalizeBoardCreatePayload,
 } from "@/features/board/schema";
 import { board } from "@/features/board/service";
+import { BoardListResult, BoardRecord } from "@/features/board/types";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ZodError } from "zod";
 import { boardKeys } from "../queries/board.query.key";
+
+const addBoardToList = (
+  boardList: BoardListResult | null | undefined,
+  createdBoard: BoardRecord,
+) => {
+  if (!boardList) return boardList;
+  if (boardList.items.some((board) => board.id === createdBoard.id)) {
+    return boardList;
+  }
+
+  return {
+    ...boardList,
+    items: [createdBoard, ...boardList.items],
+    pageInfo: {
+      ...boardList.pageInfo,
+      totalCount:
+        typeof boardList.pageInfo.totalCount === "number"
+          ? boardList.pageInfo.totalCount + 1
+          : boardList.pageInfo.totalCount,
+    },
+  };
+};
 
 export const useCreateBoard = () => {
   const queryClient = useQueryClient();
@@ -34,9 +57,28 @@ export const useCreateBoard = () => {
     mutationFn: (payload: BoardCreatePayload) => {
       return board.createBoard(payload);
     },
-    onSuccess: () => {
+    onSuccess: async (createdBoard) => {
       resetBoard();
-      queryClient.invalidateQueries({ queryKey: boardKeys.all });
+
+      if (profileId) {
+        queryClient.setQueryData<BoardListResult | null>(
+          boardKeys.activeLists(profileId),
+          (boardList) => addBoardToList(boardList, createdBoard),
+        );
+        queryClient.setQueryData<BoardListResult | null>(
+          boardKeys.homeLists(profileId),
+          (boardList) => addBoardToList(boardList, createdBoard),
+        );
+        queryClient.setQueryData<BoardListResult | null>(
+          boardKeys.lists(profileId),
+          (boardList) => addBoardToList(boardList, createdBoard),
+        );
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: boardKeys.all,
+        refetchType: "active",
+      });
     },
     onError: (error) => {
       // TODO: error handling
