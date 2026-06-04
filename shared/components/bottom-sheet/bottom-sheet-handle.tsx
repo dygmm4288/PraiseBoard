@@ -2,8 +2,8 @@ import { View } from "react-native";
 
 const BottomSheetHandle = () => {
   return (
-    <View className="items-center py-[10px]">
-      <View className="h-[6px] w-[30px] rounded-[10px] bg-bgLightGray" />
+    <View className="h-[16px] items-center pt-[5px]">
+      <View className="h-[5px] w-[36px] rounded-[100px] bg-lineGray" />
     </View>
   );
 };

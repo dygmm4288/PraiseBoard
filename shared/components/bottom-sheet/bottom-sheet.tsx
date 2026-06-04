@@ -77,7 +77,7 @@ const AppBottomSheet = ({
           {...props}
           appearsOnIndex={0}
           disappearsOnIndex={-1}
-          opacity={0.45}
+          opacity={0.5}
           pressBehavior="close"
         />
       ) : null,
@@ -95,7 +95,10 @@ const AppBottomSheet = ({
       onChange={handleChange}
       handleComponent={BottomSheetHandle}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ borderRadius: 30 }}
+      backgroundStyle={{
+        borderTopLeftRadius: 38,
+        borderTopRightRadius: 38,
+      }}
     >
       <BottomSheetView className="flex-1">{children}</BottomSheetView>
     </BottomSheet>

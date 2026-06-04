@@ -22,7 +22,7 @@ export default function IntroContent({ currentIndex }: Props) {
       <AppText variant="title2" weight="bold" className="w-full text-center ">
         {title}
       </AppText>
-      <AppText variant="body2" weight="regular" className="w-full text-center">
+      <AppText variant="body3" weight="regular" className="w-full text-center">
         {content}
       </AppText>
       <View className="items-center justify-center">

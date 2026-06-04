@@ -1,11 +1,11 @@
-import { images } from "@/assets/images";
 import type { WhaleMessage } from "@/services/whale-message";
 import { resolveWhaleMessage } from "@/services/whale-message";
+import WhaleAvatar from "@/shared/components/whale-avatar";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import { BoardRecord } from "../../types";
 
 type BoardWhaleMessageProps = {
@@ -64,16 +64,13 @@ const BoardWhaleMessage = ({
         }}
       >
         <View className="flex flex-row gap-[8px] pb-[12px] border-b border-b-primary-15">
-          <View className="h-[33px] w-[33px] rounded-full bg-primary-20 flex items-center overflow-hidden">
-            <Image
-              className="w-[51px] h-[53px]"
-              height={53}
-              width={51}
-              source={images.whaleMessages.whale}
-            />
-          </View>
+          <WhaleAvatar />
           <View className="flex-col gap-[3px]">
-            <AppText variant="button2" weight="bold" className="text-primary-50">
+            <AppText
+              variant="button2"
+              weight="bold"
+              className="text-primary-50"
+            >
               두잉
             </AppText>
             <AppText

@@ -22,6 +22,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { SvgProps } from "react-native-svg";
 import { AppText } from "./text";
 
@@ -58,7 +59,9 @@ type FnbItemProps<T extends string> = {
   onLayout: (event: LayoutChangeEvent) => void;
 };
 
-const HORIZONTAL_PADDING = 5;
+const FNB_CONTAINER_HORIZONTAL_PADDING = 2;
+const ACTIVE_SURFACE_OVERFLOW = 2;
+const BOTTOM_OFFSET = 23;
 
 const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
   const translateX = useSharedValue(x);
@@ -111,9 +114,9 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
 
   return (
     <Animated.View
-      className="absolute left-0 top-[4px] bottom-[4px] rounded-[100px] bg-primary-500/10"
+      className="absolute bottom-0 left-0 top-0 rounded-[100px] bg-primary-10"
       pointerEvents="none"
-      style={[{ width }, styles.activeSurface, activeSurfaceStyle]}
+      style={[{ width }, activeSurfaceStyle]}
     />
   );
 };
@@ -150,13 +153,13 @@ const FnbItemBase = <T extends string>({
     <Pressable
       accessibilityRole="tab"
       accessibilityState={{ selected: isActive }}
-      className="relative min-w-0 flex-1 items-center justify-center rounded-[100px] px-[7px] pb-[7px] pt-[7px]"
+      className="relative min-w-0 flex-1 items-center justify-center rounded-[100px] px-[8px] pb-[7px] pt-[6px]"
       style={{ zIndex: isActive ? 10 : 1 }}
       onLayout={onLayout}
       onPress={() => onPress(item.key)}
     >
       <Animated.View
-        className="items-center justify-center gap-[1px]"
+        className="items-center justify-center"
         style={contentStyle}
       >
         <Icon width={28} height={28} color={color} stroke={color} />
@@ -184,6 +187,7 @@ const Fnb = <T extends string>({
   onPress,
   className,
 }: Props<T>) => {
+  const insets = useSafeAreaInsets();
   const onPressRef = useRef(onPress);
   const [visualActiveKey, setVisualActiveKey] = useState(activeKey);
   const [itemLayouts, setItemLayouts] = useState<
@@ -201,7 +205,8 @@ const Fnb = <T extends string>({
   const [containerWidth, setContainerWidth] = useState(0);
   const activeSurfaceWidth =
     containerWidth > 0
-      ? (containerWidth - HORIZONTAL_PADDING * 2) / items.length
+      ? (containerWidth - FNB_CONTAINER_HORIZONTAL_PADDING * 2) / items.length +
+        ACTIVE_SURFACE_OVERFLOW * 2
       : 0;
   const activeSurfaceX =
     activeLayout && activeSurfaceWidth > 0
@@ -263,12 +268,14 @@ const Fnb = <T extends string>({
   return (
     <View
       className={cn(
-        "fixed bottom-[25px] w-full left-[25px] right-[25px]",
+        "absolute left-[25px] right-[25px] items-center",
         className,
       )}
+      pointerEvents="box-none"
+      style={{ bottom: insets.bottom + BOTTOM_OFFSET }}
     >
       <View
-        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[5px] py-[4px]"
+        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[2px]"
         style={styles.container}
         onLayout={handleContainerLayout}
       >
@@ -298,15 +305,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 40,
-  },
-  activeSurface: {
-    elevation: 6,
-    shadowColor: COLOR.primary[500],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.14,
-    shadowRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.35)",
   },
 });
 
