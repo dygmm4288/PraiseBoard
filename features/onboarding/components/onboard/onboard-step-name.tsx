@@ -1,6 +1,6 @@
 import { BoardSetupFormValues } from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import {
@@ -8,7 +8,7 @@ import {
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
-import { validateBeforeNext } from "../../hooks/useOnboardingSetupForm";
+import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
@@ -16,14 +16,14 @@ import ChatInput from "../chat/chat-input";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
+  const [canInput, setCanInput] = useState(false);
+
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
       {
-        message: "안녕하세요! 저는 칭찬고래 두잉이에요.🐳",
-      },
-      {
-        message: "당신의 이름은 무엇인가요?",
+        message: "안녕! 나는 칭찬고래 두잉이야.\n너의 이름은 뭐야?",
         userDisabled: false,
+        onOk: () => setCanInput(true),
       },
     ],
   });
@@ -59,7 +59,7 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bottomOffset={12}
@@ -87,11 +87,11 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
               render={({ field }) => (
                 <View className="gap-2">
                   <ChatInput
-                    placeholder="이름을 알려주세요"
+                    placeholder="hintText"
                     value={field.value}
                     onChangeText={field.onChange}
                     onSend={() => onSendForm(field)}
-                    disabled={disabled}
+                    disabled={disabled || !canInput}
                   />
                 </View>
               )}

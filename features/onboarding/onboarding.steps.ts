@@ -2,7 +2,6 @@ import { BoardSetupFormValues } from "@/features/board/schema";
 import { FieldPath } from "react-hook-form";
 
 export const steps = [
-  { label: "intro", value: "intro" },
   { label: "name", value: "name" },
   { label: "title", value: "title" },
   { label: "limit", value: "limit" },
@@ -14,7 +13,6 @@ export const STEP_FIELDS: Record<
   (typeof steps)[number]["value"],
   FieldPath<BoardSetupFormValues>[]
 > = {
-  intro: [],
   name: ["profiles.nickname"],
   title: ["boards.title"],
   limit: ["boards.target_count"],

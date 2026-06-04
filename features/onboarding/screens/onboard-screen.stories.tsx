@@ -8,7 +8,7 @@ import { AppButton, AppText } from "@/shared/ui";
 import {
   ONBOARD_STEP_VALUES,
   OnboardScreenContent,
-} from "@/features/onboarding/screens/OnboardScreen";
+} from "@/features/onboarding/screens/onboard-screen";
 
 const STORY_INITIAL_VALUES = {
   profiles: {

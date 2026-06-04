@@ -1,6 +1,5 @@
 import { BoardSetupFormValues } from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
-import { AppText } from "@/shared/ui";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -10,40 +9,38 @@ import {
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
-import { validateBeforeNext } from "../../hooks/useOnboardingSetupForm";
+import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
-import ChatChip from "../chat/chat-chip";
 import ChatInput from "../chat/chat-input";
+import OnboardSelectList, { OnboardSelectListItem } from "./onboard-select-list";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
-  { icon: "📚", text: "나에게 책 선물" },
   { icon: "🍗", text: "치팅데이" },
-  { icon: "🪴", text: "새로운 화분 구매" },
+  { icon: "📚", text: "나에게 책 선물" },
   { icon: "🎸", text: "악기 부품 장만" },
-  { icon: "🐳", text: "기부하기" },
-  { icon: "🫥", text: "보상 비워두기" },
+  { icon: "🪴", text: "새로운 화분 구매" },
+  { icon: "✍️", text: "직접 입력하기", value: null },
+  { icon: "🫥", text: "보상 비워두기", value: "" },
 ];
 const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
-  const [showChips, setShowChips] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [isDirectMode, setIsDirectMode] = useState(false);
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
       {
-        message:
-          "구슬을 다 모아 병이 차면, 스스로에게 어떤 선물을 주고 싶어요?",
-      },
-      {
-        message: "상상만 해도 기분이 좋아지는 걸 적어주세요.",
-        onOk: () => setShowChips(true),
+        message: "만약 100% 다 달성하면 스스로에게 어떤 보상을 주고 싶어?",
+        userDisabled: false,
+        onOk: () => setShowOptions(true),
         waitUser: true,
       },
       {
         message: () => {
           return form.getValues("boards.reward_memo") !== null
-            ? `우와~ 벌써 선물을 받은 ${form.getValues("boards.reward_memo")}님이 상상되네요.함께 열심히 구슬을 모아봐요. 🔮선물 변경을 원하면, 설정에서 언제든 변경할 수 있어요.`
-            : "지금 생각나지 않아도 괜찮아요~ 다음에 생각나면 설정에서 ‘선물’을 언제든 입력할 수 있어요. 📝";
+            ? "우와! 벌써 선물을 받은 네 모습이 상상돼.\n함께 열심히 해보자."
+            : "지금 생각나지 않아도 괜찮아!\n나중에 언제든 입력할 수 있어.";
         },
         async onOk() {
           await sleep(1200);
@@ -74,30 +71,31 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
 
     form.clearErrors("boards.reward_memo");
     field.onChange("");
+    form.setValue("boards.reward_memo", rewardMemo);
     await addUserMessage(rewardMemo);
-    onNext();
     field.onChange(rewardMemo);
   };
 
-  const Chips = () =>
-    CHIPS.map((props) => (
-      <ChatChip
-        key={props.icon}
-        {...props}
-        onPress={async () => {
-          const rewardMemo = props.text !== "보상 비워두기" ? props.text : null;
-          form.setValue("boards.reward_memo", rewardMemo);
-          await addUserMessage(props.text);
-        }}
-      />
-    ));
+  const onSelectOption = async (item: OnboardSelectListItem) => {
+    setShowOptions(false);
+
+    if (item.value === null) {
+      await addUserMessage(item.text, { runNext: false });
+      setIsDirectMode(true);
+      return;
+    }
+
+    const rewardMemo = item.value === "" ? null : item.text;
+    form.setValue("boards.reward_memo", rewardMemo);
+    await addUserMessage(item.text);
+  };
 
   return (
     <OnboardStepLayout stepName="reward">
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bottomOffset={12}
@@ -111,20 +109,9 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                   message={v.message ?? ""}
                   side={v.role === "system" ? "left" : "right"}
                 />
-                {/* TODO 조건 수정 */}
-                {showChips && v.role === "system" && i === 1 && (
-                  <View className="mt-[40px] flex flx-col justify-center gap-[10px]">
-                    <>
-                      <AppText
-                        variant="caption1"
-                        className="text-gray-400 text-center"
-                      >
-                        직접 입력하거나 아래에서 선택해도 좋아요!
-                      </AppText>
-                      <View className="w-full flex-row flex-wrap items-center justify-center gap-[6px]">
-                        <Chips />
-                      </View>
-                    </>
+                {showOptions && v.role === "system" && i === 0 && (
+                  <View className="mt-[24px]">
+                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
                   </View>
                 )}
               </Fragment>
@@ -142,11 +129,11 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
               render={({ field }) => (
                 <View className="gap-2">
                   <ChatInput
-                    placeholder="이름을 알려주세요"
+                    placeholder="hintText"
                     value={field.value || ""}
                     onChangeText={field.onChange}
                     onSend={() => onSendForm(field)}
-                    disabled={disabled}
+                    disabled={disabled || !isDirectMode}
                   />
                 </View>
               )}

@@ -1,7 +1,6 @@
 import { COLOR } from "@/shared/constants/colors.constant";
-import { AppInput } from "@/shared/ui";
 import { useMemo } from "react";
-import { View } from "react-native";
+import { TextInput, View } from "react-native";
 import ChatSend from "./chat-send";
 
 type Props = {
@@ -22,15 +21,18 @@ const ChatInput = ({
   const sendDisabled = useMemo(() => value.length === 0, [value]);
 
   return (
-    <View className="flex flex-row items-center gap-[9px] ">
-      <AppInput
-        className="flex-1"
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={COLOR.labelGray}
-      />
-      <ChatSend onPress={onSend} disabled={disabled || sendDisabled} />
+    <View className="items-center bg-white py-[18px]">
+      <View className="h-[42px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white py-[4px] pl-[15px] pr-[4px]">
+        <TextInput
+          className="h-full flex-1 pr-[8px] font-pretendard text-[14px] leading-[20px] text-gray-900"
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={COLOR.labelGray}
+          editable={!disabled}
+        />
+        <ChatSend onPress={onSend} disabled={disabled || sendDisabled} />
+      </View>
     </View>
   );
 };

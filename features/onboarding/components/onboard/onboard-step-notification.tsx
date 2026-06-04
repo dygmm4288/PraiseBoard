@@ -3,20 +3,23 @@ import { notification } from "@/services/notification";
 import { board } from "@/features/board/service";
 import { useUser, userRepository } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
+import sleep from "@/shared/utils/sleep";
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
+import OnboardCompletionPreview from "./onboard-completion-preview";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepNotification = ({ form }: OnboardStepProps) => {
   const router = useRouter();
   const { completeOnboarding, profileId } = useUser();
   const hasStartedRef = useRef(false);
+  const [showCompletionPreview, setShowCompletionPreview] = useState(false);
 
   const persistOnboardingSetup = async () => {
     if (!profileId) {
@@ -38,12 +41,11 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
     whaleMessages: [
       {
         message:
-          "바쁜 일상 속에서도 구슬 모으는 걸 잊지 않게 물보라를 뿜어 신호를 보내줄게요. 푸우~🐳",
-      },
-      {
-        message:
-          "#{알림을 허용해주세요.  동의하지 않아도 앱 사용이 가능합니다.}",
+          "마지막으로, 바쁜 일상 속에서도 습관을 잊지 않게 물보라를 뿜어 신호를 보내줄게.",
         onOk: async () => {
+          setShowCompletionPreview(true);
+          await sleep(2700);
+
           try {
             await persistOnboardingSetup();
           } catch (error) {
@@ -80,7 +82,7 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bottomOffset={12}
@@ -98,6 +100,14 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
           </ChatBubbleList>
         </KeyboardAwareScrollView>
       </View>
+      {showCompletionPreview ? (
+        <OnboardCompletionPreview
+          nickname={form.getValues("profiles.nickname")}
+          title={form.getValues("boards.title")}
+          rewardMemo={form.getValues("boards.reward_memo")}
+          emoji={form.getValues("boards.emoji")}
+        />
+      ) : null}
     </OnboardStepLayout>
   );
 };

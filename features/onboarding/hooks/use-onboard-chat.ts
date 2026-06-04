@@ -26,7 +26,10 @@ const useOnboardChat = ({ whaleMessages }: Props) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [disabled, setDisabled] = useState(true);
 
-  const addUserMessage = async (text: string) => {
+  const addUserMessage = async (
+    text: string,
+    options: { runNext?: boolean } = {},
+  ) => {
     setMessages((prev) => [
       ...prev,
       {
@@ -36,7 +39,7 @@ const useOnboardChat = ({ whaleMessages }: Props) => {
       },
     ]);
 
-    if (!queueRef.current?.isEmpty()) {
+    if (options.runNext !== false && !queueRef.current?.isEmpty()) {
       run();
     }
     await sleep(1200);

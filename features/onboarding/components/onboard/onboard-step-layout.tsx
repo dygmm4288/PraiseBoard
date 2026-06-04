@@ -7,7 +7,7 @@ type Props = {
   stepName: STEPS;
 } & PropsWithChildren;
 
-const OnboardStepLayout = ({ children, stepName = "intro" }: Props) => {
+const OnboardStepLayout = ({ children, stepName }: Props) => {
   return (
     <View className="flex-1">
       <OnboardHeader stepName={stepName} />
