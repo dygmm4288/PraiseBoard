@@ -1,13 +1,13 @@
 import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { View } from "react-native";
-import { useBoardCreateSheet } from "../components/board-create/board-create-sheet-provider";
+import { useBoardSheet } from "../hooks/use-board-sheet";
 import BoardToday from "../components/board-today/board-today";
 import BoardHomeWhaleMessage from "../components/board/board-home-whale-message";
 import BoardList from "../components/board/board-list";
 
 export const BoardScreenContent = () => {
-  const { openCreateSheet } = useBoardCreateSheet();
+  const { openCreateSheet } = useBoardSheet();
 
   return (
     <>

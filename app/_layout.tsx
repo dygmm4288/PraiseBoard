@@ -1,4 +1,3 @@
-import { BoardCreateSheetProvider } from "@/features/board/components/board-create/board-create-sheet-provider";
 import { FnbContainer } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
@@ -11,7 +10,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { Stack, usePathname } from "expo-router";
+import { Stack, usePathname, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState, Platform, View } from "react-native";
@@ -62,35 +61,34 @@ const useReactQueryAppLifecycle = () => {
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
+  const segments = useSegments();
 
   if (!isInitialized) return null;
 
-  const hiddenRoutes = ["login"];
+  const hiddenPathnames = ["/login", "/signup"];
+  const hiddenGroups = ["(onboarding)", "(modals)"];
+  const routeGroup = segments[0];
 
-  const shouldShowFnb = !hiddenRoutes.includes(pathname);
+  const shouldShowFnb =
+    !hiddenPathnames.includes(pathname) && !hiddenGroups.includes(routeGroup);
 
   return (
     <View className="flex-1">
       <TopLevelSheetProvider>
-        <BoardCreateSheetProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(onboarding)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(modals)"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="settings" options={{ headerShown: false }} />
-            <Stack.Screen name="stats" options={{ headerShown: false }} />
-            <Stack.Screen name="archives" options={{ headerShown: false }} />
-            <Stack.Screen name="(boards)" options={{ headerShown: false }} />
-          </Stack>
-          {shouldShowFnb && <FnbContainer />}
-        </BoardCreateSheetProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(modals)"
+            options={{ presentation: "modal", headerShown: false }}
+          />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="stats" options={{ headerShown: false }} />
+          <Stack.Screen name="archives" options={{ headerShown: false }} />
+          <Stack.Screen name="(boards)" options={{ headerShown: false }} />
+        </Stack>
+        {shouldShowFnb && <FnbContainer />}
       </TopLevelSheetProvider>
     </View>
   );
@@ -105,8 +103,8 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
         <KeyboardProvider>
           <UserProvider>
             <RootLayoutNav />
@@ -114,7 +112,7 @@ export default function RootLayout() {
             <StatusBar style="auto" />
           </UserProvider>
         </KeyboardProvider>
-      </GestureHandlerRootView>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

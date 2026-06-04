@@ -1,5 +1,5 @@
 import { BoardProvider } from "@/features/board/hooks";
-import BoardScreen from "@/features/board/screens/BoardScreen";
+import BoardScreen from "@/features/board/screens/board-screen";
 import { useUser } from "@/services/user";
 import { Redirect } from "expo-router";
 
@@ -9,6 +9,8 @@ export default function IndexRoute() {
     effectiveHasCompletedOnboarding,
     effectiveHasSeenIntro,
   } = useUser();
+  // const router = useRouter();
+  // router.push('/debug-settings');
 
   if (!isInitialized) return null;
 

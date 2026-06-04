@@ -1,6 +1,6 @@
 import ArchiveDetailItem from "@/features/archive/components/detail/archive-detail-item";
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
-import { useBoardCreateSheet } from "@/features/board/components/board-create/board-create-sheet-provider";
+import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
 import { Icon } from "@/assets/icons";
 import { AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
@@ -17,7 +17,7 @@ const ArchiveDetailScreen = () => {
   const params = useLocalSearchParams();
   const boardId = typeof params.id === "string" ? params.id : null;
   const month = getCurrentMonth();
-  const { openEditSheet } = useBoardCreateSheet();
+  const { openEditSheet } = useBoardSheet();
   const {
     data: detail,
     isLoading,

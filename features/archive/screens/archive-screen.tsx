@@ -1,5 +1,5 @@
 import BoardItem from "@/features/board/components/board-item/board-item";
-import { useBoardCreateSheet } from "@/features/board/components/board-create/board-create-sheet-provider";
+import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
 import { canCreateBoard } from "@/features/board/domain/policies/board-policy";
 import { toast } from "@/shared/toasts/toast";
 import ScreenHeader from "@/shared/ui/screen-header";
@@ -10,7 +10,7 @@ import useArchive from "../hooks/use-archive";
 
 const ArchiveScreen = () => {
   const { activeBoards, completedBoards } = useArchive();
-  const { openCreateSheet } = useBoardCreateSheet();
+  const { openCreateSheet } = useBoardSheet();
 
   const openCreateBoard = () => {
     if (!canCreateBoard(activeBoards.length)) {

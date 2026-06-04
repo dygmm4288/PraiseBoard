@@ -1,9 +1,9 @@
 import { BoardCardData } from "@/features/board/types";
+import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
-import { BoardCreateSheetProvider } from "../components/board-create/board-create-sheet-provider";
 import { BoardProvider, BoardUIProvider } from "../hooks";
-import { BoardScreenContent } from "./BoardScreen";
+import { BoardScreenContent } from "./board-screen";
 
 type BoardScreenStoryProps = BoardCardData;
 
@@ -51,9 +51,9 @@ const BoardScreenStory = ({
           titleMode: "header",
         }}
       >
-        <BoardCreateSheetProvider>
+        <TopLevelSheetProvider>
           <BoardScreenContent />
-        </BoardCreateSheetProvider>
+        </TopLevelSheetProvider>
       </BoardUIProvider>
     </BoardProvider>
   );
