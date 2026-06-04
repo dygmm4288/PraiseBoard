@@ -3,4 +3,4 @@ export type { UserFlowOverrideMode } from "./hooks/use-user-flow";
 export * from "./model/user.interface";
 export * from "./repository/user.repository";
 export * from "./service/user.service";
-export { UserProvider, useUser } from "./UserProvider";
+export { UserProvider, useUser } from "./user-provider";

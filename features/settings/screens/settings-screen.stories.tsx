@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import SettingsScreen from "./SettingsScreen";
+import SettingsScreen from "./settings-screen";
 
 const meta = {
   title: "Settings/SettingsScreen",

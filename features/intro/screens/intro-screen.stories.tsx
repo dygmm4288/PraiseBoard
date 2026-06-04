@@ -1,7 +1,7 @@
 import {
   INTRO_STEP_VALUES,
   IntroScreenContent,
-} from "@/features/intro/screens/IntroScreen";
+} from "@/features/intro/screens/intro-screen";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { fn } from "storybook/test";

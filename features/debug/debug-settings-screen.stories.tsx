@@ -2,7 +2,7 @@ import { UserFlowOverrideMode } from "@/services/user";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { fn } from "storybook/test";
-import { DebugSettingsScreenContent } from "./DebugSettingsScreen";
+import { DebugSettingsScreenContent } from "./debug-settings-screen";
 
 const OVERRIDE_MODE_OPTIONS: UserFlowOverrideMode[] = [
   "real",

@@ -1,4 +1,4 @@
-import StatsScreen from "@/features/stats/screens/StatsScreen";
+import StatsScreen from "@/features/stats/screens/stats-screen";
 
 export default function StatsRoute() {
   return <StatsScreen />;

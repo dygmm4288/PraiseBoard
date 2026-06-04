@@ -1,5 +1,5 @@
 import ArchiveScreen from "@/features/archive/screens/archive-screen";
-import Screen from "@/shared/ui/Screen";
+import Screen from "@/shared/ui/screen";
 
 export default function ArchiveRoute() {
   return (
