@@ -55,15 +55,17 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   return (
     <TopLevelSheetContext.Provider value={value}>
       {children}
-      <AppBottomSheet
-        state={sheetConfig ? "peek" : "hidden"}
-        onChangeState={(state) => {
-          if (state === "hidden") handleClose();
-        }}
-        snapPoints={sheetConfig?.snapPoints ?? [300]}
-      >
-        {sheetConfig?.children ?? null}
-      </AppBottomSheet>
+      {sheetConfig ? (
+        <AppBottomSheet
+          state="peek"
+          onChangeState={(state) => {
+            if (state === "hidden") handleClose();
+          }}
+          snapPoints={sheetConfig.snapPoints}
+        >
+          {sheetConfig.children}
+        </AppBottomSheet>
+      ) : null}
     </TopLevelSheetContext.Provider>
   );
 };
