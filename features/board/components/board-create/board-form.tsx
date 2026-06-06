@@ -1,4 +1,5 @@
 import { Icon } from "@/assets/icons";
+import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import {
   BoardCreateFormValues,
   boardCreateDraftSchema,
@@ -181,12 +182,19 @@ const BoardForm = ({
   isDeleting = false,
 }: BoardFormProps) => {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const emojiOptions = useBoardEmojiOptions();
   const isEditMode = mode === "edit";
   const submitDisabled = !boardCreateDraftSchema.safeParse(formData).success;
 
   const handleDelete = () => {
     setDeleteConfirmVisible(false);
     onDelete?.();
+  };
+
+  const handleSelectEmoji = (emoji: string) => {
+    onChangeFormData("emoji")(emoji);
+    setEmojiPickerVisible(false);
   };
 
   return (
@@ -211,14 +219,19 @@ const BoardForm = ({
               className="h-[42px] min-h-[42px] flex-1 rounded-[12px] border-bgLightGray px-[12px] py-[10px]"
               inputClassName="min-w-0 flex-1 p-0 text-[14px] leading-[20px] text-black"
             />
-            <AppInput
-              value={formData.emoji}
-              onChangeText={onChangeFormData("emoji")}
-              placeholder="🌱"
-              placeholderTextColor={COLOR.black}
-              className="h-[42px] min-h-[42px] w-[42px] rounded-[12px] border-bgLightGray px-[10px] py-[6px]"
-              inputClassName="p-0 text-center text-[20px] leading-[24px] text-black"
-            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="대표 이모지 선택"
+              className="h-[42px] min-h-[42px] w-[42px] items-center justify-center rounded-[12px] border border-bgLightGray bg-white"
+              onPress={() => setEmojiPickerVisible(true)}
+            >
+              <AppText
+                variant="custom"
+                className="text-center text-[20px] leading-[24px] text-black"
+              >
+                {formData.emoji || "🌱"}
+              </AppText>
+            </Pressable>
           </View>
         </BoardFormSection>
 
@@ -280,6 +293,13 @@ const BoardForm = ({
         confirmDisabled={isDeleting}
         onCancel={() => setDeleteConfirmVisible(false)}
         onConfirm={handleDelete}
+      />
+      <EmojiPickerModal
+        visible={emojiPickerVisible}
+        selectedEmoji={formData.emoji}
+        options={emojiOptions}
+        onSelect={handleSelectEmoji}
+        onClose={() => setEmojiPickerVisible(false)}
       />
     </View>
   );
