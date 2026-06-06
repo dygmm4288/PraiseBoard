@@ -17,6 +17,7 @@ type Props = {
   title?: string | null;
   rewardMemo?: string | null;
   emoji?: string | null;
+  onDone?: () => void;
 };
 
 const OnboardCompletionPreview = ({
@@ -24,6 +25,7 @@ const OnboardCompletionPreview = ({
   title,
   rewardMemo,
   emoji,
+  onDone,
 }: Props) => {
   const { height } = useWindowDimensions();
   const settled = useSharedValue(0);
@@ -41,7 +43,15 @@ const OnboardCompletionPreview = ({
         easing: Easing.out(Easing.cubic),
       }),
     );
-  }, [settled]);
+
+    if (!onDone) return;
+
+    const doneTimer = setTimeout(onDone, 2700);
+
+    return () => {
+      clearTimeout(doneTimer);
+    };
+  }, [onDone, settled]);
 
   const homeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(settled.value, [0, 1], [0.42, 1]),

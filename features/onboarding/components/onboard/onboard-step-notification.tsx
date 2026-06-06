@@ -3,23 +3,20 @@ import { notification } from "@/services/notification";
 import { board } from "@/features/board/service";
 import { useUser, userRepository } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
-import sleep from "@/shared/utils/sleep";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
-import OnboardCompletionPreview from "./onboard-completion-preview";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepNotification = ({ form }: OnboardStepProps) => {
   const router = useRouter();
   const { completeOnboarding, profileId } = useUser();
   const hasStartedRef = useRef(false);
-  const [showCompletionPreview, setShowCompletionPreview] = useState(false);
 
   const persistOnboardingSetup = async () => {
     if (!profileId) {
@@ -34,7 +31,7 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
     await userRepository.updateProfile(profileId, {
       nickname: payload.profiles.nickname,
     });
-    await board.createBoardFromSetup(profileId, payload);
+    return board.createBoardFromSetup(profileId, payload);
   };
 
   const { messages, run } = useOnboardChat({
@@ -43,11 +40,10 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
         message:
           "마지막으로, 바쁜 일상 속에서도 습관을 잊지 않게 물보라를 뿜어 신호를 보내줄게.",
         onOk: async () => {
-          setShowCompletionPreview(true);
-          await sleep(2700);
+          let createdBoard: Awaited<ReturnType<typeof persistOnboardingSetup>>;
 
           try {
-            await persistOnboardingSetup();
+            createdBoard = await persistOnboardingSetup();
           } catch (error) {
             console.error("온보딩 보드 저장 중 오류 발생", error);
             toast.error("보드를 저장하는 중 오류가 발생했어요.");
@@ -62,7 +58,13 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
           }
 
           await completeOnboarding();
-          router.replace("/");
+          router.replace({
+            pathname: "/",
+            params: {
+              from: "onboarding",
+              boardId: createdBoard.id,
+            },
+          });
         },
       },
     ],
@@ -100,14 +102,6 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
           </ChatBubbleList>
         </KeyboardAwareScrollView>
       </View>
-      {showCompletionPreview ? (
-        <OnboardCompletionPreview
-          nickname={form.getValues("profiles.nickname")}
-          title={form.getValues("boards.title")}
-          rewardMemo={form.getValues("boards.reward_memo")}
-          emoji={form.getValues("boards.emoji")}
-        />
-      ) : null}
     </OnboardStepLayout>
   );
 };
