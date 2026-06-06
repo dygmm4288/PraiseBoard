@@ -1,5 +1,6 @@
 import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
+import { Link } from "expo-router";
 import { ScrollView } from "react-native";
 import SettingEnv from "../components/sections/setting-env";
 import SettingInfo from "../components/sections/setting-info";
@@ -8,12 +9,8 @@ import SettingProfile from "../components/sections/setting-profile";
 import { useSettingsSheets } from "../hooks/use-settings-sheets";
 
 const SettingsScreen = () => {
-  const {
-    alarmTimeLabel,
-    displayName,
-    openAlarmTimeSheet,
-    openNameSheet,
-  } = useSettingsSheets();
+  const { alarmTimeLabel, displayName, openAlarmTimeSheet, openNameSheet } =
+    useSettingsSheets();
 
   return (
     <Screen className="pb-[118px]">
@@ -36,6 +33,9 @@ const SettingsScreen = () => {
 
         {/* 앱 정보 */}
         <SettingInfo />
+
+        {/* Debug 설정 이동 */}
+        <Link href="/debug-settings">debug settings 이동</Link>
       </ScrollView>
     </Screen>
   );

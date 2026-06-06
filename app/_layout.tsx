@@ -87,6 +87,7 @@ const RootLayoutNav = () => {
           <Stack.Screen name="stats" options={{ headerShown: false }} />
           <Stack.Screen name="archives" options={{ headerShown: false }} />
           <Stack.Screen name="(boards)" options={{ headerShown: false }} />
+          <Stack.Screen name="debug" options={{ headerShown: false }} />
         </Stack>
         {shouldShowFnb && <FnbContainer />}
       </TopLevelSheetProvider>
