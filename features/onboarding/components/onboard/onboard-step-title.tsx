@@ -116,13 +116,13 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
               name="boards.title"
               control={form.control}
               render={({ field }) => (
-                <ChatInput
+                isDirectMode ? <ChatInput
                   placeholder="보드 제목을 알려주세요"
                   value={field.value}
                   onChangeText={field.onChange}
-                  disabled={disabled || !isDirectMode}
+                  disabled={disabled}
                   onSend={() => onSendForm(field)}
-                />
+                /> : <></>
               )}
             />
           </View>

@@ -14,7 +14,9 @@ import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
-import OnboardSelectList, { OnboardSelectListItem } from "./onboard-select-list";
+import OnboardSelectList, {
+  OnboardSelectListItem,
+} from "./onboard-select-list";
 import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
@@ -128,13 +130,15 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
               control={form.control}
               render={({ field }) => (
                 <View className="gap-2">
-                  <ChatInput
-                    placeholder="hintText"
-                    value={field.value || ""}
-                    onChangeText={field.onChange}
-                    onSend={() => onSendForm(field)}
-                    disabled={disabled || !isDirectMode}
-                  />
+                  {isDirectMode && (
+                    <ChatInput
+                      placeholder="보상을 알려주세요"
+                      value={field.value || ""}
+                      onChangeText={field.onChange}
+                      onSend={() => onSendForm(field)}
+                      disabled={disabled}
+                    />
+                  )}
                 </View>
               )}
             />

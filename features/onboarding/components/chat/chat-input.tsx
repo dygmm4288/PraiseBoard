@@ -22,7 +22,7 @@ const ChatInput = ({
 
   return (
     <View className="items-center bg-white py-[18px]">
-      <View className="h-[42px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white py-[4px] pl-[15px] pr-[4px]">
+      <View className="h-[42px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white pl-[15px] pr-[4px]">
         <TextInput
           className="h-full flex-1 pr-[8px] font-pretendard text-[14px] leading-[20px] text-gray-900"
           value={value}

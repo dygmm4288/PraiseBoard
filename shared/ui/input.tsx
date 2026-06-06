@@ -23,12 +23,14 @@ export const AppInput = ({
   return (
     <View
       className={cn(
-        "flex flex-row justify-between w-full min-h-[40px] rounded-[20px] border border-gray-200 px-[14px] py-[8px]",
+        "w-full min-h-[40px] flex-row items-center rounded-[20px] border border-gray-200 px-[14px]",
         className,
       )}
     >
       <TextInput
-        className={cn("w-full", inputClassName)}
+        className={cn("min-h-[40px] flex-1 self-stretch p-0", inputClassName)}
+        textAlignVertical="center"
+        underlineColorAndroid="transparent"
         placeholder={placeholder}
         value={value}
         {...props}
@@ -37,10 +39,11 @@ export const AppInput = ({
         <Pressable
           onPress={onReset}
           hitSlop={8}
-          accessibilityRole='button'
-          accessibilityLabel='입력값 지우기'
-          className='ml-2 h-6 w-6 items-center justify-center rounded-full bg-gray-100'>
-          <Text className='text-gray-500'>x</Text>
+          accessibilityRole="button"
+          accessibilityLabel="입력값 지우기"
+          className="ml-2 h-6 w-6 items-center justify-center rounded-full bg-gray-100"
+        >
+          <Text className="text-gray-500">x</Text>
         </Pressable>
       ) : null}
     </View>

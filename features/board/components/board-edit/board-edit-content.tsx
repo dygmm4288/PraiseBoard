@@ -24,7 +24,7 @@ const BoardEditContent = () => {
           <AppText variant="caption1" className="text-gray-400">
             보상 (선택)
           </AppText>
-          <AppInput placeholder="hint text" />
+          <AppInput placeholder="나에게 어떤 선물을 주고 싶나요?" />
         </View>
       </View>
       <AppButton variant="primary">확인</AppButton>
