@@ -92,6 +92,10 @@ const AppBottomSheet = ({
       animateOnMount={false}
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
+      enableBlurKeyboardOnGesture
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       onChange={handleChange}
       handleComponent={BottomSheetHandle}
       backdropComponent={renderBackdrop}

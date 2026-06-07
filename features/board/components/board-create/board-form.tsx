@@ -7,6 +7,10 @@ import {
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppInput, AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
+import {
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 
@@ -206,11 +210,21 @@ const BoardForm = ({
         onSubmit={onSubmit}
       />
 
-      <View className="gap-[30px] py-[21px]">
+      <BottomSheetScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          gap: 30,
+          paddingTop: 21,
+          paddingBottom: 32,
+        }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <BoardFormSection label="습관 이름">
           <View className="flex-row items-center gap-[6px]">
             <AppInput
               reset
+              inputComponent={BottomSheetTextInput}
               value={formData.title}
               onReset={() => onChangeFormData("title")("")}
               onChangeText={onChangeFormData("title")}
@@ -255,6 +269,7 @@ const BoardForm = ({
 
         <BoardFormSection label="보상 (선택)">
           <AppInput
+            inputComponent={BottomSheetTextInput}
             value={formData.rewardMemo ?? ""}
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
@@ -281,12 +296,14 @@ const BoardForm = ({
             </AppText>
           </Pressable>
         ) : null}
-      </View>
+      </BottomSheetScrollView>
 
       <ConfirmModal
         visible={deleteConfirmVisible}
         title="정말로 삭제하고 싶나요?"
-        description={"지금 삭제하면, 모든 기록이 영구적으로 사라져요.\n다시 찾을 수 없어요."}
+        description={
+          "지금 삭제하면, 모든 기록이 영구적으로 사라져요.\n다시 찾을 수 없어요."
+        }
         cancelText="취소"
         confirmText="삭제하기"
         confirmVariant="danger"

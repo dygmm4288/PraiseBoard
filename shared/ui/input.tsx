@@ -1,4 +1,5 @@
 import { cn } from "@/shared/utils/cn";
+import { ComponentType } from "react";
 import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
 
 export interface AppInputProps extends TextInputProps {
@@ -7,6 +8,7 @@ export interface AppInputProps extends TextInputProps {
   onReset?: () => void;
   className?: string;
   placeholder?: string;
+  inputComponent?: ComponentType<TextInputProps>;
 }
 
 export const AppInput = ({
@@ -16,6 +18,7 @@ export const AppInput = ({
   value = "",
   className = "",
   placeholder,
+  inputComponent: InputComponent = TextInput,
   ...props
 }: AppInputProps) => {
   const hasValue = typeof value === "string" && value.length > 0;
@@ -27,7 +30,7 @@ export const AppInput = ({
         className,
       )}
     >
-      <TextInput
+      <InputComponent
         className={cn("min-h-[40px] flex-1 self-stretch p-0", inputClassName)}
         textAlignVertical="center"
         underlineColorAndroid="transparent"
