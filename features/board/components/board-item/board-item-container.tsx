@@ -12,12 +12,8 @@ const BoardItemContainer = ({ board, children }: Props) => {
   const { isTodayDone, isCompleted } = useBoardItemUi({ board });
   return (
     <View
-      className={cn(
-        "mb-[9px] rounded-[20px] px-[16px] py-[14px]",
-        isCompleted ? "border border-secondary-30 bg-secondary-10" : "bg-white",
-      )}
+      className="mb-[9px] rounded-[20px]"
       style={{
-        opacity: isTodayDone ? 0.58 : 1,
         shadowColor: COLOR.primary[500],
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
@@ -25,7 +21,17 @@ const BoardItemContainer = ({ board, children }: Props) => {
         elevation: 2,
       }}
     >
-      <View className="flex-row items-center gap-[11px]">{children}</View>
+      <View
+        className={cn(
+          "rounded-[20px] px-[16px] py-[14px]",
+          isCompleted
+            ? "border border-secondary-30 bg-secondary-10"
+            : "bg-white",
+        )}
+        style={{ opacity: isTodayDone ? 0.58 : 1 }}
+      >
+        <View className="flex-row items-center gap-[11px]">{children}</View>
+      </View>
     </View>
   );
 };

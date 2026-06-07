@@ -21,11 +21,14 @@ const SettingSectionLayout = ({ title, children }: Props) => {
           {title}
         </AppText>
       )}
-      <View
-        className={cn("w-full overflow-hidden rounded-[20px] bg-white py-[16px]")}
-        style={styles.card}
-      >
-        {children}
+      <View className="w-full rounded-[20px]" style={styles.card}>
+        <View
+          className={cn(
+            "w-full overflow-hidden rounded-[20px] bg-white py-[16px]",
+          )}
+        >
+          {children}
+        </View>
       </View>
     </View>
   );

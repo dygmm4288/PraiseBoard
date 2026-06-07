@@ -151,10 +151,7 @@ const Calendar = ({
 
   return (
     <View
-      className={cn(
-        "w-full rounded-[20px] bg-white px-[20px] pb-[20px] pt-[24px]",
-        className,
-      )}
+      className={cn("w-full rounded-[20px]", className)}
       style={{
         shadowColor: CALENDAR_SHADOW_COLOR,
         shadowOffset: { width: 0, height: 4 },
@@ -163,108 +160,110 @@ const Calendar = ({
         elevation: 3,
       }}
     >
-      <View className="mb-[24px] flex-row items-center justify-between">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="이전 달"
-          className="h-[24px] w-[24px] items-start justify-center"
-          hitSlop={10}
-          onPress={() => changeMonth(addMonths(date, -1))}
-        >
-          <Icon name="ChevronLeft" size={18} />
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="날짜 선택"
-          onPress={openMonthPicker}
-        >
-          <AppText
-            variant="caption1"
-            weight="semibold"
-            className="text-gray-900"
+      <View className="w-full rounded-[20px] bg-white px-[20px] pb-[20px] pt-[24px]">
+        <View className="mb-[24px] flex-row items-center justify-between">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="이전 달"
+            className="h-[24px] w-[24px] items-start justify-center"
+            hitSlop={10}
+            onPress={() => changeMonth(addMonths(date, -1))}
           >
-            {monthLabel}
-          </AppText>
-        </Pressable>
+            <Icon name="ChevronLeft" size={18} />
+          </Pressable>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="다음 달"
-          className="h-[24px] w-[24px] items-end justify-center"
-          hitSlop={10}
-          onPress={() => changeMonth(addMonths(date, 1))}
-        >
-          <Icon name="ChevronRightSmall" width={6} height={11} />
-        </Pressable>
-      </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="날짜 선택"
+            onPress={openMonthPicker}
+          >
+            <AppText
+              variant="caption1"
+              weight="semibold"
+              className="text-gray-900"
+            >
+              {monthLabel}
+            </AppText>
+          </Pressable>
 
-      <View className="gap-[11px]">
-        <View className="flex-row items-center justify-between">
-          {WEEK_DAYS.map((day, index) => (
-            <View key={day} className="w-[45px] items-center">
-              <AppText
-                variant="button2"
-                weight="semibold"
-                className={cn(
-                  "text-center",
-                  index === 0 && "text-red",
-                  index > 0 && index < 6 && "text-gray-400",
-                  index === 6 && "text-tertiary-500",
-                )}
-              >
-                {day}
-              </AppText>
-            </View>
-          ))}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="다음 달"
+            className="h-[24px] w-[24px] items-end justify-center"
+            hitSlop={10}
+            onPress={() => changeMonth(addMonths(date, 1))}
+          >
+            <Icon name="ChevronRightSmall" width={6} height={11} />
+          </Pressable>
         </View>
 
-        <View className="gap-[3px]">
-          {weeks.map((week, weekIndex) => (
-            <View
-              key={`week-${weekIndex}`}
-              className="flex-row items-center justify-between"
-            >
-              {week.map((cell) => {
-                const dateKey = formatDateKey(cell.date);
-                const count = stickerCountMap.get(dateKey);
-                const hasSticker = !!count;
-                const isToday =
-                  cell.dayOfMonth !== null && dateKey === todayKey;
+        <View className="gap-[11px]">
+          <View className="flex-row items-center justify-between">
+            {WEEK_DAYS.map((day, index) => (
+              <View key={day} className="w-[45px] items-center">
+                <AppText
+                  variant="button2"
+                  weight="semibold"
+                  className={cn(
+                    "text-center",
+                    index === 0 && "text-red",
+                    index > 0 && index < 6 && "text-gray-400",
+                    index === 6 && "text-tertiary-500",
+                  )}
+                >
+                  {day}
+                </AppText>
+              </View>
+            ))}
+          </View>
 
-                return (
-                  <View
-                    key={cell.key}
-                    accessibilityLabel={
-                      cell.dayOfMonth
-                        ? `${dateKey}, 스티커 ${count ?? 0}개`
-                        : undefined
-                    }
-                    className={cn(
-                      "h-[45px] w-[45px] items-center justify-center rounded-[9px]",
-                      cell.dayOfMonth === null
-                        ? "bg-white/50"
-                        : getStickerLevelClassName(count),
-                      isToday && "border-[1.5px] border-primary-800",
-                    )}
-                  >
-                    {cell.dayOfMonth !== null ? (
-                      <AppText
-                        variant="button2"
-                        weight="medium"
-                        className={cn(
-                          "text-center",
-                          hasSticker ? "text-gray-900" : "text-gray-400",
-                        )}
-                      >
-                        {cell.dayOfMonth}
-                      </AppText>
-                    ) : null}
-                  </View>
-                );
-              })}
-            </View>
-          ))}
+          <View className="gap-[3px]">
+            {weeks.map((week, weekIndex) => (
+              <View
+                key={`week-${weekIndex}`}
+                className="flex-row items-center justify-between"
+              >
+                {week.map((cell) => {
+                  const dateKey = formatDateKey(cell.date);
+                  const count = stickerCountMap.get(dateKey);
+                  const hasSticker = !!count;
+                  const isToday =
+                    cell.dayOfMonth !== null && dateKey === todayKey;
+
+                  return (
+                    <View
+                      key={cell.key}
+                      accessibilityLabel={
+                        cell.dayOfMonth
+                          ? `${dateKey}, 스티커 ${count ?? 0}개`
+                          : undefined
+                      }
+                      className={cn(
+                        "h-[45px] w-[45px] items-center justify-center rounded-[9px]",
+                        cell.dayOfMonth === null
+                          ? "bg-white/50"
+                          : getStickerLevelClassName(count),
+                        isToday && "border-[1.5px] border-primary-800",
+                      )}
+                    >
+                      {cell.dayOfMonth !== null ? (
+                        <AppText
+                          variant="button2"
+                          weight="medium"
+                          className={cn(
+                            "text-center",
+                            hasSticker ? "text-gray-900" : "text-gray-400",
+                          )}
+                        >
+                          {cell.dayOfMonth}
+                        </AppText>
+                      ) : null}
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
         </View>
       </View>
     </View>

@@ -76,7 +76,7 @@ const getProgressGridRows = (detail?: ArchiveDetail) => {
 const DetailCard = ({ children, className }: DetailCardProps) => {
   return (
     <View
-      className={cn("rounded-[20px] bg-white", className)}
+      className="rounded-[20px]"
       style={{
         shadowColor: CARD_SHADOW_COLOR,
         shadowOffset: { width: 0, height: 4 },
@@ -85,7 +85,9 @@ const DetailCard = ({ children, className }: DetailCardProps) => {
         elevation: 3,
       }}
     >
-      {children}
+      <View className={cn("rounded-[20px] bg-white", className)}>
+        {children}
+      </View>
     </View>
   );
 };
@@ -140,7 +142,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
               className="text-gray-500"
               numberOfLines={1}
             >
-              {board?.rewardMemo ?? '-'}
+              {board?.rewardMemo ?? "-"}
             </AppText>
           </View>
         </View>
