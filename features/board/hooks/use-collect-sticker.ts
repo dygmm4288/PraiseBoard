@@ -5,7 +5,10 @@ import {
   BoardTodayAchievement,
   CollectStickerError,
 } from "@/features/board/types";
-import { whaleMessageKeys, whaleMessageService } from "@/services/whale-message";
+import {
+  whaleMessageKeys,
+  whaleMessageService,
+} from "@/services/whale-message";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -25,6 +28,25 @@ const replaceBoardInList = (
   };
 };
 
+const patchBoardInList = (
+  boardList: BoardListResult | null | undefined,
+  boardId: string,
+  patch: Partial<BoardListResult["items"][number]>,
+) => {
+  if (!boardList) return boardList;
+
+  return {
+    ...boardList,
+    items: boardList.items.map((board) =>
+      board.id === boardId ? { ...board, ...patch } : board,
+    ),
+  };
+};
+
+const isBoardListQueryKey = (queryKey: readonly unknown[]) =>
+  queryKey[0] === boardKeys.all[0] &&
+  (queryKey[1] === "list" || queryKey[1] === "home-list");
+
 export const useCollectSticker = () => {
   const queryClient = useQueryClient();
   const { profileId } = useUser();
@@ -41,41 +63,20 @@ export const useCollectSticker = () => {
     },
     onSuccess: async (updatedBoard) => {
       if (profileId) {
-        const currentHomeBoardList =
+        queryClient.setQueriesData<BoardListResult | null>(
+          {
+            predicate: (query) => isBoardListQueryKey(query.queryKey),
+          },
+          (boardList) => replaceBoardInList(boardList, updatedBoard),
+        );
+        const nextHomeBoardList =
           queryClient.getQueryData<BoardListResult | null>(
             boardKeys.homeLists(profileId),
           );
-        const currentBoardList =
-          queryClient.getQueryData<BoardListResult | null>(
-            boardKeys.lists(profileId),
-          );
-        const nextHomeBoardList = replaceBoardInList(
-          currentHomeBoardList,
-          updatedBoard,
+        const nextBoardList = queryClient.getQueryData<BoardListResult | null>(
+          boardKeys.lists(profileId),
         );
-        const nextBoardList = replaceBoardInList(
-          currentBoardList,
-          updatedBoard,
-        );
-        const nextBoards =
-          nextHomeBoardList?.items ??
-          nextBoardList?.items ??
-          currentHomeBoardList?.items ??
-          currentBoardList?.items;
-
-        if (nextHomeBoardList) {
-          queryClient.setQueryData<BoardListResult | null>(
-            boardKeys.homeLists(profileId),
-            nextHomeBoardList,
-          );
-        }
-
-        if (nextBoardList) {
-          queryClient.setQueryData<BoardListResult | null>(
-            boardKeys.lists(profileId),
-            nextBoardList,
-          );
-        }
+        const nextBoards = nextHomeBoardList?.items ?? nextBoardList?.items;
 
         const currentTodayAchievement =
           queryClient.getQueryData<BoardTodayAchievement>(
@@ -85,9 +86,9 @@ export const useCollectSticker = () => {
 
         queryClient.setQueryData<BoardTodayAchievement>(
           boardKeys.todayAchievement(profileId),
-          (achievement) => ({
-            count: (achievement?.count ?? 0) + 1,
-          }),
+          {
+            count: nextTodayStickerCount,
+          },
         );
 
         if (nextBoards) {
@@ -107,6 +108,11 @@ export const useCollectSticker = () => {
             }),
           ]);
         }
+
+        await queryClient.invalidateQueries({
+          queryKey: boardKeys.todayAchievement(profileId),
+          refetchType: "active",
+        });
       }
 
       await queryClient.invalidateQueries({
@@ -114,8 +120,38 @@ export const useCollectSticker = () => {
         refetchType: "active",
       });
     },
-    onError: (error: CollectStickerError) => {
+    onError: async (
+      error: CollectStickerError,
+      variables: { boardId: string; source: BoardStickerSource },
+    ) => {
       if (error.reason === "DAILY_LIMIT_EXCEEDED") {
+        if (profileId) {
+          queryClient.setQueriesData<BoardListResult | null>(
+            {
+              predicate: (query) => isBoardListQueryKey(query.queryKey),
+            },
+            (boardList) =>
+              patchBoardInList(boardList, variables.boardId, {
+                todayStickerCount:
+                  error.todayStickerCount ?? error.limitCount ?? 0,
+                ...(typeof error.limitCount === "number"
+                  ? { limitCount: error.limitCount }
+                  : {}),
+              }),
+          );
+
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: boardKeys.todayAchievement(profileId),
+              refetchType: "active",
+            }),
+            queryClient.invalidateQueries({
+              queryKey: boardKeys.all,
+              refetchType: "active",
+            }),
+          ]);
+        }
+
         toast.chatError("오늘 받을 수 있는 스티커를 모두 받았어요");
         return;
       }

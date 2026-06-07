@@ -6,7 +6,6 @@ type Props = {
   board: BoardRecord;
 };
 
-const DAILY_STICKER_LIMIT = 3;
 const MAX_BOARD_D_DAY = 99;
 
 const formatShortDate = (dateValue: string | null) => {
@@ -37,10 +36,9 @@ const getBoardDDay = (baseDateValue: string | null) => {
 
 export const useBoardItemUi = ({ board }: Props) => {
   const isCompleted = board.status === "completed";
-  const isTodayDone = board.todaySuccess;
-  const canCollectToday =
-    !isCompleted && board.todayStickerCount < DAILY_STICKER_LIMIT;
-  const boardDisabled = !canCollectToday;
+  const isTodayDone =
+    !isCompleted && board.todayStickerCount >= board.limitCount;
+  const boardDisabled = isCompleted || isTodayDone;
   const { progressPercent } = getBoardProgress(
     board.targetCount,
     board.currentCount,

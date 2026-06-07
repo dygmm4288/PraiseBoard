@@ -5,7 +5,6 @@ import {
 } from "@/shared/lib/supabase-error";
 import { getTodayRange } from "@/shared/utils/date";
 import {
-  BoardRecord,
   BoardTodayAchievement,
   CollectStickerRpcResult,
   IBoardRepository,
@@ -142,6 +141,7 @@ export const boardRepository: IBoardRepository = {
         {
           reason: collectResult?.reason,
           currentCount: collectResult?.current_count,
+          todayStickerCount: collectResult?.current_count,
           limitCount: collectResult?.limit_count,
         },
       );

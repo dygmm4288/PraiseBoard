@@ -19,18 +19,15 @@ const BoardItemCollectAction = ({ board }: Props) => {
     boardDisabled,
     isCompleted,
     isTodayDone,
-  } =
-    useBoardItemUi({
-      board,
-    });
+  } = useBoardItemUi({
+    board,
+  });
 
   const { mutate: collectSticker, isPending } = useCollectSticker();
+  const actionDisabled = boardDisabled || isPending;
 
   const handlePress = () => {
-    if (isCompleted) return;
-    if (isTodayDone) return;
-    if (boardDisabled) return;
-    if (isPending) return;
+    if (isCompleted || isTodayDone || actionDisabled) return;
     setBurstKey((key) => key + 1);
 
     collectSticker({ boardId: board.id, source: "app" });
@@ -49,7 +46,7 @@ const BoardItemCollectAction = ({ board }: Props) => {
       </AppText>
       <View className="relative h-[34px] w-[34px] overflow-visible">
         <AppCheckbox
-          disabled={boardDisabled}
+          disabled={actionDisabled}
           variant={
             isCompleted ? "completed" : isTodayDone ? "todayDone" : "default"
           }

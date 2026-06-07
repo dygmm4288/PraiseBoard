@@ -82,6 +82,7 @@ export type CollectStickerRpcResult = {
 export type CollectStickerError = Error & {
   reason?: CollectStickerFailureReason;
   currentCount?: number;
+  todayStickerCount?: number;
   limitCount?: number;
 };
 
