@@ -1,6 +1,13 @@
 import { AppText } from "@/shared/ui";
-import { View } from "react-native";
-import { STEPS } from "../../onboarding.steps";
+import { useEffect } from "react";
+import { LayoutChangeEvent, View } from "react-native";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { STEP_INDEX, STEPS, TOTAL_STEPS } from "../../onboarding.steps";
 
 type Props = {
   stepName: STEPS;
@@ -22,15 +29,27 @@ const STEP_CNT_LABEL = {
   notification: "STEP 5 / 5",
 } as Record<STEPS, string>;
 
-const STEP_PROGRESS_CLASS = {
-  name: "w-1/5",
-  title: "w-2/5",
-  limit: "w-3/5",
-  reward: "w-4/5",
-  notification: "w-full",
-} as Record<STEPS, string>;
-
 const OnboardHeader = ({ stepName }: Props) => {
+  const progress = useSharedValue((STEP_INDEX[stepName] + 1) / TOTAL_STEPS);
+  const trackWidth = useSharedValue(0);
+
+  useEffect(() => {
+    const nextProgress = (STEP_INDEX[stepName] + 1) / TOTAL_STEPS;
+    progress.value = withTiming(nextProgress, {
+      duration: 240,
+      reduceMotion: ReduceMotion.System,
+    });
+  }, [progress, stepName]);
+
+  const handleTrackLayout = ({ nativeEvent }: LayoutChangeEvent) => {
+    trackWidth.value = nativeEvent.layout.width;
+  };
+
+  const fillStyle = useAnimatedStyle(() => ({
+    opacity: trackWidth.value > 0 ? 1 : 0,
+    width: trackWidth.value * progress.value,
+  }));
+
   return (
     <View className="h-[45px] justify-between px-[8px]">
       <View className="flex-1 flex-row items-center justify-between">
@@ -49,9 +68,13 @@ const OnboardHeader = ({ stepName }: Props) => {
           {STEP_CNT_LABEL[stepName]}
         </AppText>
       </View>
-      <View className="h-[4px] overflow-hidden rounded-[10px] bg-primary-100">
-        <View
-          className={`h-full rounded-[10px] bg-primary-500 ${STEP_PROGRESS_CLASS[stepName]}`}
+      <View
+        className="h-[4px] overflow-hidden rounded-[10px] bg-primary-100"
+        onLayout={handleTrackLayout}
+      >
+        <Animated.View
+          className="h-full rounded-[10px] bg-primary-500"
+          style={fillStyle}
         />
       </View>
     </View>

@@ -21,3 +21,13 @@ export const STEP_FIELDS: Record<
 };
 
 export type STEPS = (typeof steps)[number]["value"];
+
+export const TOTAL_STEPS = steps.length;
+
+export const STEP_INDEX = steps.reduce(
+  (acc, step, index) => {
+    acc[step.value] = index;
+    return acc;
+  },
+  {} as Record<STEPS, number>,
+);

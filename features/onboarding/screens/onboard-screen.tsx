@@ -7,6 +7,8 @@ import { Screen } from "@/shared/ui";
 import { ReactNode } from "react";
 import { FormProvider } from "react-hook-form";
 import { View } from "react-native";
+import OnboardHeader from "../components/onboard/onboard-header";
+import { OnboardHeaderBoundary } from "../components/onboard/onboard-step-layout";
 import OnboardStepLimit from "../components/onboard/onboard-step-limit";
 import OnboardStepName from "../components/onboard/onboard-step-name";
 import OnboardStepNotification from "../components/onboard/onboard-step-notification";
@@ -54,29 +56,32 @@ export const OnboardScreenContent = ({
       <FormProvider {...form}>
         <Stepper steps={steps as any} defaultValue={defaultStep}>
           {({ currentValue, next }) => (
-            <View className="flex-1">
-              {currentValue === "name" && (
-                <OnboardStepName form={form} onNext={next} />
-              )}
-              {currentValue === "title" && (
-                <OnboardStepTitle form={form} onNext={next} />
-              )}
-              {currentValue === "reward" && (
-                <OnboardStepReward form={form} onNext={next} />
-              )}
-              {currentValue === "limit" && (
-                <OnboardStepLimit form={form} onNext={next} />
-              )}
-              {currentValue === "notification" && (
-                <>
-                  {renderNotificationStep ? (
-                    renderNotificationStep({ form, onNext: next })
-                  ) : (
-                    <OnboardStepNotification form={form} onNext={next} />
-                  )}
-                </>
-              )}
-            </View>
+            <OnboardHeaderBoundary>
+              <View className="flex-1">
+                <OnboardHeader stepName={currentValue as STEPS} />
+                {currentValue === "name" && (
+                  <OnboardStepName form={form} onNext={next} />
+                )}
+                {currentValue === "title" && (
+                  <OnboardStepTitle form={form} onNext={next} />
+                )}
+                {currentValue === "reward" && (
+                  <OnboardStepReward form={form} onNext={next} />
+                )}
+                {currentValue === "limit" && (
+                  <OnboardStepLimit form={form} onNext={next} />
+                )}
+                {currentValue === "notification" && (
+                  <>
+                    {renderNotificationStep ? (
+                      renderNotificationStep({ form, onNext: next })
+                    ) : (
+                      <OnboardStepNotification form={form} onNext={next} />
+                    )}
+                  </>
+                )}
+              </View>
+            </OnboardHeaderBoundary>
           )}
         </Stepper>
       </FormProvider>
