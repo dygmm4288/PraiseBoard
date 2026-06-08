@@ -1,4 +1,4 @@
-import { useUser, UserFlowOverrideMode } from "@/services/user";
+import { UserFlowOverrideMode, useUser } from "@/services/user";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { Stack, useRouter } from "expo-router";
@@ -73,6 +73,7 @@ type DebugSettingsScreenContentProps = {
   effectiveHasCompletedOnboarding: boolean;
   onOverridePress?: (mode: UserFlowOverrideMode) => Promise<void> | void;
   onResetPress?: () => Promise<void> | void;
+  onPreviewBoardPress?: () => Promise<void> | void;
 };
 
 export const DebugSettingsScreenContent = ({
@@ -84,6 +85,7 @@ export const DebugSettingsScreenContent = ({
   effectiveHasCompletedOnboarding,
   onOverridePress = () => undefined,
   onResetPress = () => undefined,
+  onPreviewBoardPress = () => undefined,
 }: DebugSettingsScreenContentProps) => {
   const currentRoute = resolveCurrentRouteLabel({
     effectiveHasSeenIntro,
@@ -191,12 +193,16 @@ export const DebugSettingsScreenContent = ({
               </AppButton>
             </View>
           ) : null}
+          <AppButton onPress={onPreviewBoardPress}>
+            온보딩 완료 Preview 강제 실행
+          </AppButton>
         </View>
       </ScrollView>
     </Screen>
   );
 };
 
+const DEBUG_PREVIEW_BOARD_ID = "3de7d0e3-eb76-428c-8766-fd24237ec32b";
 const DebugSettingsScreen = () => {
   const router = useRouter();
   const {
@@ -221,6 +227,16 @@ const DebugSettingsScreen = () => {
     router.replace("/");
   };
 
+  const handlePreviewBoardPress = () => {
+    router.replace({
+      pathname: "/",
+      params: {
+        from: "onboarding",
+        boardId: DEBUG_PREVIEW_BOARD_ID,
+      },
+    });
+  };
+
   return (
     <>
       <Stack.Screen options={{ title: "디버그 설정" }} />
@@ -233,6 +249,7 @@ const DebugSettingsScreen = () => {
         effectiveHasCompletedOnboarding={effectiveHasCompletedOnboarding}
         onOverridePress={handleOverridePress}
         onResetPress={handleResetPress}
+        onPreviewBoardPress={handlePreviewBoardPress}
       />
     </>
   );

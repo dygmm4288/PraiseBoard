@@ -10,7 +10,12 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { Stack, usePathname, useSegments } from "expo-router";
+import {
+  Stack,
+  useGlobalSearchParams,
+  usePathname,
+  useSegments,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState, Platform, View } from "react-native";
@@ -62,6 +67,7 @@ const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
   const segments = useSegments();
+  const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
 
   if (!isInitialized) return null;
 
@@ -70,7 +76,9 @@ const RootLayoutNav = () => {
   const routeGroup = segments[0];
 
   const shouldShowFnb =
-    !hiddenPathnames.includes(pathname) && !hiddenGroups.includes(routeGroup);
+    !hiddenPathnames.includes(pathname) &&
+    !hiddenGroups.includes(routeGroup) &&
+    !(pathname === "/" && params.from === "onboarding" && params.boardId);
 
   return (
     <View className="flex-1">

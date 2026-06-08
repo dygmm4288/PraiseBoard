@@ -41,16 +41,21 @@ const StatsScreen = () => {
   };
 
   return (
-    <Screen>
-      <View className="h-[45px] justify-center px-[8px]">
+    <Screen padded={false}>
+      <View className="h-[45px] justify-center px-screen">
         <AppText variant="button1" className="text-gray-850">
           {getMonthTitle(monthDate)}
         </AppText>
       </View>
 
       <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ gap: 12, paddingTop: 12, paddingBottom: 24 }}
+        className="flex-1 overflow-visible"
+        contentContainerStyle={{
+          gap: 12,
+          paddingHorizontal: 16,
+          paddingTop: 12,
+          paddingBottom: 32,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <Calendar

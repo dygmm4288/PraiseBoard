@@ -59,8 +59,7 @@ type FnbItemProps<T extends string> = {
   onLayout: (event: LayoutChangeEvent) => void;
 };
 
-const FNB_CONTAINER_HORIZONTAL_PADDING = 2;
-const ACTIVE_SURFACE_OVERFLOW = 2;
+const FNB_CONTAINER_HORIZONTAL_PADDING = 4;
 const BOTTOM_OFFSET = 23;
 
 const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
@@ -90,7 +89,7 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
     }
 
     scaleX.value = withSequence(
-      withTiming(0.1, { duration: 0.5 }),
+      withTiming(0.94, { duration: 80 }),
       withSpring(1, {
         damping: 50,
         stiffness: 135,
@@ -98,7 +97,7 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
       }),
     );
     scaleY.value = withSequence(
-      withTiming(0.1, { duration: 0.5 }),
+      withTiming(0.96, { duration: 80 }),
       withSpring(1, {
         damping: 50,
         stiffness: 145,
@@ -114,7 +113,7 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
 
   return (
     <Animated.View
-      className="absolute bottom-0 left-0 top-0 rounded-[100px] bg-primary-10"
+      className="absolute bottom-[4px] left-[4px] top-[4px] rounded-[100px] bg-primary-10"
       pointerEvents="none"
       style={[{ width }, activeSurfaceStyle]}
     />
@@ -205,8 +204,7 @@ const Fnb = <T extends string>({
   const [containerWidth, setContainerWidth] = useState(0);
   const activeSurfaceWidth =
     containerWidth > 0
-      ? (containerWidth - FNB_CONTAINER_HORIZONTAL_PADDING * 2) / items.length +
-        ACTIVE_SURFACE_OVERFLOW * 2
+      ? (containerWidth - FNB_CONTAINER_HORIZONTAL_PADDING * 2) / items.length
       : 0;
   const activeSurfaceX =
     activeLayout && activeSurfaceWidth > 0
@@ -275,7 +273,7 @@ const Fnb = <T extends string>({
       style={{ bottom: insets.bottom + BOTTOM_OFFSET }}
     >
       <View
-        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[2px]"
+        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[4px]"
         style={styles.container}
         onLayout={handleContainerLayout}
       >

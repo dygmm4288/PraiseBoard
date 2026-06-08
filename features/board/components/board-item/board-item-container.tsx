@@ -18,7 +18,7 @@ const BoardItemContainer = ({ board, children }: Props) => {
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 24,
-        elevation: 2,
+        elevation: 1,
       }}
     >
       <View
@@ -28,9 +28,15 @@ const BoardItemContainer = ({ board, children }: Props) => {
             ? "border border-secondary-30 bg-secondary-10"
             : "bg-white",
         )}
-        style={{ opacity: isTodayDone ? 0.58 : 1 }}
       >
-        <View className="flex-row items-center gap-[11px]">{children}</View>
+        <View
+          className="flex-row items-center gap-[11px]"
+          style={{
+            opacity: isTodayDone ? 0.5 : 1,
+          }}
+        >
+          {children}
+        </View>
       </View>
     </View>
   );

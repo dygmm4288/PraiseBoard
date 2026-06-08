@@ -2,9 +2,9 @@ import OnboardCompletionPreview from "@/features/onboarding/components/onboard/o
 import { useCurrentProfile, useUser } from "@/services/user";
 import { Screen } from "@/shared/ui";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ScreenHeader from "@/shared/ui/screen-header";
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 import { useBoardSheet } from "../hooks/use-board-sheet";
 import BoardToday from "../components/board-today/board-today";
 import BoardHomeWhaleMessage from "../components/board/board-home-whale-message";
@@ -20,30 +20,57 @@ export const BoardScreenContent = () => {
   const { openCreateSheet } = useBoardSheet();
   const [completionPreviewDone, setCompletionPreviewDone] = useState(false);
   const previewBoard =
-    params.from === "onboarding" && params.boardId
+    params.from === "onboarding" && typeof params.boardId === "string"
       ? homeBoards?.find((board) => board.id === params.boardId)
       : null;
   const showCompletionPreview = !!previewBoard && !completionPreviewDone;
 
   const handleCompletionPreviewDone = useCallback(() => {
     setCompletionPreviewDone(true);
-    router.replace("/");
+    router.setParams({ from: undefined, boardId: undefined });
   }, [router]);
+
+  useEffect(() => {
+    if (
+      params.from === "onboarding" &&
+      typeof params.boardId === "string" &&
+      homeBoards &&
+      !previewBoard &&
+      !completionPreviewDone
+    ) {
+      router.setParams({ from: undefined, boardId: undefined });
+    }
+  }, [
+    completionPreviewDone,
+    homeBoards,
+    params.boardId,
+    params.from,
+    previewBoard,
+    router,
+  ]);
 
   return (
     <>
-      <ScreenHeader title="홈" />
-      <View className="flex min-h-[660px] flex-col gap-[12px]">
+      <ScreenHeader title="홈" className="px-screen" />
+      <ScrollView
+        className="flex-1 overflow-visible"
+        contentContainerStyle={{
+          gap: 12,
+          minHeight: 660,
+          paddingHorizontal: 16,
+          paddingTop: 4,
+          paddingBottom: 32,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         <BoardHomeWhaleMessage />
         <BoardToday />
         <BoardList onCreateBoardPress={openCreateSheet} />
-      </View>
+      </ScrollView>
       {showCompletionPreview ? (
         <OnboardCompletionPreview
           nickname={nickname}
-          title={previewBoard.title}
-          rewardMemo={previewBoard.rewardMemo}
-          emoji={previewBoard.emoji}
+          board={previewBoard}
           onDone={handleCompletionPreviewDone}
         />
       ) : null}
@@ -53,7 +80,7 @@ export const BoardScreenContent = () => {
 
 const BoardScreen = () => {
   return (
-    <Screen>
+    <Screen padded={false}>
       <BoardScreenContent />
     </Screen>
   );

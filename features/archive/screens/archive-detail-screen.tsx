@@ -41,39 +41,49 @@ const ArchiveDetailScreen = () => {
   };
 
   return (
-    <Screen>
-      <View className="h-[45px] flex-row items-center justify-between px-[8px]">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="뒤로가기"
-          className="h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray"
-          onPress={() => router.back()}
-        >
-          <Icon name="ChevronLeft" size={18} />
-        </Pressable>
+    <Screen padded={false}>
+      <View className="px-screen">
+        <View className="h-[45px] flex-row items-center justify-between px-[8px]">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="뒤로가기"
+            className="h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray"
+            onPress={() => router.back()}
+          >
+            <Icon name="ChevronLeft" size={18} />
+          </Pressable>
 
-        <AppText
-          variant="custom"
-          weight="bold"
-          className="text-[18px] leading-[32px] text-black"
-        >
-          상세보기
-        </AppText>
+          <AppText
+            variant="custom"
+            weight="bold"
+            className="text-[18px] leading-[32px] text-black"
+          >
+            상세보기
+          </AppText>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="보드 수정"
-          disabled={!detail?.board}
-          className={cn(
-            "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
-            !detail?.board && "opacity-40",
-          )}
-          onPress={handleOpenEditSheet}
-        >
-          <Icon name="Edit" size={18} />
-        </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="보드 수정"
+            disabled={!detail?.board}
+            className={cn(
+              "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
+              !detail?.board && "opacity-40",
+            )}
+            onPress={handleOpenEditSheet}
+          >
+            <Icon name="Edit" size={18} />
+          </Pressable>
+        </View>
       </View>
-      <ScrollView className="pt-[12px]">
+      <ScrollView
+        className="flex-1 overflow-visible"
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: 12,
+          paddingBottom: 32,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {isLoading ? (
           <AppText>ArchiveDetailLoading</AppText>
         ) : error ? (

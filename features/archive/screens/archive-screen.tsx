@@ -22,8 +22,17 @@ const ArchiveScreen = () => {
 
   return (
     <>
-      <ScreenHeader title={"보관함"} />
-      <ScrollView className="flex flex-col gap-[30px] pt-[12px] overflow-auto">
+      <ScreenHeader title={"보관함"} className="px-screen" />
+      <ScrollView
+        className="flex-1 overflow-visible"
+        contentContainerStyle={{
+          gap: 30,
+          paddingHorizontal: 16,
+          paddingTop: 12,
+          paddingBottom: 32,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         <ArchiveSection
           title={`진행 습관 ${activeBoards.length}개`}
           action={<ArchiveActionBtn label="+ 추가" onPress={openCreateBoard} />}

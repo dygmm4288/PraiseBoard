@@ -69,7 +69,7 @@ const getStickerLevelClassName = (count: number | undefined) => {
   if (!count) return "bg-white";
   if (count <= 2) return "bg-primary-100";
   if (count <= 4) return "bg-primary-300";
-  return "bg-primary-500";
+  return "bg-primary-25";
 };
 
 const chunkWeeks = (cells: CalendarCell[]) =>

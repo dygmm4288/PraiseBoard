@@ -3,7 +3,7 @@ import Screen from "@/shared/ui/screen";
 
 export default function ArchiveRoute() {
   return (
-    <Screen>
+    <Screen padded={false}>
       <ArchiveScreen />
     </Screen>
   );
