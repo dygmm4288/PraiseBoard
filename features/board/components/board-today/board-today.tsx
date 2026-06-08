@@ -21,25 +21,38 @@ const BoardToday = ({ className }: BoardTodayProps) => {
         className,
       )}
     >
-      <AppText variant="caption2" weight="semibold" className="text-achievement-textStrong">
+      <AppText
+        variant="caption2"
+        weight="semibold"
+        className="text-achievement-textStrong"
+      >
         오늘의 성취
       </AppText>
       {!profileId ? (
-        <AppText variant="caption2" className="text-right text-achievement-textMuted">
+        <AppText
+          variant="caption2"
+          className="text-right text-achievement-textMuted"
+        >
           프로필 정보를 확인할 수 없어요
         </AppText>
       ) : isLoading ? (
-        <AppText variant="caption2" className="text-right text-achievement-textMuted">
+        <AppText
+          variant="caption2"
+          className="text-right text-achievement-textMuted"
+        >
           불러오는 중이에요
         </AppText>
       ) : error ? (
-        <AppText variant="caption2" className="text-right text-achievement-textMuted">
+        <AppText
+          variant="caption2"
+          className="text-right text-achievement-textMuted"
+        >
           다시 확인해 주세요
         </AppText>
       ) : count === 0 ? (
         <AppText
           variant="caption2"
-          className="text-right italic text-achievement-textMuted"
+          className="text-right text-achievement-textMuted"
         >
           오늘의 성취를 기다리고 있어요
         </AppText>
