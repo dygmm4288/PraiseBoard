@@ -55,12 +55,13 @@ type ActiveSurfaceProps = {
 type FnbItemProps<T extends string> = {
   item: BaseFnbItem<T>;
   isActive: boolean;
+  isLast: boolean;
   onPress: (key: T) => void;
   onLayout: (event: LayoutChangeEvent) => void;
 };
 
-const FNB_CONTAINER_HORIZONTAL_PADDING = 4;
 const BOTTOM_OFFSET = 23;
+const ACTIVE_SURFACE_WIDTH = 97;
 
 const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
   const translateX = useSharedValue(x);
@@ -113,9 +114,16 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
 
   return (
     <Animated.View
-      className="absolute bottom-[4px] left-[4px] top-[4px] rounded-[100px] bg-primary-10"
+      className="absolute bottom-[4px] left-0 top-[4px] rounded-[100px] bg-primary-10"
       pointerEvents="none"
-      style={[{ width }, activeSurfaceStyle]}
+      style={[
+        {
+          width,
+          zIndex: 0,
+          elevation: 0,
+        },
+        activeSurfaceStyle,
+      ]}
     />
   );
 };
@@ -123,6 +131,7 @@ const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
 const FnbItemBase = <T extends string>({
   item,
   isActive,
+  isLast,
   onPress,
   onLayout,
 }: FnbItemProps<T>) => {
@@ -153,7 +162,12 @@ const FnbItemBase = <T extends string>({
       accessibilityRole="tab"
       accessibilityState={{ selected: isActive }}
       className="relative min-w-0 flex-1 items-center justify-center rounded-[100px] px-[8px] pb-[7px] pt-[6px]"
-      style={{ zIndex: isActive ? 10 : 1 }}
+      style={{
+        zIndex: 1,
+        elevation: 0,
+        marginRight: isLast ? 0 : -8,
+        backgroundColor: "transparent",
+      }}
       onLayout={onLayout}
       onPress={() => onPress(item.key)}
     >
@@ -201,15 +215,10 @@ const Fnb = <T extends string>({
     [items, visualActiveKey],
   );
   const activeLayout = itemLayouts[activeIndex];
-  const [containerWidth, setContainerWidth] = useState(0);
-  const activeSurfaceWidth =
-    containerWidth > 0
-      ? (containerWidth - FNB_CONTAINER_HORIZONTAL_PADDING * 2) / items.length
-      : 0;
-  const activeSurfaceX =
-    activeLayout && activeSurfaceWidth > 0
-      ? activeLayout.x + activeLayout.width / 2 - activeSurfaceWidth / 2
-      : 0;
+  const activeSurfaceWidth = ACTIVE_SURFACE_WIDTH;
+  const activeSurfaceX = activeLayout
+    ? activeLayout.x + activeLayout.width / 2 - activeSurfaceWidth / 2
+    : 0;
 
   useEffect(() => {
     onPressRef.current = onPress;
@@ -246,14 +255,6 @@ const Fnb = <T extends string>({
     [],
   );
 
-  const handleContainerLayout = useCallback((event: LayoutChangeEvent) => {
-    const nextWidth = event.nativeEvent.layout.width;
-
-    setContainerWidth((current) =>
-      current === nextWidth ? current : nextWidth,
-    );
-  }, []);
-
   const itemLayoutHandlers = useMemo(
     () =>
       items.map(
@@ -266,27 +267,27 @@ const Fnb = <T extends string>({
   return (
     <View
       className={cn(
-        "absolute left-[25px] right-[25px] items-center",
+        "absolute left-[21px] right-[21px] items-center",
         className,
       )}
       pointerEvents="box-none"
       style={{ bottom: insets.bottom + BOTTOM_OFFSET }}
     >
       <View
-        className="w-full max-w-[348px] flex-row items-start justify-center rounded-[296px] bg-white px-[4px]"
+        className="relative w-full max-w-[360px] flex-row items-start justify-center overflow-hidden rounded-[296px] bg-white px-[6px] py-[4px]"
         style={styles.container}
-        onLayout={handleContainerLayout}
       >
         <ActiveSurface
           x={activeSurfaceX}
           width={activeSurfaceWidth}
-          visible={!!activeLayout && activeSurfaceWidth > 0}
+          visible={!!activeLayout}
         />
         {items.map((item, index) => (
           <FnbItem
             key={item.key}
             item={item}
             isActive={item.key === visualActiveKey}
+            isLast={index === items.length - 1}
             onLayout={itemLayoutHandlers[index]}
             onPress={handlePress}
           />
