@@ -44,7 +44,7 @@ export const useFnb = () => {
     const target = pathMap[key];
     if (target === pathname) return; // no-op if same screen
 
-    router.push(target);
+    router.replace(target);
   };
 
   return { items, activeKey, onPress };
