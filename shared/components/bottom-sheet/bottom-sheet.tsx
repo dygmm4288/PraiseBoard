@@ -1,73 +1,53 @@
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetBackdropProps,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import type {
+  BottomSheetBackdropProps,
+  BottomSheetProps,
+} from "@gorhom/bottom-sheet";
+import type { ElementRef, PropsWithChildren } from "react";
 import {
-  PropsWithChildren,
   useCallback,
   useEffect,
   useMemo,
   useRef,
 } from "react";
+import { Keyboard } from "react-native";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
-export type SheetState = "hidden" | "peek" | "half" | "full";
-
 type Props = {
-  state: SheetState;
-  onChangeState: (state: SheetState) => void;
-  snapPoints?: Array<string | number>;
+  index: number;
+  onChangeIndex: (index: number) => void;
+  snapPoints?: (string | number)[];
   enablePanDownToClose?: boolean;
   enableBackdrop?: boolean;
+  keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
 } & PropsWithChildren;
-
-const STATE_TO_INDEX = {
-  hidden: -1,
-  peek: 0,
-  half: 1,
-  full: 2,
-} satisfies Record<SheetState, number>;
-
-const INDEX_TO_STATE = {
-  [-1]: "hidden",
-  0: "peek",
-  1: "half",
-  2: "full",
-} as const satisfies Record<number, SheetState>;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
 
 const AppBottomSheet = ({
-  state,
-  onChangeState,
+  index,
+  onChangeIndex,
   children,
+  keyboardBehavior,
   snapPoints = [...DEFAULT_SNAP_POINTS],
   enablePanDownToClose = true,
   enableBackdrop = true,
 }: Props) => {
-  const sheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
+  const controlledIndexRef = useRef(index);
+  const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
 
-  useEffect(() => {
-    const index = STATE_TO_INDEX[state];
-
-    if (index === -1) {
-      sheetRef.current?.close();
-    } else {
-      sheetRef.current?.snapToIndex(index);
-    }
-  }, [state]);
+  controlledIndexRef.current = index;
 
   const handleChange = useCallback(
     (index: number) => {
-      const nextState = INDEX_TO_STATE[index as keyof typeof INDEX_TO_STATE];
-
-      if (nextState) {
-        onChangeState(nextState);
-      }
+      onChangeIndex(index);
     },
-    [onChangeState],
+    [onChangeIndex],
   );
 
   const renderBackdrop = useCallback(
@@ -84,16 +64,52 @@ const AppBottomSheet = ({
     [enableBackdrop],
   );
 
+  useEffect(() => {
+    if (!keyboardBehavior) {
+      return;
+    }
+
+    const restoreControlledIndex = () => {
+      const targetIndex = controlledIndexRef.current;
+
+      if (restoreTimerRef.current) {
+        clearTimeout(restoreTimerRef.current);
+      }
+
+      restoreTimerRef.current = setTimeout(() => {
+        if (targetIndex >= 0) {
+          bottomSheetRef.current?.snapToIndex(targetIndex);
+        } else {
+          bottomSheetRef.current?.close();
+        }
+      }, 50);
+    };
+
+    const subscription = Keyboard.addListener(
+      "keyboardDidHide",
+      restoreControlledIndex,
+    );
+
+    return () => {
+      subscription.remove();
+
+      if (restoreTimerRef.current) {
+        clearTimeout(restoreTimerRef.current);
+        restoreTimerRef.current = null;
+      }
+    };
+  }, [keyboardBehavior]);
+
   return (
     <BottomSheet
-      ref={sheetRef}
-      index={STATE_TO_INDEX[state]}
+      ref={bottomSheetRef}
+      index={index}
       snapPoints={resolvedSnapPoints}
       animateOnMount={false}
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
       enableBlurKeyboardOnGesture
-      keyboardBehavior="interactive"
+      keyboardBehavior={keyboardBehavior}
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"
       onChange={handleChange}

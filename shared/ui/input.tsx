@@ -1,5 +1,5 @@
 import { cn } from "@/shared/utils/cn";
-import { ComponentType } from "react";
+import { ElementType } from "react";
 import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
 
 export interface AppInputProps extends TextInputProps {
@@ -8,7 +8,7 @@ export interface AppInputProps extends TextInputProps {
   onReset?: () => void;
   className?: string;
   placeholder?: string;
-  inputComponent?: ComponentType<TextInputProps>;
+  inputComponent?: ElementType<TextInputProps>;
 }
 
 export const AppInput = ({

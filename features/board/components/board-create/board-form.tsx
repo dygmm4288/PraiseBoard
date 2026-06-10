@@ -1,9 +1,9 @@
 import { Icon } from "@/assets/icons";
-import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import {
   BoardCreateFormValues,
   boardCreateDraftSchema,
 } from "@/features/board/schema";
+import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppInput, AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
@@ -43,7 +43,7 @@ type BoardFormProps = {
 };
 
 type OptionRowProps = {
-  options: Array<{ label: string; value: number }>;
+  options: { label: string; value: number }[];
   selectedValue: number;
   locked?: boolean;
   onSelect: (value: number) => void;
@@ -230,8 +230,7 @@ const BoardForm = ({
               onChangeText={onChangeFormData("title")}
               placeholder="어떤 습관을 시작해볼까요?"
               placeholderTextColor={COLOR.textGray}
-              className="h-[42px] min-h-[42px] flex-1 rounded-[12px] border-bgLightGray px-[12px] py-[10px]"
-              inputClassName="min-w-0 flex-1 p-0 text-[14px] leading-[20px] text-black"
+              className="flex-1"
             />
             <Pressable
               accessibilityRole="button"
@@ -274,8 +273,6 @@ const BoardForm = ({
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
             placeholderTextColor={COLOR.textGray}
-            className="h-[42px] min-h-[42px] rounded-[12px] border-bgLightGray px-[12px] py-[10px]"
-            inputClassName="min-w-0 flex-1 p-0 text-[14px] leading-[20px] text-black"
           />
         </BoardFormSection>
 

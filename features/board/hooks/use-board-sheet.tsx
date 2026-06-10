@@ -17,7 +17,9 @@ export type BoardEditSheetInput = {
 
 const BOARD_SHEET_SNAP_POINTS = ["68%", "80%"];
 
-const toInitialValues = (board: BoardEditSheetInput): BoardCreateFormValues => ({
+const toInitialValues = (
+  board: BoardEditSheetInput,
+): BoardCreateFormValues => ({
   title: board.title,
   emoji: board.emoji,
   targetCount: board.targetCount,
@@ -31,6 +33,7 @@ export const useBoardSheet = () => {
   const openCreateSheet = useCallback(() => {
     presentTopLevelSheet({
       snapPoints: BOARD_SHEET_SNAP_POINTS,
+      keyboardBehavior: "fillParent",
       children: (
         <View className="flex-1 px-[16px] pb-[16px]">
           <BoardCreate
@@ -46,6 +49,7 @@ export const useBoardSheet = () => {
     (board: BoardEditSheetInput) => {
       presentTopLevelSheet({
         snapPoints: BOARD_SHEET_SNAP_POINTS,
+        keyboardBehavior: "fillParent",
         children: (
           <View className="flex-1 px-[16px] pb-[16px]">
             <BoardEditSheetContent
