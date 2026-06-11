@@ -1,4 +1,7 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import {
+  BoardSetupFormValues,
+  NICKNAME_MAX_LENGTH,
+} from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import { useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -92,6 +95,7 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
                     onChangeText={field.onChange}
                     onSend={() => onSendForm(field)}
                     disabled={disabled || !canInput}
+                    maxLength={NICKNAME_MAX_LENGTH}
                   />
                 </View>
               )}

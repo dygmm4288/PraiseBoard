@@ -1,4 +1,4 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import { BoardSetupFormValues, TITLE_MAX_LENGTH } from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import { useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -122,6 +122,7 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
                   onChangeText={field.onChange}
                   disabled={disabled}
                   onSend={() => onSendForm(field)}
+                  maxLength={TITLE_MAX_LENGTH}
                 /> : <></>
               )}
             />

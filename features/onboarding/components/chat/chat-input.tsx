@@ -9,6 +9,7 @@ type Props = {
   onSend?: () => void;
   placeholder?: string;
   disabled?: boolean;
+  maxLength?: number;
 };
 
 const ChatInput = ({
@@ -17,6 +18,7 @@ const ChatInput = ({
   onSend = () => {},
   placeholder = "",
   disabled = false,
+  maxLength,
 }: Props) => {
   const sendDisabled = useMemo(() => value.length === 0, [value]);
 
@@ -30,6 +32,7 @@ const ChatInput = ({
           placeholder={placeholder}
           placeholderTextColor={COLOR.labelGray}
           editable={!disabled}
+          maxLength={maxLength}
         />
         <ChatSend onPress={onSend} disabled={disabled || sendDisabled} />
       </View>

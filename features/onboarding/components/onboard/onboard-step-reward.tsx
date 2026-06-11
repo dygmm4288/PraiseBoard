@@ -1,4 +1,7 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import {
+  BoardSetupFormValues,
+  REWARD_MEMO_LENGTH,
+} from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useEffect, useState } from "react";
@@ -137,6 +140,7 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                       onChangeText={field.onChange}
                       onSend={() => onSendForm(field)}
                       disabled={disabled}
+                      maxLength={REWARD_MEMO_LENGTH}
                     />
                   )}
                 </View>

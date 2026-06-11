@@ -1,7 +1,9 @@
 import { Icon } from "@/assets/icons";
 import {
-  BoardCreateFormValues,
   boardCreateDraftSchema,
+  BoardCreateFormValues,
+  REWARD_MEMO_LENGTH,
+  TITLE_MAX_LENGTH,
 } from "@/features/board/schema";
 import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import { COLOR } from "@/shared/constants/colors.constant";
@@ -228,6 +230,7 @@ const BoardForm = ({
               value={formData.title}
               onReset={() => onChangeFormData("title")("")}
               onChangeText={onChangeFormData("title")}
+              maxLength={TITLE_MAX_LENGTH}
               placeholder="어떤 습관을 시작해볼까요?"
               placeholderTextColor={COLOR.textGray}
               className="flex-1"
@@ -272,6 +275,7 @@ const BoardForm = ({
             value={formData.rewardMemo ?? ""}
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
+            maxLength={REWARD_MEMO_LENGTH}
             placeholderTextColor={COLOR.textGray}
           />
         </BoardFormSection>
