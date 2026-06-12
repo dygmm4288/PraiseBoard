@@ -1,6 +1,9 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import {
+  BoardSetupFormValues,
+  NICKNAME_MAX_LENGTH,
+} from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import {
@@ -17,6 +20,11 @@ import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   const [canInput, setCanInput] = useState(false);
+  const showMaxLengthToast = useCallback(() => {
+    toast.chatError("이름은 15자까지 입력할 수 있어요", {
+      refresh: true,
+    });
+  }, []);
 
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
@@ -92,6 +100,8 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
                     onChangeText={field.onChange}
                     onSend={() => onSendForm(field)}
                     disabled={disabled || !canInput}
+                    maxLength={NICKNAME_MAX_LENGTH}
+                    onMaxLengthExceeded={showMaxLengthToast}
                   />
                 </View>
               )}
