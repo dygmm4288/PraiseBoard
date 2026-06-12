@@ -3,7 +3,7 @@ import { useDeleteBoard } from "../../hooks/use-delete-board";
 import { useUpdateBoard } from "../../hooks/use-update-board";
 import BoardForm from "./board-form";
 
-type BoardEditSheetContentProps = {
+type BoardEditProps = {
   boardId: string;
   initialValues: BoardCreateFormValues;
   onClose: () => void;
@@ -11,13 +11,13 @@ type BoardEditSheetContentProps = {
   onDeleted?: () => void;
 };
 
-const BoardEditSheetContent = ({
+const BoardEdit = ({
   boardId,
   initialValues,
   onClose,
   onUpdated,
   onDeleted,
-}: BoardEditSheetContentProps) => {
+}: BoardEditProps) => {
   const { changeFormData, formData, updateBoard } = useUpdateBoard(
     boardId,
     initialValues,
@@ -51,4 +51,4 @@ const BoardEditSheetContent = ({
   );
 };
 
-export default BoardEditSheetContent;
+export default BoardEdit;

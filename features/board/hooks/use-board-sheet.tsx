@@ -1,5 +1,5 @@
-import BoardCreate from "@/features/board/components/board-create/board-create";
-import BoardEditSheetContent from "@/features/board/components/board-create/board-edit-sheet-content";
+import BoardCreate from "@/features/board/components/board-form/board-create";
+import BoardEdit from "@/features/board/components/board-form/board-edit";
 import { BoardCreateFormValues } from "@/features/board/schema";
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { useCallback } from "react";
@@ -52,7 +52,7 @@ export const useBoardSheet = () => {
         keyboardBehavior: "fillParent",
         children: (
           <View className="flex-1 px-[16px] pb-[16px]">
-            <BoardEditSheetContent
+            <BoardEdit
               boardId={board.id}
               initialValues={toInitialValues(board)}
               onClose={dismissTopLevelSheet}
