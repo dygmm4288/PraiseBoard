@@ -12,8 +12,7 @@ if (!ISSUES) {
   throw new Error("ISSUES is missing");
 }
 
-const issues = ISSUES
-  .split(",")
+const issues = ISSUES.split(",")
   .map((v) => v.trim())
   .filter(Boolean);
 
@@ -42,24 +41,32 @@ async function graphql(query, variables = {}) {
 async function getIssueId(identifier) {
   const data = await graphql(
     `
-    query($identifier: String!) {
-      issue(identifier: $identifier) {
-        id
+      query ($identifier: String!) {
+        issues(filter: { identifier: { eq: $identifier } }) {
+          nodes {
+            id
+            identifier
+            title
+          }
+        }
       }
-    }
     `,
     {
       identifier,
     },
   );
 
-  return data.issue.id;
+  if (!data.issues.nodes.length) {
+    throw new Error(`Issue not found: ${identifier}`);
+  }
+
+  return data.issues.nodes[0].id;
 }
 
 async function createComment(issueId, body) {
   await graphql(
     `
-      mutation($input: CommentCreateInput!) {
+      mutation ($input: CommentCreateInput!) {
         commentCreate(input: $input) {
           success
         }
