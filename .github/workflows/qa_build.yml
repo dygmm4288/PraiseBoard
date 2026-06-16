@@ -42,4 +42,4 @@ jobs:
         env:
           ISSUES: ${{ github.event.inputs.issues }}
           PLATFORM: ${{ github.event.inputs.platform }}
-        run: node ./qa-build.mjs
+        run: node scripts/qa-build.mjs
