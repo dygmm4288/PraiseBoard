@@ -32,41 +32,37 @@ async function graphql(query, variables = {}) {
   const json = await res.json();
 
   if (json.errors) {
-    throw new Error(JSON.stringify(json.errors, null, 2));
+    console.error(JSON.stringify(json.errors, null, 2));
+    throw new Error("GraphQL request failed");
   }
 
   return json.data;
 }
 
-async function getIssueId(identifier) {
-  const data = await graphql(
-    `
-      query ($identifier: String!) {
-        issues(filter: { identifier: { eq: $identifier } }) {
-          nodes {
-            id
-            identifier
-            title
-          }
+async function loadIssueMap() {
+  const data = await graphql(`
+    query {
+      issues(first: 100) {
+        nodes {
+          id
+          identifier
         }
       }
-    `,
-    {
-      identifier,
-    },
+    }
+  `);
+
+  return new Map(
+    data.issues.nodes.map((issue) => [
+      issue.identifier.toLowerCase(),
+      issue.id,
+    ]),
   );
-
-  if (!data.issues.nodes.length) {
-    throw new Error(`Issue not found: ${identifier}`);
-  }
-
-  return data.issues.nodes[0].id;
 }
 
 async function createComment(issueId, body) {
-  await graphql(
+  return graphql(
     `
-      mutation ($input: CommentCreateInput!) {
+      mutation CommentCreate($input: CommentCreateInput!) {
         commentCreate(input: $input) {
           success
         }
@@ -82,6 +78,8 @@ async function createComment(issueId, body) {
 }
 
 async function main() {
+  const issueMap = await loadIssueMap();
+
   const body = `## ✅ QA Build
 
 ### 🤖 Android
@@ -93,12 +91,18 @@ ${ANDROID_BUILD_URL || "-"}
 ${IOS_BUILD_URL || "-"}
 `;
 
-  for (const issue of issues) {
-    console.log(`Commenting ${issue}`);
+  for (const issueIdentifier of issues) {
+    const issueId = issueMap.get(issueIdentifier.toLowerCase());
 
-    const issueId = await getIssueId(issue);
+    if (!issueId) {
+      throw new Error(`Issue not found: ${issueIdentifier}`);
+    }
 
-    await createComment(issueId, body);
+    console.log(`Commenting ${issueIdentifier} (${issueId})`);
+
+    const result = await createComment(issueId, body);
+
+    console.log(JSON.stringify(result, null, 2));
   }
 
   console.log("Done");
