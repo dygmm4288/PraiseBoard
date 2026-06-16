@@ -1,0 +1,46 @@
+name: QA Build
+
+env:
+  LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      issues:
+        description: "Linear Issues (ex: EAS-20,EAS-31)"
+        required: true
+
+      platform:
+        description: "android | ios | all"
+        required: true
+        default: "android"
+
+jobs:
+  qa-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - uses: expo/expo-github-action@v8
+        with:
+          token: ${{ env.EXPO_TOKEN }}
+          eas-version: latest
+
+      - name: Build Preview
+        run: |
+          eas build \
+            --platform ${{ github.event.inputs.platform }} \
+            --profile preview \
+            --non-interactive
