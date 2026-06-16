@@ -1,4 +1,5 @@
 import AppBottomSheet from "@/shared/components/bottom-sheet/bottom-sheet";
+import { clamp } from "@/shared/utils/number";
 import { BottomSheetProps } from "@gorhom/bottom-sheet";
 import {
   createContext,
@@ -6,9 +7,14 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
+
+type DismissTopLevelSheetOptions = {
+  runOnClose?: boolean;
+};
 
 type TopLevelSheetConfig = {
   children: ReactNode;
@@ -20,44 +26,108 @@ type TopLevelSheetConfig = {
 
 type TopLevelSheetContextValue = {
   presentTopLevelSheet: (config: TopLevelSheetConfig) => void;
-  dismissTopLevelSheet: () => void;
+  dismissTopLevelSheet: (options?: DismissTopLevelSheetOptions) => void;
 };
 
 type TopLevelSheetState = {
   config: TopLevelSheetConfig | null;
   index: number;
+  closeEffect: (() => void) | null;
+  runOnCloseAfterDismiss: boolean | null;
 };
 
 const TopLevelSheetContext = createContext<TopLevelSheetContextValue | null>(
   null,
 );
 
+const getSafeInitialIndex = (config: TopLevelSheetConfig) => {
+  const maxIndex = config.snapPoints.length - 1;
+
+  if (maxIndex < 0) {
+    return -1;
+  }
+
+  const initialIndex = config.initialIndex ?? 0;
+
+  if (!Number.isInteger(initialIndex)) {
+    return 0;
+  }
+
+  return clamp(initialIndex, 0, maxIndex);
+};
+
+const getSafeCurrentIndex = (
+  config: TopLevelSheetConfig,
+  currentIndex: number,
+) => {
+  const maxIndex = config.snapPoints.length - 1;
+
+  if (maxIndex < 0) {
+    return -1;
+  }
+
+  if (!Number.isInteger(currentIndex) || currentIndex < 0) {
+    return getSafeInitialIndex(config);
+  }
+
+  return Math.min(currentIndex, maxIndex);
+};
+
+const getClosedSheetState = (): TopLevelSheetState => ({
+  config: null,
+  index: -1,
+  closeEffect: null,
+  runOnCloseAfterDismiss: null,
+});
+
 export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
-  const [sheetState, setSheetState] = useState<TopLevelSheetState>({
-    config: null,
-    index: -1,
-  });
+  const [sheetState, setSheetState] =
+    useState<TopLevelSheetState>(getClosedSheetState);
 
   const presentTopLevelSheet = useCallback((config: TopLevelSheetConfig) => {
-    setSheetState((current) => ({
-      config,
-      index: current.config ? current.index : (config.initialIndex ?? 0),
-    }));
-  }, []);
-
-  const dismissTopLevelSheet = useCallback(() => {
-    setSheetState((current) =>
-      current.config ? { ...current, index: -1 } : current,
-    );
-  }, []);
-
-  const handleClose = useCallback(() => {
     setSheetState((current) => {
-      current.config?.onClose?.();
+      if (config.snapPoints.length === 0) {
+        return getClosedSheetState();
+      }
 
       return {
-        config: null,
-        index: -1,
+        config,
+        index: current.config
+          ? getSafeCurrentIndex(config, current.index)
+          : getSafeInitialIndex(config),
+        closeEffect: null,
+        runOnCloseAfterDismiss: null,
+      };
+    });
+  }, []);
+
+  const dismissTopLevelSheet = useCallback(
+    (options?: DismissTopLevelSheetOptions) => {
+      setSheetState((current) => {
+        if (!current.config) {
+          return current;
+        }
+
+        return {
+          ...current,
+          index: -1,
+          closeEffect: null,
+          runOnCloseAfterDismiss: options?.runOnClose ?? false,
+        };
+      });
+    },
+    [],
+  );
+
+  const clearTopLevelSheet = useCallback((runOnClose: boolean) => {
+    setSheetState((current) => {
+      const shouldRunOnClose = current.runOnCloseAfterDismiss ?? runOnClose;
+
+      return {
+        ...getClosedSheetState(),
+        closeEffect: shouldRunOnClose
+          ? (current.config?.onClose ?? null)
+          : null,
       };
     });
   }, []);
@@ -65,7 +135,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const handleChangeIndex = useCallback(
     (index: number) => {
       if (index === -1) {
-        handleClose();
+        clearTopLevelSheet(true);
         return;
       }
 
@@ -82,8 +152,23 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
         return { ...current, index };
       });
     },
-    [handleClose],
+    [clearTopLevelSheet],
   );
+
+  useEffect(() => {
+    if (!sheetState.closeEffect) {
+      return;
+    }
+
+    const closeEffect = sheetState.closeEffect;
+
+    closeEffect();
+    setSheetState((current) =>
+      current.closeEffect === closeEffect
+        ? { ...current, closeEffect: null }
+        : current,
+    );
+  }, [sheetState.closeEffect]);
 
   const value = useMemo(
     () => ({

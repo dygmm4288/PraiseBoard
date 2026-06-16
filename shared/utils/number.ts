@@ -6,13 +6,17 @@ export const toSafeInteger = (value: number) => {
 export const toPadZero = (
   value: number,
   digit: number = 2,
-  direction: 'prefix' | 'suffix' = 'prefix',
+  direction: "prefix" | "suffix" = "prefix",
 ): string => {
   const numStr = String(value);
 
   if (numStr.length >= digit) return numStr;
 
-  const zeros = '0'.repeat(digit - numStr.length);
+  const zeros = "0".repeat(digit - numStr.length);
 
-  return direction === 'suffix' ? `${numStr}${zeros}` : `${zeros}${numStr}`;
+  return direction === "suffix" ? `${numStr}${zeros}` : `${zeros}${numStr}`;
+};
+
+export const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
 };

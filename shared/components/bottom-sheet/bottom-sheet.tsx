@@ -12,6 +12,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { Keyboard } from "react-native";
 import BottomSheetHandle from "./bottom-sheet-handle";
@@ -37,14 +38,17 @@ const AppBottomSheet = ({
   enableBackdrop = true,
 }: Props) => {
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
+  const lastEmittedIndexRef = useRef<number | null>(null);
   const controlledIndexRef = useRef(index);
   const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [initialIndex] = useState(index);
   const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
 
   controlledIndexRef.current = index;
 
   const handleChange = useCallback(
     (index: number) => {
+      lastEmittedIndexRef.current = index;
       onChangeIndex(index);
     },
     [onChangeIndex],
@@ -63,6 +67,20 @@ const AppBottomSheet = ({
       ) : null,
     [enableBackdrop],
   );
+
+  useEffect(() => {
+    if (lastEmittedIndexRef.current === index) {
+      lastEmittedIndexRef.current = null;
+      return;
+    }
+
+    if (index >= 0) {
+      bottomSheetRef.current?.snapToIndex(index);
+      return;
+    }
+
+    bottomSheetRef.current?.close();
+  }, [index]);
 
   useEffect(() => {
     if (!keyboardBehavior) {
@@ -103,7 +121,7 @@ const AppBottomSheet = ({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={index}
+      index={initialIndex}
       snapPoints={resolvedSnapPoints}
       animateOnMount={false}
       enableDynamicSizing={false}

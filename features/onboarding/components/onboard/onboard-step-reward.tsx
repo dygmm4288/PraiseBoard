@@ -1,7 +1,10 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import {
+  BoardSetupFormValues,
+  REWARD_MEMO_LENGTH,
+} from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import {
@@ -30,6 +33,12 @@ const CHIPS = [
 const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isDirectMode, setIsDirectMode] = useState(false);
+  const showMaxLengthToast = useCallback(() => {
+    toast.chatError("보상은 20자까지 입력할 수 있어요", {
+      refresh: true,
+    });
+  }, []);
+
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
       {
@@ -137,6 +146,8 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                       onChangeText={field.onChange}
                       onSend={() => onSendForm(field)}
                       disabled={disabled}
+                      maxLength={REWARD_MEMO_LENGTH}
+                      onMaxLengthExceeded={showMaxLengthToast}
                     />
                   )}
                 </View>
