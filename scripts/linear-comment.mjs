@@ -42,18 +42,18 @@ async function graphql(query, variables = {}) {
 async function getIssueId(identifier) {
   const data = await graphql(
     `
-      query($identifier: String!) {
-        issueV2(identifier: $identifier) {
-          id
-        }
+    query($identifier: String!) {
+      issue(identifier: $identifier) {
+        id
       }
+    }
     `,
     {
       identifier,
     },
   );
 
-  return data.issueV2.id;
+  return data.issue.id;
 }
 
 async function createComment(issueId, body) {
