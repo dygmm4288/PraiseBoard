@@ -1,9 +1,5 @@
 name: QA Build
 
-env:
-  LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
-  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
 on:
   workflow_dispatch:
     inputs:
@@ -15,6 +11,10 @@ on:
         description: "android | ios | all"
         required: true
         default: "android"
+
+env:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
 
 jobs:
   qa-build:
@@ -38,9 +38,8 @@ jobs:
           token: ${{ env.EXPO_TOKEN }}
           eas-version: latest
 
-      - name: Build Preview
-        run: |
-          eas build \
-            --platform ${{ github.event.inputs.platform }} \
-            --profile preview \
-            --non-interactive
+      - name: Run QA Build
+        env:
+          ISSUES: ${{ github.event.inputs.issues }}
+          PLATFORM: ${{ github.event.inputs.platform }}
+        run: node ./qa-build.mjs
