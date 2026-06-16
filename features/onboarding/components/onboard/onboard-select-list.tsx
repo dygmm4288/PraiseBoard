@@ -11,10 +11,11 @@ export type OnboardSelectListItem = {
 
 type Props = {
   items: OnboardSelectListItem[];
-  onPress: (item: OnboardSelectListItem) => void | Promise<void>;
+  onPress: (item: OnboardSelectListItem) => void | Promise<unknown>;
+  disabled?: boolean;
 };
 
-const OnboardSelectList = ({ items, onPress }: Props) => {
+const OnboardSelectList = ({ items, onPress, disabled = false }: Props) => {
   return (
     <View className="gap-[12px]">
       {items.map((item, index) => (
@@ -29,7 +30,9 @@ const OnboardSelectList = ({ items, onPress }: Props) => {
         >
           <Pressable
             className="w-full rounded-[16px] border border-[#EFF1F5] bg-white px-[14px] py-[12px]"
+            disabled={disabled}
             onPress={() => onPress(item)}
+            style={{ opacity: disabled ? 0.55 : 1 }}
           >
             <View className="flex-row items-center gap-[12px]">
               <View className="h-[40px] w-[40px] items-center justify-center rounded-[13px] bg-primary-100">

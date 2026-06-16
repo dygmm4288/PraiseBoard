@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
@@ -18,6 +19,7 @@ const CHIPS = [
 
 const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
+  const actionLock = useOnboardActionLock();
 
   const { messages, addUserMessage, run } = useOnboardChat({
     whaleMessages: [
@@ -32,12 +34,12 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
     run();
   }, []);
 
-  const onSelectOption = async (item: OnboardSelectListItem) => {
+  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
     setShowOptions(false);
     await addUserMessage(item.text);
     form.setValue("boards.target_count", item.value ?? item.text);
     onNext();
-  };
+  });
 
   return (
     <OnboardStepLayout stepName="limit">
@@ -60,7 +62,11 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
                 />
                 {showOptions && v.role === "system" && i === 0 && (
                   <View className="mt-[24px]">
-                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
+                    <OnboardSelectList
+                      items={CHIPS}
+                      onPress={onSelectOption}
+                      disabled={actionLock.disabled}
+                    />
                   </View>
                 )}
               </Fragment>
