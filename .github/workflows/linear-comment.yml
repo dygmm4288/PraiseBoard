@@ -1,0 +1,39 @@
+name: Linear Comment
+
+on:
+  workflow_dispatch:
+    inputs:
+      issues:
+        description: "Linear Issues (ex: EAS-20,EAS-31)"
+        required: true
+
+      android_build_url:
+        description: "Android Build URL"
+        required: false
+        default: ""
+
+      ios_build_url:
+        description: "iOS Build URL"
+        required: false
+        default: ""
+
+env:
+  LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Comment to Linear
+        env:
+          ISSUES: ${{ github.event.inputs.issues }}
+          ANDROID_BUILD_URL: ${{ github.event.inputs.android_build_url }}
+          IOS_BUILD_URL: ${{ github.event.inputs.ios_build_url }}
+        run: node scripts/linear-comment.mjs
