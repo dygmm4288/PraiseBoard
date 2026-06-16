@@ -27,6 +27,12 @@ const rewardMemoSchema = z
   .max(REWARD_MEMO_LENGTH, "보상은 20자까지 입력할 수 있어요.")
   .nullable();
 
+const limitCountSchema = z
+  .number()
+  .int("하루 최대 개수는 정수만 입력할 수 있어요.")
+  .min(1, "하루 최대 개수는 1 이상이어야 해요.")
+  .max(5, "하루 최대 개수는 5개까지 입력할 수 있어요.");
+
 export const boardSetupDraftSchema = z.object({
   boards: z.object({
     title: titleSchema,
@@ -41,6 +47,7 @@ export const boardSetupDraftSchema = z.object({
       .refine((value) => Number(value) > 0, "목표 개수는 1 이상이어야 해요.")
       .refine((value) => [30, 50, 100].includes(Number(value))),
     reward_memo: rewardMemoSchema,
+    limit_count: limitCountSchema,
     emoji: emojiSchema,
   }),
   profiles: z.object({
@@ -72,11 +79,7 @@ export const boardCreateDraftSchema = z.object({
     .max(REWARD_MEMO_LENGTH, "보상은 20자까지 입력할 수 있어요.")
     .optional()
     .nullable(),
-  limitCount: z
-    .number()
-    .int("하루 최대 개수는 정수만 입력할 수 있어요.")
-    .min(1, "하루 최대 개수는 1 이상이어야 해요.")
-    .max(5, "하루 최대 개수는 5개까지 입력할 수 있어요."),
+  limitCount: limitCountSchema,
 });
 
 export const normalizeBoardSetupPayload = (
@@ -94,7 +97,7 @@ export const normalizeBoardSetupPayload = (
       emoji: boards.emoji,
       target_count: Number(boards.target_count),
       reward_memo: boards.reward_memo ? boards.reward_memo : null,
-      limit_count: 10,
+      limit_count: Number(boards.limit_count),
     },
     profiles: {
       nickname: profiles.nickname ? profiles.nickname : null,
@@ -174,6 +177,7 @@ export const BOARD_SETUP_DEFAULT_VALUES: BoardSetupFormValues = {
     target_count: "",
     reward_memo: "",
     emoji: "🐋",
+    limit_count: 0,
   },
   profiles: {
     nickname: "",

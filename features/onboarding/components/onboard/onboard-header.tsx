@@ -19,14 +19,16 @@ const STEP_LABEL = {
   limit: "목표 개수 설정",
   reward: "보상 설정",
   notification: "알림 설정",
+  limitCount: "하루 최대 개수 설정",
 } as Record<STEPS, string>;
 
 const STEP_CNT_LABEL = {
-  name: "STEP 1 / 5",
-  title: "STEP 2 / 5",
-  limit: "STEP 3 / 5",
-  reward: "STEP 4 / 5",
-  notification: "STEP 5 / 5",
+  name: "STEP 1 / 6",
+  title: "STEP 2 / 6",
+  limit: "STEP 3 / 6",
+  reward: "STEP 4 / 6",
+  limitCount: "STEP 5 / 6",
+  notification: "STEP 6 / 6",
 } as Record<STEPS, string>;
 
 const OnboardHeader = ({ stepName }: Props) => {
