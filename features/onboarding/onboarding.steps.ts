@@ -22,6 +22,23 @@ export const STEP_FIELDS: Record<
   notification: [],
 };
 
+export const STEP_LABEL = {
+  name: "이름 설정",
+  title: "습관 설정",
+  limit: "목표 개수 설정",
+  reward: "보상 설정",
+  notification: "알림 설정",
+  limitCount: "하루 최대 개수 설정",
+} as Record<STEPS, string>;
+
+export const STEP_CNT_LABEL = {
+  name: "STEP 1 / 6",
+  title: "STEP 2 / 6",
+  limit: "STEP 3 / 6",
+  limitCount: "STEP 4 / 6",
+  reward: "STEP 5 / 6",
+  notification: "STEP 6 / 6",
+} as Record<STEPS, string>;
 export type STEPS = (typeof steps)[number]["value"];
 
 export const TOTAL_STEPS = steps.length;

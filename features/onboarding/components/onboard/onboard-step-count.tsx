@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
@@ -42,24 +43,33 @@ const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
   };
 
   return (
-    <OnboardStepLayout stepName="limit">
+    <OnboardStepLayout stepName="limitCount">
       <View className="flex-1">
-        <ChatBubbleList>
-          {messages.map((v, i) => (
-            <Fragment key={`onboard-step-count${i}`}>
-              <ChatBubble
-                showTyping={v.type === "typing"}
-                message={v.message ?? ""}
-                side={v.role === "system" ? "left" : "right"}
-              />
-              {showOptions && v.role === "system" && i === 0 && (
-                <View className="mt-[24px]">
-                  <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
-                </View>
-              )}
-            </Fragment>
-          ))}
-        </ChatBubbleList>
+        <KeyboardAwareScrollView
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bottomOffset={12}
+          extraKeyboardSpace={8}
+        >
+          <ChatBubbleList>
+            {messages.map((v, i) => (
+              <Fragment key={`onboard-step-count${i}`}>
+                <ChatBubble
+                  showTyping={v.type === "typing"}
+                  message={v.message ?? ""}
+                  side={v.role === "system" ? "left" : "right"}
+                />
+                {showOptions && v.role === "system" && i === 0 && (
+                  <View className="mt-[24px]">
+                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
+                  </View>
+                )}
+              </Fragment>
+            ))}
+          </ChatBubbleList>
+        </KeyboardAwareScrollView>
       </View>
     </OnboardStepLayout>
   );
