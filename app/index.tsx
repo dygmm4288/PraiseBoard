@@ -10,7 +10,7 @@ export default function IndexRoute() {
     effectiveHasSeenIntro,
   } = useUser();
   // const router = useRouter();
-  // router.push('/debug-settings');
+  // router.push("/debug-settings");
 
   if (!isInitialized) return null;
 

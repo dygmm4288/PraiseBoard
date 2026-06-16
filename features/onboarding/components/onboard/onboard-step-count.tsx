@@ -12,19 +12,22 @@ import OnboardSelectList, {
 import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
-  { icon: "🌟", text: "30개", value: "30" },
-  { icon: "🔥", text: "50개", value: "50" },
-  { icon: "💯", text: "100개", value: "100" },
+  { icon: "1️⃣", text: "1번", value: "1" },
+  { icon: "2️⃣", text: "2번", value: "2" },
+  { icon: "3️⃣", text: "3번", value: "3" },
+  { icon: "4️⃣", text: "4번", value: "4" },
+  { icon: "5️⃣", text: "5번", value: "5" },
 ];
 
-const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
+const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const actionLock = useOnboardActionLock();
 
   const { messages, addUserMessage, run } = useOnboardChat({
     whaleMessages: [
       {
-        message: "원하는 목표 개수를 골라줘.\n너가 원하는 속도에 맞춰보자.",
+        message:
+          "그럼 하루에 최대 몇 번까지 할 수 있을 것 같아? 방금 정한 목표 개수를 며칠에 걸쳐 나눌지 생각해봐.",
         onOk: () => setShowOptions(true),
       },
     ],
@@ -37,12 +40,12 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
   const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
     setShowOptions(false);
     await addUserMessage(item.text);
-    form.setValue("boards.target_count", item.value ?? item.text);
+    form.setValue("boards.limit_count", Number(item.value!));
     onNext();
   });
 
   return (
-    <OnboardStepLayout stepName="limit">
+    <OnboardStepLayout stepName="limitCount">
       <View className="flex-1">
         <KeyboardAwareScrollView
           className="flex-1"
@@ -54,7 +57,7 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
         >
           <ChatBubbleList>
             {messages.map((v, i) => (
-              <Fragment key={`onboard-step-name${i}`}>
+              <Fragment key={`onboard-step-count${i}`}>
                 <ChatBubble
                   showTyping={v.type === "typing"}
                   message={v.message ?? ""}
@@ -78,4 +81,4 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
   );
 };
 
-export default OnboardStepLimit;
+export default OnboardStepCount;

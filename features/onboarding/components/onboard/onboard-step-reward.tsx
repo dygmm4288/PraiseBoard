@@ -4,13 +4,14 @@ import {
 } from "@/features/board/schema";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
+import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
@@ -33,6 +34,8 @@ const CHIPS = [
 const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isDirectMode, setIsDirectMode] = useState(false);
+  const submittedRewardMemoRef = useRef<string | null | undefined>(undefined);
+  const actionLock = useOnboardActionLock();
   const showMaxLengthToast = useCallback(() => {
     toast.chatError("보상은 20자까지 입력할 수 있어요", {
       refresh: true,
@@ -49,12 +52,20 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
       },
       {
         message: () => {
-          return form.getValues("boards.reward_memo") !== null
+          const rewardMemo =
+            submittedRewardMemoRef.current !== undefined
+              ? submittedRewardMemoRef.current
+              : form.getValues("boards.reward_memo");
+
+          return rewardMemo !== null
             ? "우와! 벌써 선물을 받은 네 모습이 상상돼.\n함께 열심히 해보자."
             : "지금 생각나지 않아도 괜찮아!\n나중에 언제든 입력할 수 있어.";
         },
         async onOk() {
           await sleep(1200);
+          if (submittedRewardMemoRef.current !== undefined) {
+            form.setValue("boards.reward_memo", submittedRewardMemoRef.current);
+          }
           onNext();
         },
       },
@@ -65,41 +76,45 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
     run();
   }, []);
 
-  const onSendForm = async (
-    field: ControllerRenderProps<BoardSetupFormValues, "boards.reward_memo">,
-  ) => {
-    const rewardMemo = (field.value ?? "").trim();
+  const onSendForm = actionLock.guard(
+    async (
+      field: ControllerRenderProps<BoardSetupFormValues, "boards.reward_memo">,
+    ) => {
+      const rewardMemo = (field.value ?? "").trim();
 
-    const error = await validateBeforeNext(form, {
-      fields: "boards.reward_memo",
-      shouldFocus: true,
-    });
+      const error = await validateBeforeNext(form, {
+        fields: "boards.reward_memo",
+        shouldFocus: true,
+      });
 
-    if (error) {
-      toast.chatError(error);
-      return;
-    }
+      if (error) {
+        actionLock.reset();
+        toast.chatError(error);
+        return;
+      }
 
-    form.clearErrors("boards.reward_memo");
-    field.onChange("");
-    form.setValue("boards.reward_memo", rewardMemo);
-    await addUserMessage(rewardMemo);
-    field.onChange(rewardMemo);
-  };
+      form.clearErrors("boards.reward_memo");
+      submittedRewardMemoRef.current = rewardMemo;
+      field.onChange("");
+      await addUserMessage(rewardMemo);
+    },
+  );
 
-  const onSelectOption = async (item: OnboardSelectListItem) => {
+  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
     setShowOptions(false);
 
     if (item.value === null) {
       await addUserMessage(item.text, { runNext: false });
       setIsDirectMode(true);
+      actionLock.reset();
       return;
     }
 
     const rewardMemo = item.value === "" ? null : item.text;
+    submittedRewardMemoRef.current = rewardMemo;
     form.setValue("boards.reward_memo", rewardMemo);
     await addUserMessage(item.text);
-  };
+  });
 
   return (
     <OnboardStepLayout stepName="reward">
@@ -122,7 +137,11 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                 />
                 {showOptions && v.role === "system" && i === 0 && (
                   <View className="mt-[24px]">
-                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
+                    <OnboardSelectList
+                      items={CHIPS}
+                      onPress={onSelectOption}
+                      disabled={actionLock.disabled}
+                    />
                   </View>
                 )}
               </Fragment>
@@ -145,7 +164,7 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                       value={field.value || ""}
                       onChangeText={field.onChange}
                       onSend={() => onSendForm(field)}
-                      disabled={disabled}
+                      disabled={disabled || actionLock.disabled}
                       maxLength={REWARD_MEMO_LENGTH}
                       onMaxLengthExceeded={showMaxLengthToast}
                     />

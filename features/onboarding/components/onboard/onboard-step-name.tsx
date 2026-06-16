@@ -10,6 +10,7 @@ import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
+import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
@@ -20,6 +21,7 @@ import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   const [canInput, setCanInput] = useState(false);
+  const actionLock = useOnboardActionLock();
   const showMaxLengthToast = useCallback(() => {
     toast.chatError("이름은 15자까지 입력할 수 있어요", {
       refresh: true,
@@ -36,27 +38,30 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
     ],
   });
 
-  const onSendForm = async (
-    field: ControllerRenderProps<BoardSetupFormValues, "profiles.nickname">,
-  ) => {
-    const nickname = (field.value ?? "").trim();
+  const onSendForm = actionLock.guard(
+    async (
+      field: ControllerRenderProps<BoardSetupFormValues, "profiles.nickname">,
+    ) => {
+      const nickname = (field.value ?? "").trim();
 
-    const error = await validateBeforeNext(form, {
-      fields: "profiles.nickname",
-      shouldFocus: true,
-    });
+      const error = await validateBeforeNext(form, {
+        fields: "profiles.nickname",
+        shouldFocus: true,
+      });
 
-    if (error) {
-      toast.chatError(error);
-      return;
-    }
+      if (error) {
+        actionLock.reset();
+        toast.chatError(error);
+        return;
+      }
 
-    form.clearErrors("profiles.nickname");
-    field.onChange("");
-    await addUserMessage(nickname);
-    onNext();
-    field.onChange(nickname);
-  };
+      form.clearErrors("profiles.nickname");
+      field.onChange("");
+      await addUserMessage(nickname);
+      onNext();
+      field.onChange(nickname);
+    },
+  );
 
   useEffect(() => {
     run();
@@ -99,7 +104,7 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
                     value={field.value}
                     onChangeText={field.onChange}
                     onSend={() => onSendForm(field)}
-                    disabled={disabled || !canInput}
+                    disabled={disabled || !canInput || actionLock.disabled}
                     maxLength={NICKNAME_MAX_LENGTH}
                     onMaxLengthExceeded={showMaxLengthToast}
                   />
