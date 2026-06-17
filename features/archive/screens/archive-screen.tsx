@@ -1,6 +1,4 @@
-import BoardItem from "@/features/board/components/board-item/board-item";
-import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
-import { canCreateBoard } from "@/features/board/domain/policies/board-policy";
+import { BoardItem, canCreateBoard, useBoardSheet } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";

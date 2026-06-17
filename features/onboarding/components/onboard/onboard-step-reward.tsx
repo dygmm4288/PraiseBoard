@@ -1,7 +1,7 @@
 import {
   BoardSetupFormValues,
   REWARD_MEMO_LENGTH,
-} from "@/features/board/schema";
+} from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";

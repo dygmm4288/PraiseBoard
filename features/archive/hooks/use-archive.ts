@@ -1,7 +1,7 @@
 import {
   useActiveBoardQuery,
   useCompletedBoardQuery,
-} from "@/features/board/queries/use-board-query";
+} from "@/features/board";
 import { useUser } from "@/services/user";
 
 const useArchive = () => {
