@@ -1,17 +1,11 @@
-import { BoardItem, useBoardSheet } from "@/features/board";
+import { BoardItem } from "@/features/board";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";
-import ArchiveActionBtn from "../components/btn/archive-action-btn";
 import ArchiveSection from "../components/list/archive-list";
 import useArchive from "../hooks/use-archive";
 
 const ArchiveScreen = () => {
   const { activeBoards, completedBoards } = useArchive();
-  const { openCreateSheet } = useBoardSheet();
-
-  const openCreateBoard = () => {
-    openCreateSheet();
-  };
 
   return (
     <>
@@ -26,10 +20,7 @@ const ArchiveScreen = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <ArchiveSection
-          title={`진행 습관 ${activeBoards.length}개`}
-          action={<ArchiveActionBtn label="+ 추가" onPress={openCreateBoard} />}
-        >
+        <ArchiveSection title={`진행 습관 ${activeBoards.length}개`}>
           {activeBoards.map((board) => (
             <BoardItem board={board} key={board.id} actionType="goto" />
           ))}

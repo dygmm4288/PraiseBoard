@@ -5,7 +5,7 @@ import { useCallback } from "react";
 const useFloatingAction = () => {
   const pathname = usePathname();
   const { openCreateSheet } = useBoardSheet();
-  const isVisible = pathname === "/";
+  const isVisible = ["/", "/archives"].some((val) => pathname === val);
 
   const onPressCreate = useCallback(() => {
     openCreateSheet();
