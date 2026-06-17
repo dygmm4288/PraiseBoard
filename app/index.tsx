@@ -1,5 +1,4 @@
-import { BoardProvider } from "@/features/board/hooks";
-import BoardScreen from "@/features/board/screens/board-screen";
+import { BoardProvider, BoardScreen } from "@/features/board";
 import { useUser } from "@/services/user";
 import { Redirect } from "expo-router";
 

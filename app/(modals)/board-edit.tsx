@@ -1,4 +1,4 @@
-import BoardEditView from "@/features/board/components/board-edit/board-edit-view";
+import { BoardEditView } from "@/features/board";
 import { useNavigation } from "expo-router";
 
 const BoardEditModal = () => {

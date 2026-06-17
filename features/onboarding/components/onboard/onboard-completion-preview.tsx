@@ -10,8 +10,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import BoardItem from "@/features/board/components/board-item/board-item";
-import type { BoardRecord } from "@/features/board/types";
+import { BoardItem, type BoardRecord } from "@/features/board";
 
 type Props = {
   nickname?: string | null;
