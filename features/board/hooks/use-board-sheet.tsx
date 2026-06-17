@@ -1,9 +1,13 @@
 import BoardCreate from "@/features/board/components/board-create/board-create";
 import BoardEditSheetContent from "@/features/board/components/board-create/board-edit-sheet-content";
 import { BoardCreateFormValues } from "@/features/board/schema";
+import { useUser } from "@/services/user";
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
+import { toast } from "@/shared/toasts/toast";
 import { useCallback } from "react";
 import { View } from "react-native";
+import { canCreateBoard } from "../domain/policies/board-policy";
+import { useActiveBoardQuery } from "../queries/use-board-query";
 
 export type BoardEditSheetInput = {
   id: string;
@@ -28,9 +32,16 @@ const toInitialValues = (
 });
 
 export const useBoardSheet = () => {
+  const { profileId } = useUser();
   const { presentTopLevelSheet, dismissTopLevelSheet } = useTopLevelSheet();
+  const { data: activeBoards } = useActiveBoardQuery(profileId);
+  const activeBoardCount = activeBoards?.items.length ?? 0;
 
   const openCreateSheet = useCallback(() => {
+    if (!canCreateBoard(activeBoardCount)) {
+      return toast.chatError("앗! 최대 3개를 다 만들었어요.");
+    }
+
     presentTopLevelSheet({
       snapPoints: BOARD_SHEET_SNAP_POINTS,
       keyboardBehavior: "fillParent",
@@ -43,7 +54,7 @@ export const useBoardSheet = () => {
         </View>
       ),
     });
-  }, [dismissTopLevelSheet, presentTopLevelSheet]);
+  }, [activeBoardCount, dismissTopLevelSheet, presentTopLevelSheet]);
 
   const openEditSheet = useCallback(
     (board: BoardEditSheetInput) => {

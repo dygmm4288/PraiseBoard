@@ -1,7 +1,4 @@
-import BoardItem from "@/features/board/components/board-item/board-item";
-import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
-import { canCreateBoard } from "@/features/board/domain/policies/board-policy";
-import { toast } from "@/shared/toasts/toast";
+import { BoardItem, useBoardSheet } from "@/features/board";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";
 import ArchiveActionBtn from "../components/btn/archive-action-btn";
@@ -13,10 +10,6 @@ const ArchiveScreen = () => {
   const { openCreateSheet } = useBoardSheet();
 
   const openCreateBoard = () => {
-    if (!canCreateBoard(activeBoards.length)) {
-      return toast.chatError("앗! 최대 3개를 다 만들었어요.");
-    }
-
     openCreateSheet();
   };
 
