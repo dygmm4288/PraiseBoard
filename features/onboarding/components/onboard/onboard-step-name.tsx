@@ -1,7 +1,7 @@
 import {
   BoardSetupFormValues,
   NICKNAME_MAX_LENGTH,
-} from "@/features/board/schema";
+} from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";

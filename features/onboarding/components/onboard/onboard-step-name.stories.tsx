@@ -1,7 +1,7 @@
 import {
   BOARD_SETUP_DEFAULT_VALUES,
   BoardSetupFormValues,
-} from "@/features/board/schema";
+} from "@/features/board";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";

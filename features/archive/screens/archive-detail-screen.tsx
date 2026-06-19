@@ -1,6 +1,6 @@
 import ArchiveDetailItem from "@/features/archive/components/detail/archive-detail-item";
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
-import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
+import { useBoardSheet } from "@/features/board";
 import { Icon } from "@/assets/icons";
 import { AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
