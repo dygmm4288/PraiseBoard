@@ -114,11 +114,22 @@ features → services
 features → shared
 features → entities
 
-하지만 다음 의존은 금지한다.
+feature 간 의존은 해당 feature의 public API를 통해서만 허용한다.
 
-features → features
+features → features/public API
 
-즉 feature 간 직접 의존을 만들지 않는다.
+예:
+
+```ts
+// 허용
+import { useBoardSheet } from "@/features/board";
+
+// 지양
+import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
+```
+
+즉 feature 간 협력은 가능하지만, 다른 feature의 내부 폴더 구조에 직접 의존하지 않는다.
+각 feature는 필요한 외부 공개 표면을 `features/<feature>/index.ts`에서 명시한다.
 
 ---
 
