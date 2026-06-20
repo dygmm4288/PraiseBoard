@@ -7,6 +7,7 @@ import {
 import { board } from "@/features/board/service";
 import { BoardListResult, BoardRecord } from "@/features/board/types";
 import { useUser } from "@/services/user";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -38,6 +39,7 @@ const addBoardToList = (
 export const useCreateBoard = () => {
   const queryClient = useQueryClient();
   const { profileId } = useUser();
+  const todayKey = useTodayKey();
 
   const [formData, setFormData] = useState<BoardCreateFormValues>(
     BOARD_CREATE_DEFAULT_VALUES,
@@ -66,7 +68,7 @@ export const useCreateBoard = () => {
           (boardList) => addBoardToList(boardList, createdBoard),
         );
         queryClient.setQueryData<BoardListResult | null>(
-          boardKeys.homeLists(profileId),
+          boardKeys.homeLists(profileId, todayKey),
           (boardList) => addBoardToList(boardList, createdBoard),
         );
         queryClient.setQueryData<BoardListResult | null>(
