@@ -1,4 +1,5 @@
 import { board } from "@/features/board/service";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { useQuery } from "@tanstack/react-query";
 import { boardKeys } from "./board.query.key";
 
@@ -23,8 +24,12 @@ export const useBoardsQuery = (profileId: string | null) => {
 };
 
 export const useHomeBoardsQuery = (profileId: string | null) => {
+  const todayKey = useTodayKey();
+
   return useQuery({
-    queryKey: profileId ? boardKeys.homeLists(profileId) : ["board", "idle"],
+    queryKey: profileId
+      ? boardKeys.homeLists(profileId, todayKey)
+      : ["board", "idle"],
 
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
