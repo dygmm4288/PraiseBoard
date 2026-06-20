@@ -13,14 +13,11 @@ import { ArchiveDetail, ArchiveDetailRequest, IArchiveRepository } from "./types
 const BOARD_DETAIL_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, created_at";
 
-const getSelectedDate = (month: string) => {
-  const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(
-    now.getMonth() + 1,
-  ).padStart(2, "0")}`;
+const getSelectedDate = (month: string, todayKey: string) => {
+  const currentMonth = todayKey.slice(0, 7);
 
   if (month === currentMonth) {
-    return now.toISOString().slice(0, 10);
+    return todayKey;
   }
 
   return `${month}-01`;
@@ -30,9 +27,10 @@ export const archiveRepository: IArchiveRepository = {
   async getDetail({
     boardId,
     month,
+    todayKey,
   }: ArchiveDetailRequest): Promise<ArchiveDetail> {
     const { startDate, endDate } = getMonthRange(month);
-    const selectedDate = getSelectedDate(month);
+    const selectedDate = getSelectedDate(month, todayKey);
 
     const [
       { data: boardRow, error: boardError },

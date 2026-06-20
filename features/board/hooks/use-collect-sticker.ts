@@ -1,3 +1,4 @@
+import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { board } from "@/features/board/service";
 import {
   BoardListResult,
@@ -119,6 +120,10 @@ export const useCollectSticker = () => {
 
       await queryClient.invalidateQueries({
         queryKey: boardKeys.all,
+        refetchType: "active",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: archiveKeys.detail(updatedBoard.id),
         refetchType: "active",
       });
     },
