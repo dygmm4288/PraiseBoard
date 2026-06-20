@@ -48,8 +48,12 @@ export const useHomeBoardsQuery = (profileId: string | null) => {
 };
 
 export const useActiveBoardQuery = (profileId: string | null) => {
+  const todayKey = useTodayKey();
+
   return useQuery({
-    queryKey: profileId ? boardKeys.activeLists(profileId) : ["board", "idle"],
+    queryKey: profileId
+      ? boardKeys.activeLists(profileId, todayKey)
+      : ["board", "idle"],
 
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
@@ -68,9 +72,11 @@ export const useActiveBoardQuery = (profileId: string | null) => {
 };
 
 export const useCompletedBoardQuery = (profileId: string | null) => {
+  const todayKey = useTodayKey();
+
   return useQuery({
     queryKey: profileId
-      ? boardKeys.completedLists(profileId)
+      ? boardKeys.completedLists(profileId, todayKey)
       : ["board", "idle"],
 
     queryFn: async () => {

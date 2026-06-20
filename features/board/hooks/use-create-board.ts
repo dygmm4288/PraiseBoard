@@ -64,7 +64,7 @@ export const useCreateBoard = () => {
 
       if (profileId) {
         queryClient.setQueryData<BoardListResult | null>(
-          boardKeys.activeLists(profileId),
+          boardKeys.activeLists(profileId, todayKey),
           (boardList) => addBoardToList(boardList, createdBoard),
         );
         queryClient.setQueryData<BoardListResult | null>(

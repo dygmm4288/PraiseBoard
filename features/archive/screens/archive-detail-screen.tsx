@@ -3,20 +3,17 @@ import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-de
 import { useBoardSheet } from "@/features/board";
 import { Icon } from "@/assets/icons";
 import { AppText, Screen } from "@/shared/ui";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { cn } from "@/shared/utils/cn";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, ScrollView, View } from "react-native";
-
-const getCurrentMonth = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-};
 
 const ArchiveDetailScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
   const boardId = typeof params.id === "string" ? params.id : null;
-  const month = getCurrentMonth();
+  const todayKey = useTodayKey();
+  const month = todayKey.slice(0, 7);
   const { openEditSheet } = useBoardSheet();
   const {
     data: detail,
