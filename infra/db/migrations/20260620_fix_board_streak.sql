@@ -1,14 +1,3 @@
-create table sticker_daily (
-    board_id uuid not null references boards(id) on delete cascade,
-    d date not null,
-    count int not null default 0 check (count >= 0),
-
-    primary key(board_id, d)
-);
-
-create index index_idx_sticker_daily_board_date
-on sticker_daily (board_id, d);
-
 create or replace function get_board_streak(p_board_id uuid)
 returns json as $$
 declare
