@@ -1,5 +1,5 @@
+import { BoardItem, type BoardRecord } from "@/features/board";
 import { AppText } from "@/shared/ui";
-import { BlurView } from "expo-blur";
 import { useEffect } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
@@ -10,7 +10,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import { BoardItem, type BoardRecord } from "@/features/board";
+import { scheduleOnRN } from "react-native-worklets";
 
 type Props = {
   nickname?: string | null;
@@ -33,19 +33,19 @@ const OnboardCompletionPreview = ({
   useEffect(() => {
     settled.value = withDelay(
       1500,
-      withTiming(1, {
-        duration: 850,
-        easing: Easing.out(Easing.cubic),
-      }),
+      withTiming(
+        1,
+        {
+          duration: 850,
+          easing: Easing.out(Easing.cubic),
+        },
+        (finished) => {
+          if (finished && onDone) {
+            scheduleOnRN(onDone);
+          }
+        },
+      ),
     );
-
-    if (!onDone) return;
-
-    const doneTimer = setTimeout(onDone, 2700);
-
-    return () => {
-      clearTimeout(doneTimer);
-    };
   }, [onDone, settled]);
 
   const overlayStyle = useAnimatedStyle(() => ({
@@ -76,7 +76,7 @@ const OnboardCompletionPreview = ({
         pointerEvents="none"
         style={[StyleSheet.absoluteFill, overlayStyle]}
       >
-        <BlurView intensity={70} tint="light" style={StyleSheet.absoluteFill} />
+        <View className="absolute inset-0 bg-white/80" />
         <View className="absolute inset-0 bg-[rgba(20,10,50,0.22)]" />
       </Animated.View>
 

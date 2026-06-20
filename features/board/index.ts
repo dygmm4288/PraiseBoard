@@ -3,6 +3,7 @@ export { default as BoardItem } from "./components/board-item/board-item";
 export { canCreateBoard } from "./domain/policies/board-policy";
 export { BoardProvider, useBoard } from "./hooks";
 export { useBoardSheet } from "./hooks/use-board-sheet";
+export { boardKeys } from "./queries/board.query.key";
 export {
   useActiveBoardQuery,
   useCompletedBoardQuery,
