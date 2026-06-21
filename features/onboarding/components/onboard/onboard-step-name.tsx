@@ -107,6 +107,8 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
                     disabled={disabled || !canInput || actionLock.disabled}
                     maxLength={NICKNAME_MAX_LENGTH}
                     onMaxLengthExceeded={showMaxLengthToast}
+                    autoFocus={canInput}
+                    focusTrigger={canInput}
                   />
                 </View>
               )}
