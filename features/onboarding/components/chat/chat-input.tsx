@@ -60,6 +60,11 @@ const ChatInput = ({
     },
     [maxLength, onMaxLengthExceeded, value.length],
   );
+  const handleSubmitEditing = useCallback(() => {
+    if (disabled || sendDisabled) return;
+
+    onSend();
+  }, [disabled, onSend, sendDisabled]);
 
   useEffect(() => {
     if (!autoFocus || disabled) return;
@@ -81,6 +86,9 @@ const ChatInput = ({
           value={value}
           onChangeText={handleChangeText}
           onKeyPress={handleKeyPress}
+          onSubmitEditing={handleSubmitEditing}
+          blurOnSubmit={false}
+          returnKeyType="send"
           placeholder={placeholder}
           placeholderTextColor={COLOR.labelGray}
           editable={!disabled}
