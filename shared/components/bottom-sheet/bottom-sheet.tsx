@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { Keyboard } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
 type Props = {
@@ -27,6 +28,7 @@ type Props = {
 } & PropsWithChildren;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
+const TOP_INSET_OFFSET = 8;
 
 const AppBottomSheet = ({
   index,
@@ -37,6 +39,7 @@ const AppBottomSheet = ({
   enablePanDownToClose = true,
   enableBackdrop = true,
 }: Props) => {
+  const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
   const lastEmittedIndexRef = useRef<number | null>(null);
   const controlledIndexRef = useRef(index);
@@ -123,6 +126,7 @@ const AppBottomSheet = ({
       ref={bottomSheetRef}
       index={initialIndex}
       snapPoints={resolvedSnapPoints}
+      topInset={insets.top + TOP_INSET_OFFSET}
       animateOnMount={false}
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
