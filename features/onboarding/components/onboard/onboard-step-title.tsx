@@ -129,15 +129,19 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
               name="boards.title"
               control={form.control}
               render={({ field }) => (
-                isDirectMode ? <ChatInput
-                  placeholder="보드 제목을 알려주세요"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  disabled={disabled || actionLock.disabled}
-                  onSend={() => onSendForm(field)}
-                  maxLength={TITLE_MAX_LENGTH}
-                  onMaxLengthExceeded={showMaxLengthToast}
-                /> : <></>
+                isDirectMode ? (
+                  <ChatInput
+                    placeholder="보드 제목을 알려주세요"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    disabled={disabled || actionLock.disabled}
+                    onSend={() => onSendForm(field)}
+                    maxLength={TITLE_MAX_LENGTH}
+                    onMaxLengthExceeded={showMaxLengthToast}
+                    autoFocus={isDirectMode}
+                    focusTrigger={isDirectMode}
+                  />
+                ) : null
               )}
             />
           </View>

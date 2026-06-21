@@ -1,5 +1,5 @@
 import { COLOR } from "@/shared/constants/colors.constant";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   NativeSyntheticEvent,
   TextInput,
@@ -16,6 +16,8 @@ type Props = {
   disabled?: boolean;
   maxLength?: number;
   onMaxLengthExceeded?: () => void;
+  autoFocus?: boolean;
+  focusTrigger?: unknown;
 };
 
 const ChatInput = ({
@@ -26,7 +28,10 @@ const ChatInput = ({
   disabled = false,
   maxLength,
   onMaxLengthExceeded,
+  autoFocus = false,
+  focusTrigger,
 }: Props) => {
+  const inputRef = useRef<TextInput>(null);
   const sendDisabled = useMemo(() => value.length === 0, [value]);
   const handleChangeText = useCallback(
     (nextValue: string) => {
@@ -55,15 +60,35 @@ const ChatInput = ({
     },
     [maxLength, onMaxLengthExceeded, value.length],
   );
+  const handleSubmitEditing = useCallback(() => {
+    if (disabled || sendDisabled) return;
+
+    onSend();
+  }, [disabled, onSend, sendDisabled]);
+
+  useEffect(() => {
+    if (!autoFocus || disabled) return;
+
+    const frame = requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [autoFocus, disabled, focusTrigger]);
 
   return (
     <View className="items-center bg-white py-[18px]">
       <View className="h-[42px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white pl-[15px] pr-[4px]">
         <TextInput
+          ref={inputRef}
+          autoFocus={autoFocus}
           className="h-full flex-1 pr-[8px] font-pretendard text-[14px] leading-[20px] text-gray-900"
           value={value}
           onChangeText={handleChangeText}
           onKeyPress={handleKeyPress}
+          onSubmitEditing={handleSubmitEditing}
+          blurOnSubmit={false}
+          returnKeyType="send"
           placeholder={placeholder}
           placeholderTextColor={COLOR.labelGray}
           editable={!disabled}

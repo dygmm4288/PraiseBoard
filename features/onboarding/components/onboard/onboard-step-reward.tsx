@@ -167,6 +167,8 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
                       disabled={disabled || actionLock.disabled}
                       maxLength={REWARD_MEMO_LENGTH}
                       onMaxLengthExceeded={showMaxLengthToast}
+                      autoFocus={isDirectMode}
+                      focusTrigger={isDirectMode}
                     />
                   )}
                 </View>

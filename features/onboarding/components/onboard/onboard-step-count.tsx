@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
@@ -11,17 +11,30 @@ import OnboardSelectList, {
 } from "./onboard-select-list";
 import OnboardStepLayout from "./onboard-step-layout";
 
-const CHIPS = [
-  { icon: "1️⃣", text: "1번", value: "1" },
-  { icon: "2️⃣", text: "2번", value: "2" },
-  { icon: "3️⃣", text: "3번", value: "3" },
-  { icon: "4️⃣", text: "4번", value: "4" },
-  { icon: "5️⃣", text: "5번", value: "5" },
+const DAILY_LIMIT_OPTIONS = [
+  { icon: "1️⃣", value: 1 },
+  { icon: "2️⃣", value: 2 },
+  { icon: "3️⃣", value: 3 },
+  { icon: "4️⃣", value: 4 },
+  { icon: "5️⃣", value: 5 },
 ];
 
 const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const actionLock = useOnboardActionLock();
+  const targetCount = Number(form.watch("boards.target_count"));
+  const safeTargetCount = [30, 50, 100].includes(targetCount)
+    ? targetCount
+    : 30;
+  const chips = useMemo(
+    () =>
+      DAILY_LIMIT_OPTIONS.map(({ icon, value }) => ({
+        icon,
+        text: `${value}번·${Math.ceil(safeTargetCount / value)}일`,
+        value: String(value),
+      })),
+    [safeTargetCount],
+  );
 
   const { messages, addUserMessage, run } = useOnboardChat({
     whaleMessages: [
@@ -37,12 +50,14 @@ const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
     run();
   }, []);
 
-  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
-    setShowOptions(false);
-    await addUserMessage(item.text);
-    form.setValue("boards.limit_count", Number(item.value!));
-    onNext();
-  });
+  const onSelectOption = actionLock.guard(
+    async (item: OnboardSelectListItem) => {
+      setShowOptions(false);
+      await addUserMessage(item.text);
+      form.setValue("boards.limit_count", Number(item.value!));
+      onNext();
+    },
+  );
 
   return (
     <OnboardStepLayout stepName="limitCount">
@@ -66,7 +81,7 @@ const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
                 {showOptions && v.role === "system" && i === 0 && (
                   <View className="mt-[24px]">
                     <OnboardSelectList
-                      items={CHIPS}
+                      items={chips}
                       onPress={onSelectOption}
                       disabled={actionLock.disabled}
                     />
