@@ -14,7 +14,9 @@ import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
-import OnboardSelectList, { OnboardSelectListItem } from "./onboard-select-list";
+import OnboardSelectList, {
+  OnboardSelectListItem,
+} from "./onboard-select-list";
 
 const CHIPS = [
   { icon: "🥛", text: "아침에 물 한 잔" },
@@ -37,33 +39,36 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
       {
-        message:
-          `반가워, ${form.getValues("profiles.nickname")}!\n첫번째 습관을 정하기 위해 준비가 필요해. 무엇을 먼저 시작해보고 싶어?`,
+        message: `반가워, ${form.getValues("profiles.nickname")}!\n첫번째 습관을 정하기 위해 준비가 필요해. 무엇을 먼저 시작해보고 싶어?`,
         userDisabled: false,
         onOk: () => setShowOptions(true),
       },
     ],
   });
 
-  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
-    setShowOptions(false);
+  const onSelectOption = actionLock.guard(
+    async (item: OnboardSelectListItem) => {
+      setShowOptions(false);
 
-    if (item.value === null) {
-      await addUserMessage(item.text, { runNext: false });
-      setIsDirectMode(true);
-      form.setValue("boards.emoji", "🌱");
-      actionLock.reset();
-      return;
-    }
+      if (item.value === null) {
+        await addUserMessage(item.text, { runNext: false });
+        setIsDirectMode(true);
+        form.setValue("boards.emoji", "🌱");
+        actionLock.reset();
+        return;
+      }
 
-    await addUserMessage(item.text);
-    form.setValue("boards.title", item.text);
-    form.setValue("boards.emoji", item.icon);
-    onNext();
-  });
+      await addUserMessage(item.text);
+      form.setValue("boards.title", item.text);
+      form.setValue("boards.emoji", item.icon);
+      onNext();
+    },
+  );
 
   const onSendForm = actionLock.guard(
-    async (field: ControllerRenderProps<BoardSetupFormValues, "boards.title">) => {
+    async (
+      field: ControllerRenderProps<BoardSetupFormValues, "boards.title">,
+    ) => {
       const title = (field.value ?? "").trim();
       const error = await validateBeforeNext(form, {
         fields: "boards.title",
@@ -74,6 +79,7 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
         toast.chatError(error);
         return;
       }
+      toast.hideToast();
       form.clearErrors("boards.title");
       field.onChange("");
       await addUserMessage(title);

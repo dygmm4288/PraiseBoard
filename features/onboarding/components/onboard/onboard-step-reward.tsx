@@ -1,7 +1,4 @@
-import {
-  BoardSetupFormValues,
-  REWARD_MEMO_LENGTH,
-} from "@/features/board";
+import { BoardSetupFormValues, REWARD_MEMO_LENGTH } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
@@ -92,6 +89,7 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
         return;
       }
 
+      toast.hideToast();
       form.clearErrors("boards.reward_memo");
       submittedRewardMemoRef.current = rewardMemo;
       field.onChange("");
@@ -99,21 +97,23 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
     },
   );
 
-  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
-    setShowOptions(false);
+  const onSelectOption = actionLock.guard(
+    async (item: OnboardSelectListItem) => {
+      setShowOptions(false);
 
-    if (item.value === null) {
-      await addUserMessage(item.text, { runNext: false });
-      setIsDirectMode(true);
-      actionLock.reset();
-      return;
-    }
+      if (item.value === null) {
+        await addUserMessage(item.text, { runNext: false });
+        setIsDirectMode(true);
+        actionLock.reset();
+        return;
+      }
 
-    const rewardMemo = item.value === "" ? null : item.text;
-    submittedRewardMemoRef.current = rewardMemo;
-    form.setValue("boards.reward_memo", rewardMemo);
-    await addUserMessage(item.text);
-  });
+      const rewardMemo = item.value === "" ? null : item.text;
+      submittedRewardMemoRef.current = rewardMemo;
+      form.setValue("boards.reward_memo", rewardMemo);
+      await addUserMessage(item.text);
+    },
+  );
 
   return (
     <View className="flex-1">

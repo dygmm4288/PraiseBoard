@@ -51,6 +51,7 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
         return;
       }
 
+      toast.hideToast();
       form.clearErrors("profiles.nickname");
       field.onChange("");
       await addUserMessage(nickname);
