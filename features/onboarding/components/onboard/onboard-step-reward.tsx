@@ -17,7 +17,6 @@ import ChatInput from "../chat/chat-input";
 import OnboardSelectList, {
   OnboardSelectListItem,
 } from "./onboard-select-list";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
   { icon: "🍗", text: "치팅데이" },
@@ -93,59 +92,57 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   };
 
   return (
-    <OnboardStepLayout stepName="reward">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <Fragment key={`onboard-step-name${i}`}>
-                <ChatBubble
-                  showTyping={v.type === "typing"}
-                  message={v.message ?? ""}
-                  side={v.role === "system" ? "left" : "right"}
-                />
-                {showOptions && v.role === "system" && i === 0 && (
-                  <View className="mt-[24px]">
-                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
-                  </View>
-                )}
-              </Fragment>
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-        <KeyboardStickyView
-          offset={{ closed: 0, opened: 0 }}
-          style={{ backgroundColor: "#FFFFFF" }}
-        >
-          <View className="bg-white py-[8px]">
-            <Controller
-              name="boards.reward_memo"
-              control={form.control}
-              render={({ field }) => (
-                <View className="gap-2">
-                  {isDirectMode && (
-                    <ChatInput
-                      placeholder="보상을 알려주세요"
-                      value={field.value || ""}
-                      onChangeText={field.onChange}
-                      onSend={() => onSendForm(field)}
-                      disabled={disabled}
-                    />
-                  )}
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <Fragment key={`onboard-step-name${i}`}>
+              <ChatBubble
+                showTyping={v.type === "typing"}
+                message={v.message ?? ""}
+                side={v.role === "system" ? "left" : "right"}
+              />
+              {showOptions && v.role === "system" && i === 0 && (
+                <View className="mt-[24px]">
+                  <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
                 </View>
               )}
-            />
-          </View>
-        </KeyboardStickyView>
-      </View>
-    </OnboardStepLayout>
+            </Fragment>
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+      <KeyboardStickyView
+        offset={{ closed: 0, opened: 0 }}
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
+        <View className="bg-white py-[8px]">
+          <Controller
+            name="boards.reward_memo"
+            control={form.control}
+            render={({ field }) => (
+              <View className="gap-2">
+                {isDirectMode && (
+                  <ChatInput
+                    placeholder="보상을 알려주세요"
+                    value={field.value || ""}
+                    onChangeText={field.onChange}
+                    onSend={() => onSendForm(field)}
+                    disabled={disabled}
+                  />
+                )}
+              </View>
+            )}
+          />
+        </View>
+      </KeyboardStickyView>
+    </View>
   );
 };
 

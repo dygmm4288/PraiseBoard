@@ -11,7 +11,6 @@ import useOnboardChat from "../../hooks/use-onboard-chat";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepNotification = ({ form }: OnboardStepProps) => {
   const router = useRouter();
@@ -80,29 +79,27 @@ const OnboardStepNotification = ({ form }: OnboardStepProps) => {
   }, [run]);
 
   return (
-    <OnboardStepLayout stepName="notification">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <ChatBubble
-                key={`onboard-step-name${i}`}
-                showTyping={v.type === "typing"}
-                message={v.message ?? ""}
-                side={v.role === "system" ? "left" : "right"}
-              />
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-      </View>
-    </OnboardStepLayout>
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <ChatBubble
+              key={`onboard-step-name${i}`}
+              showTyping={v.type === "typing"}
+              message={v.message ?? ""}
+              side={v.role === "system" ? "left" : "right"}
+            />
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 

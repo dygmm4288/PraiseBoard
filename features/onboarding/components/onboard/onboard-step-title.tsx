@@ -14,7 +14,6 @@ import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
 import OnboardSelectList, { OnboardSelectListItem } from "./onboard-select-list";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
   { icon: "🥛", text: "아침에 물 한 잔" },
@@ -80,55 +79,57 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
   }, []);
 
   return (
-    <OnboardStepLayout stepName="title">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <View key={`onboard-step-name${i}`}>
-                <ChatBubble
-                  showTyping={v.type === "typing"}
-                  message={v.message ?? ""}
-                  side={v.role === "system" ? "left" : "right"}
-                />
-                {showOptions && v.role === "system" && i === 0 && (
-                  <View className="mt-[24px]">
-                    <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
-                  </View>
-                )}
-              </View>
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-        <KeyboardStickyView
-          offset={{ closed: 0, opened: 0 }}
-          style={{ backgroundColor: "#FFFFFF" }}
-        >
-          <View className="bg-white py-[8px]">
-            <Controller
-              name="boards.title"
-              control={form.control}
-              render={({ field }) => (
-                isDirectMode ? <ChatInput
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <View key={`onboard-step-name${i}`}>
+              <ChatBubble
+                showTyping={v.type === "typing"}
+                message={v.message ?? ""}
+                side={v.role === "system" ? "left" : "right"}
+              />
+              {showOptions && v.role === "system" && i === 0 && (
+                <View className="mt-[24px]">
+                  <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
+                </View>
+              )}
+            </View>
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+      <KeyboardStickyView
+        offset={{ closed: 0, opened: 0 }}
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
+        <View className="bg-white py-[8px]">
+          <Controller
+            name="boards.title"
+            control={form.control}
+            render={({ field }) =>
+              isDirectMode ? (
+                <ChatInput
                   placeholder="보드 제목을 알려주세요"
                   value={field.value}
                   onChangeText={field.onChange}
                   disabled={disabled}
                   onSend={() => onSendForm(field)}
-                /> : <></>
-              )}
-            />
-          </View>
-        </KeyboardStickyView>
-      </View>
-    </OnboardStepLayout>
+                />
+              ) : (
+                <></>
+              )
+            }
+          />
+        </View>
+      </KeyboardStickyView>
+    </View>
   );
 };
 

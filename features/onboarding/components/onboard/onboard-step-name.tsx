@@ -13,7 +13,6 @@ import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   const [canInput, setCanInput] = useState(false);
@@ -55,51 +54,49 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   }, []);
 
   return (
-    <OnboardStepLayout stepName="name">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <ChatBubble
-                key={`onboard-step-name${i}`}
-                showTyping={v.type === "typing"}
-                message={v.message ?? ""}
-                side={v.role === "system" ? "left" : "right"}
-              />
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-        <KeyboardStickyView
-          offset={{ closed: 0, opened: 0 }}
-          style={{ backgroundColor: "#FFFFFF" }}
-        >
-          <View className="bg-white py-[8px]">
-            <Controller
-              name="profiles.nickname"
-              control={form.control}
-              render={({ field }) => (
-                <View className="gap-2">
-                  <ChatInput
-                    placeholder="이름을 알려주세요"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onSend={() => onSendForm(field)}
-                    disabled={disabled || !canInput}
-                  />
-                </View>
-              )}
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <ChatBubble
+              key={`onboard-step-name${i}`}
+              showTyping={v.type === "typing"}
+              message={v.message ?? ""}
+              side={v.role === "system" ? "left" : "right"}
             />
-          </View>
-        </KeyboardStickyView>
-      </View>
-    </OnboardStepLayout>
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+      <KeyboardStickyView
+        offset={{ closed: 0, opened: 0 }}
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
+        <View className="bg-white py-[8px]">
+          <Controller
+            name="profiles.nickname"
+            control={form.control}
+            render={({ field }) => (
+              <View className="gap-2">
+                <ChatInput
+                  placeholder="이름을 알려주세요"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onSend={() => onSendForm(field)}
+                  disabled={disabled || !canInput}
+                />
+              </View>
+            )}
+          />
+        </View>
+      </KeyboardStickyView>
+    </View>
   );
 };
 
