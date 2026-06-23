@@ -62,6 +62,10 @@ export const toast = {
       ...keyboardBottomToastOptions,
     });
   },
+
+  hideToast() {
+    Toast.hide();
+  }
 };
 
 export const toastConfig = {

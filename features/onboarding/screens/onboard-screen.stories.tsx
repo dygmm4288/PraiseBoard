@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react-native";
-import { View } from "react-native";
-import { KeyboardProvider } from "react-native-keyboard-controller";
-import { fn } from "storybook/test";
-import type { OnboardStepProps } from "../types/onboard-step.type";
-import OnboardStepLayout from "../components/onboard/onboard-step-layout";
-import { AppButton, AppText } from "@/shared/ui";
 import {
   ONBOARD_STEP_VALUES,
   OnboardScreenContent,
 } from "@/features/onboarding/screens/onboard-screen";
+import { AppButton, AppText } from "@/shared/ui";
+import type { Meta, StoryObj } from "@storybook/react-native";
+import { View } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { fn } from "storybook/test";
+import OnboardStepLayout from "../components/onboard/onboard-step-layout";
+import type { OnboardStepProps } from "../types/onboard-step.type";
 
 const STORY_INITIAL_VALUES = {
   profiles: {
@@ -50,11 +50,7 @@ const StorybookNotificationStep = ({ form }: OnboardStepProps) => {
           </AppText>
         </View>
 
-        <AppButton
-          fullWidth
-          label="온보딩 완료 액션"
-          onPress={fn()}
-        />
+        <AppButton fullWidth label="온보딩 완료 액션" onPress={fn()} />
       </View>
     </OnboardStepLayout>
   );
@@ -88,7 +84,7 @@ const meta = {
   render: (args) => (
     <OnboardScreenContent
       {...args}
-      renderNotificationStep={(props) => (
+      SBrenderNotificationStep={(props) => (
         <StorybookNotificationStep {...props} />
       )}
     />

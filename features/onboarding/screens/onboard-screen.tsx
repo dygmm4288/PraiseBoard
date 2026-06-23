@@ -3,6 +3,7 @@ import {
   type BoardSetupFormValues,
 } from "@/features/board/schema";
 import { Stepper } from "@/shared/components";
+import { toast } from "@/shared/toasts/toast";
 import { Screen } from "@/shared/ui";
 import { ReactNode } from "react";
 import { FormProvider } from "react-hook-form";
@@ -28,7 +29,7 @@ type OnboardScreenInitialValues = {
 type OnboardScreenContentProps = {
   defaultStep?: STEPS;
   initialValues?: OnboardScreenInitialValues;
-  renderNotificationStep?: (props: OnboardStepProps) => ReactNode;
+  SBrenderNotificationStep?: (props: OnboardStepProps) => ReactNode; // StoryBook 전용
 };
 
 const buildInitialValues = (
@@ -47,9 +48,16 @@ const buildInitialValues = (
 export const OnboardScreenContent = ({
   defaultStep = "name",
   initialValues,
-  renderNotificationStep,
+  SBrenderNotificationStep: renderNotificationStep,
 }: OnboardScreenContentProps) => {
   const { form } = useOnboardingSetupForm(buildInitialValues(initialValues));
+
+  const handleNextStep = (next: () => void) => {
+    return () => {
+      next();
+      toast.hideToast();
+    };
+  };
 
   return (
     <Screen>
@@ -60,23 +68,32 @@ export const OnboardScreenContent = ({
               <View className="flex-1">
                 <OnboardHeader stepName={currentValue as STEPS} />
                 {currentValue === "name" && (
-                  <OnboardStepName form={form} onNext={next} />
+                  <OnboardStepName form={form} onNext={handleNextStep(next)} />
                 )}
                 {currentValue === "title" && (
-                  <OnboardStepTitle form={form} onNext={next} />
+                  <OnboardStepTitle form={form} onNext={handleNextStep(next)} />
                 )}
                 {currentValue === "reward" && (
-                  <OnboardStepReward form={form} onNext={next} />
+                  <OnboardStepReward
+                    form={form}
+                    onNext={handleNextStep(next)}
+                  />
                 )}
                 {currentValue === "limit" && (
-                  <OnboardStepLimit form={form} onNext={next} />
+                  <OnboardStepLimit form={form} onNext={handleNextStep(next)} />
                 )}
                 {currentValue === "notification" && (
                   <>
                     {renderNotificationStep ? (
-                      renderNotificationStep({ form, onNext: next })
+                      renderNotificationStep({
+                        form,
+                        onNext: handleNextStep(next),
+                      })
                     ) : (
-                      <OnboardStepNotification form={form} onNext={next} />
+                      <OnboardStepNotification
+                        form={form}
+                        onNext={handleNextStep(next)}
+                      />
                     )}
                   </>
                 )}
