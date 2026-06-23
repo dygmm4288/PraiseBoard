@@ -6,9 +6,10 @@ import { useBoardItemUi } from "../../hooks/use-board-item-ui";
 
 type Props = {
   board: BoardRecord;
+  shouldApplyTodayDoneState?: boolean;
 };
 
-const BoardItemMeta = ({ board }: Props) => {
+const BoardItemMeta = ({ board, shouldApplyTodayDoneState = true }: Props) => {
   const {
     boardDisabled,
     rewardText,
@@ -17,6 +18,8 @@ const BoardItemMeta = ({ board }: Props) => {
     boardDDay,
     completedPeriodLabel,
   } = useBoardItemUi({ board });
+  const shouldShowTodayDoneState = shouldApplyTodayDoneState && isTodayDone;
+  const shouldDisableText = shouldApplyTodayDoneState && boardDisabled;
 
   return (
     <View className="min-w-0 flex-1 flex-row items-center gap-[11px]">
@@ -26,7 +29,7 @@ const BoardItemMeta = ({ board }: Props) => {
           "h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px]",
           isCompleted
             ? "bg-secondary-20"
-            : isTodayDone
+            : shouldShowTodayDoneState
               ? "bg-gray-100"
               : "bg-primary-100",
         )}
@@ -80,7 +83,7 @@ const BoardItemMeta = ({ board }: Props) => {
           className={cn(
             isCompleted
               ? "text-black"
-              : boardDisabled
+              : shouldDisableText
                 ? "text-gray-400"
                 : "text-black",
           )}
