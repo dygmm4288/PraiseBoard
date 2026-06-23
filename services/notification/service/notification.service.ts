@@ -90,7 +90,7 @@ const requestPermissionAndSave = async () => {
   const currentPermissions = await Notifications.getPermissionsAsync();
   let status = currentPermissions.status;
 
-  if (status !== "granted") {
+  if (status === "undetermined") {
     const requestedPermissions = await Notifications.requestPermissionsAsync();
     status = requestedPermissions.status;
   }

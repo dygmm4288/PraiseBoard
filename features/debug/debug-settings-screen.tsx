@@ -1,3 +1,4 @@
+import { useHomeBoardsQuery } from "@/features/board";
 import { UserFlowOverrideMode, useUser } from "@/services/user";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
@@ -74,6 +75,8 @@ type DebugSettingsScreenContentProps = {
   onOverridePress?: (mode: UserFlowOverrideMode) => Promise<void> | void;
   onResetPress?: () => Promise<void> | void;
   onPreviewBoardPress?: () => Promise<void> | void;
+  previewBoardTitle?: string;
+  canPreviewBoard?: boolean;
 };
 
 export const DebugSettingsScreenContent = ({
@@ -86,6 +89,8 @@ export const DebugSettingsScreenContent = ({
   onOverridePress = () => undefined,
   onResetPress = () => undefined,
   onPreviewBoardPress = () => undefined,
+  previewBoardTitle,
+  canPreviewBoard = true,
 }: DebugSettingsScreenContentProps) => {
   const currentRoute = resolveCurrentRouteLabel({
     effectiveHasSeenIntro,
@@ -193,19 +198,43 @@ export const DebugSettingsScreenContent = ({
               </AppButton>
             </View>
           ) : null}
-          <AppButton onPress={onPreviewBoardPress}>
-            온보딩 완료 Preview 강제 실행
-          </AppButton>
+          {isDebugUserFlowEnabled ? (
+            <View className="rounded-[28px] bg-white px-5 py-5">
+              <AppText variant="button1" className="text-gray-700">
+                홈 진입 애니메이션
+              </AppText>
+              <AppText variant="body3" className="mt-2 text-gray-500">
+                현재 홈 보드로 온보딩 완료 preview를 강제로 재생합니다. 이
+                디버그 동작에서는 알림 권한 요청을 실행하지 않습니다.
+              </AppText>
+              {previewBoardTitle ? (
+                <StatusRow label="preview board" value={previewBoardTitle} />
+              ) : (
+                <View className="mt-4 rounded-[22px] bg-[#F7F7F9] px-4 py-4">
+                  <AppText variant="body3" className="text-gray-500">
+                    홈에 표시할 보드가 있어야 preview를 재생할 수 있습니다.
+                  </AppText>
+                </View>
+              )}
+              <AppButton
+                className="mt-4"
+                disabled={!canPreviewBoard}
+                onPress={onPreviewBoardPress}
+              >
+                Preview 재생
+              </AppButton>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </Screen>
   );
 };
 
-const DEBUG_PREVIEW_BOARD_ID = "3de7d0e3-eb76-428c-8766-fd24237ec32b";
 const DebugSettingsScreen = () => {
   const router = useRouter();
   const {
+    profileId,
     hasSeenIntro,
     hasCompletedOnboarding,
     overrideMode,
@@ -215,6 +244,8 @@ const DebugSettingsScreen = () => {
     setOverrideMode,
     resetOnboardingProgress,
   } = useUser();
+  const { data: homeBoards } = useHomeBoardsQuery(profileId);
+  const previewBoard = homeBoards?.[0] ?? null;
 
   const handleOverridePress = async (mode: UserFlowOverrideMode) => {
     await setOverrideMode(mode);
@@ -228,11 +259,13 @@ const DebugSettingsScreen = () => {
   };
 
   const handlePreviewBoardPress = () => {
+    if (!previewBoard) return;
+
     router.replace({
       pathname: "/",
       params: {
         from: "onboarding",
-        boardId: DEBUG_PREVIEW_BOARD_ID,
+        boardId: previewBoard.id,
       },
     });
   };
@@ -250,6 +283,8 @@ const DebugSettingsScreen = () => {
         onOverridePress={handleOverridePress}
         onResetPress={handleResetPress}
         onPreviewBoardPress={handlePreviewBoardPress}
+        previewBoardTitle={previewBoard?.title}
+        canPreviewBoard={!!previewBoard}
       />
     </>
   );

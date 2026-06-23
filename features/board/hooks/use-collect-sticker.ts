@@ -1,3 +1,4 @@
+import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { board } from "@/features/board/service";
 import {
   BoardListResult,
@@ -10,6 +11,7 @@ import {
   whaleMessageService,
 } from "@/services/whale-message";
 import { useUser } from "@/services/user";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardKeys } from "../queries/board.query.key";
@@ -50,6 +52,7 @@ const isBoardListQueryKey = (queryKey: readonly unknown[]) =>
 export const useCollectSticker = () => {
   const queryClient = useQueryClient();
   const { profileId } = useUser();
+  const todayKey = useTodayKey();
 
   return useMutation({
     mutationFn: ({
@@ -71,7 +74,7 @@ export const useCollectSticker = () => {
         );
         const nextHomeBoardList =
           queryClient.getQueryData<BoardListResult | null>(
-            boardKeys.homeLists(profileId),
+            boardKeys.homeLists(profileId, todayKey),
           );
         const nextBoardList = queryClient.getQueryData<BoardListResult | null>(
           boardKeys.lists(profileId),
@@ -80,12 +83,12 @@ export const useCollectSticker = () => {
 
         const currentTodayAchievement =
           queryClient.getQueryData<BoardTodayAchievement>(
-            boardKeys.todayAchievement(profileId),
+            boardKeys.todayAchievement(profileId, todayKey),
           );
         const nextTodayStickerCount = (currentTodayAchievement?.count ?? 0) + 1;
 
         queryClient.setQueryData<BoardTodayAchievement>(
-          boardKeys.todayAchievement(profileId),
+          boardKeys.todayAchievement(profileId, todayKey),
           {
             count: nextTodayStickerCount,
           },
@@ -110,13 +113,17 @@ export const useCollectSticker = () => {
         }
 
         await queryClient.invalidateQueries({
-          queryKey: boardKeys.todayAchievement(profileId),
+          queryKey: boardKeys.todayAchievement(profileId, todayKey),
           refetchType: "active",
         });
       }
 
       await queryClient.invalidateQueries({
         queryKey: boardKeys.all,
+        refetchType: "active",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: archiveKeys.detail(updatedBoard.id),
         refetchType: "active",
       });
     },
@@ -142,7 +149,7 @@ export const useCollectSticker = () => {
 
           await Promise.all([
             queryClient.invalidateQueries({
-              queryKey: boardKeys.todayAchievement(profileId),
+              queryKey: boardKeys.todayAchievement(profileId, todayKey),
               refetchType: "active",
             }),
             queryClient.invalidateQueries({

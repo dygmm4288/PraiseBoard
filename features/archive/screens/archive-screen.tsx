@@ -1,24 +1,12 @@
-import BoardItem from "@/features/board/components/board-item/board-item";
-import { useBoardSheet } from "@/features/board/hooks/use-board-sheet";
-import { canCreateBoard } from "@/features/board/domain/policies/board-policy";
+import { BoardItem, canCreateBoard, useBoardSheet } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";
-import ArchiveActionBtn from "../components/btn/archive-action-btn";
 import ArchiveSection from "../components/list/archive-list";
 import useArchive from "../hooks/use-archive";
 
 const ArchiveScreen = () => {
   const { activeBoards, completedBoards } = useArchive();
-  const { openCreateSheet } = useBoardSheet();
-
-  const openCreateBoard = () => {
-    if (!canCreateBoard(activeBoards.length)) {
-      return toast.chatError("앗! 최대 3개를 다 만들었어요.");
-    }
-
-    openCreateSheet();
-  };
 
   return (
     <>
@@ -35,13 +23,16 @@ const ArchiveScreen = () => {
       >
         <ArchiveSection
           title={`진행 습관 ${activeBoards.length}개`}
-          action={<ArchiveActionBtn label="+ 추가" onPress={openCreateBoard} />}
+          emptyMessage="진행 중인 습관이 없어요."
         >
           {activeBoards.map((board) => (
             <BoardItem board={board} key={board.id} actionType="goto" />
           ))}
         </ArchiveSection>
-        <ArchiveSection title={`완료 습관 ${completedBoards.length}개`}>
+        <ArchiveSection
+          title={`완료 습관 ${completedBoards.length}개`}
+          emptyMessage="완료한 습관이 없어요."
+        >
           {completedBoards.map((board) => (
             <BoardItem board={board} key={board.id} actionType="goto" />
           ))}

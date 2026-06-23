@@ -7,27 +7,11 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { STEP_INDEX, STEPS, TOTAL_STEPS } from "../../onboarding.steps";
+import { STEP_CNT_LABEL, STEP_INDEX, STEP_LABEL, STEPS, TOTAL_STEPS } from "../../onboarding.steps";
 
 type Props = {
   stepName: STEPS;
 };
-
-const STEP_LABEL = {
-  name: "이름 설정",
-  title: "습관 설정",
-  limit: "목표 개수 설정",
-  reward: "보상 설정",
-  notification: "알림 설정",
-} as Record<STEPS, string>;
-
-const STEP_CNT_LABEL = {
-  name: "STEP 1 / 5",
-  title: "STEP 2 / 5",
-  limit: "STEP 3 / 5",
-  reward: "STEP 4 / 5",
-  notification: "STEP 5 / 5",
-} as Record<STEPS, string>;
 
 const OnboardHeader = ({ stepName }: Props) => {
   const progress = useSharedValue((STEP_INDEX[stepName] + 1) / TOTAL_STEPS);

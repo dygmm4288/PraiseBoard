@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
@@ -10,20 +10,36 @@ import OnboardSelectList, {
   OnboardSelectListItem,
 } from "./onboard-select-list";
 
-const CHIPS = [
-  { icon: "🌟", text: "30개", value: "30" },
-  { icon: "🔥", text: "50개", value: "50" },
-  { icon: "💯", text: "100개", value: "100" },
+const DAILY_LIMIT_OPTIONS = [
+  { icon: "1️⃣", value: 1 },
+  { icon: "2️⃣", value: 2 },
+  { icon: "3️⃣", value: 3 },
+  { icon: "4️⃣", value: 4 },
+  { icon: "5️⃣", value: 5 },
 ];
 
-const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
+const OnboardStepCount = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const actionLock = useOnboardActionLock();
+  const targetCount = Number(form.watch("boards.target_count"));
+  const safeTargetCount = [30, 50, 100].includes(targetCount)
+    ? targetCount
+    : 30;
+  const chips = useMemo(
+    () =>
+      DAILY_LIMIT_OPTIONS.map(({ icon, value }) => ({
+        icon,
+        text: `${value}번·${Math.ceil(safeTargetCount / value)}일`,
+        value: String(value),
+      })),
+    [safeTargetCount],
+  );
 
   const { messages, addUserMessage, run } = useOnboardChat({
     whaleMessages: [
       {
-        message: "원하는 목표 개수를 골라줘.\n너가 원하는 속도에 맞춰보자.",
+        message:
+          "그럼 하루에 최대 몇 번까지 할 수 있을 것 같아? 방금 정한 목표 개수를 며칠에 걸쳐 나눌지 생각해봐.",
         onOk: () => setShowOptions(true),
       },
     ],
@@ -33,12 +49,14 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
     run();
   }, []);
 
-  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
-    setShowOptions(false);
-    await addUserMessage(item.text);
-    form.setValue("boards.target_count", item.value ?? item.text);
-    onNext();
-  });
+  const onSelectOption = actionLock.guard(
+    async (item: OnboardSelectListItem) => {
+      setShowOptions(false);
+      await addUserMessage(item.text);
+      form.setValue("boards.limit_count", Number(item.value!));
+      onNext();
+    },
+  );
 
   return (
     <View className="flex-1">
@@ -52,7 +70,7 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
       >
         <ChatBubbleList>
           {messages.map((v, i) => (
-            <Fragment key={`onboard-step-name${i}`}>
+            <Fragment key={`onboard-step-count${i}`}>
               <ChatBubble
                 showTyping={v.type === "typing"}
                 message={v.message ?? ""}
@@ -61,7 +79,7 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
               {showOptions && v.role === "system" && i === 0 && (
                 <View className="mt-[24px]">
                   <OnboardSelectList
-                    items={CHIPS}
+                    items={chips}
                     onPress={onSelectOption}
                     disabled={actionLock.disabled}
                   />
@@ -75,4 +93,4 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
   );
 };
 
-export default OnboardStepLimit;
+export default OnboardStepCount;

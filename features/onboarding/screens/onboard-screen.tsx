@@ -1,7 +1,7 @@
 import {
   BOARD_SETUP_DEFAULT_VALUES,
   type BoardSetupFormValues,
-} from "@/features/board/schema";
+} from "@/features/board";
 import { Stepper } from "@/shared/components";
 import { toast } from "@/shared/toasts/toast";
 import { Screen } from "@/shared/ui";
@@ -17,6 +17,7 @@ import OnboardStepTitle from "../components/onboard/onboard-step-title";
 import useOnboardingSetupForm from "../hooks/use-onboarding-setup-form";
 import { steps, type STEPS } from "../onboarding.steps";
 import type { OnboardStepProps } from "../types/onboard-step.type";
+import OnboardStepCount from "../components/onboard/onboard-step-count";
 
 export const ONBOARD_STEP_VALUES = steps.map((step) => step.value) as STEPS[];
 
@@ -76,6 +77,9 @@ export const OnboardScreenContent = ({
               )}
               {currentValue === "limit" && (
                 <OnboardStepLimit form={form} onNext={handleNextStep(next)} />
+              )}
+              {currentValue === "limitCount" && (
+                <OnboardStepCount form={form} onNext={handleNextStep(next)} />
               )}
               {currentValue === "notification" && (
                 <>

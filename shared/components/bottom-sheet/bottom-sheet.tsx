@@ -1,6 +1,7 @@
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
+  useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
 import type {
   BottomSheetBackdropProps,
@@ -12,8 +13,11 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { Keyboard } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Easing } from "react-native-reanimated";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
 type Props = {
@@ -26,6 +30,8 @@ type Props = {
 } & PropsWithChildren;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
+const TOP_INSET_OFFSET = 8;
+const ANIMATION_DURATION = 280;
 
 const AppBottomSheet = ({
   index,
@@ -36,15 +42,23 @@ const AppBottomSheet = ({
   enablePanDownToClose = true,
   enableBackdrop = true,
 }: Props) => {
+  const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
+  const lastEmittedIndexRef = useRef<number | null>(null);
   const controlledIndexRef = useRef(index);
   const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [initialIndex] = useState(index);
   const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
+  const animationConfigs = useBottomSheetTimingConfigs({
+    duration: ANIMATION_DURATION,
+    easing: Easing.bezier(0.32, 0.72, 0, 1),
+  });
 
   controlledIndexRef.current = index;
 
   const handleChange = useCallback(
     (index: number) => {
+      lastEmittedIndexRef.current = index;
       onChangeIndex(index);
     },
     [onChangeIndex],
@@ -63,6 +77,20 @@ const AppBottomSheet = ({
       ) : null,
     [enableBackdrop],
   );
+
+  useEffect(() => {
+    if (lastEmittedIndexRef.current === index) {
+      lastEmittedIndexRef.current = null;
+      return;
+    }
+
+    if (index >= 0) {
+      bottomSheetRef.current?.snapToIndex(index);
+      return;
+    }
+
+    bottomSheetRef.current?.close();
+  }, [index]);
 
   useEffect(() => {
     if (!keyboardBehavior) {
@@ -103,9 +131,11 @@ const AppBottomSheet = ({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={index}
+      index={initialIndex}
       snapPoints={resolvedSnapPoints}
-      animateOnMount={false}
+      topInset={insets.top + TOP_INSET_OFFSET}
+      animateOnMount
+      animationConfigs={animationConfigs}
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
       enableBlurKeyboardOnGesture

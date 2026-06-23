@@ -28,7 +28,7 @@ const getBoardDDay = (baseDateValue: string | null) => {
 
   if (Number.isNaN(baseDate.getTime())) return "0";
 
-  const diffDays = getCalendarDateDiff(baseDate, new Date());
+  const diffDays = getCalendarDateDiff(baseDate, new Date()) + 1;
   const safeDiffDays = Math.max(0, Math.min(diffDays, MAX_BOARD_D_DAY));
 
   return diffDays > MAX_BOARD_D_DAY ? `${MAX_BOARD_D_DAY}+` : `${safeDiffDays}`;

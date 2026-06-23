@@ -2,7 +2,7 @@ import {
   BOARD_SETUP_DEFAULT_VALUES,
   boardSetupDraftSchema,
   type BoardSetupFormValues,
-} from "@/features/board/schema";
+} from "@/features/board";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn, type FieldPath } from "react-hook-form";
 

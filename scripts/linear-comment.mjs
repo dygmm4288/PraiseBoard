@@ -12,7 +12,8 @@ if (!ISSUES) {
   throw new Error("ISSUES is missing");
 }
 
-const issues = ISSUES.split(",")
+const issues = ISSUES
+  .split(",")
   .map((v) => v.trim())
   .filter(Boolean);
 
@@ -32,37 +33,37 @@ async function graphql(query, variables = {}) {
   const json = await res.json();
 
   if (json.errors) {
-    console.error(JSON.stringify(json.errors, null, 2));
-    throw new Error("GraphQL request failed");
+    throw new Error(JSON.stringify(json.errors, null, 2));
   }
 
   return json.data;
 }
 
-async function loadIssueMap() {
-  const data = await graphql(`
-    query {
-      issues(first: 100) {
-        nodes {
+async function getIssueId(identifier) {
+  const data = await graphql(
+    `
+      query($identifier: String!) {
+        issueV2(identifier: $identifier) {
           id
-          identifier
         }
       }
-    }
-  `);
-
-  return new Map(
-    data.issues.nodes.map((issue) => [
-      issue.identifier.toLowerCase(),
-      issue.id,
-    ]),
+    `,
+    {
+      identifier,
+    },
   );
+
+  if (!data.issueV2?.id) {
+    throw new Error(`Issue not found: ${identifier}`);
+  }
+
+  return data.issueV2.id;
 }
 
 async function createComment(issueId, body) {
-  return graphql(
+  await graphql(
     `
-      mutation CommentCreate($input: CommentCreateInput!) {
+      mutation($input: CommentCreateInput!) {
         commentCreate(input: $input) {
           success
         }
@@ -78,8 +79,6 @@ async function createComment(issueId, body) {
 }
 
 async function main() {
-  const issueMap = await loadIssueMap();
-
   const body = `## ✅ QA Build
 
 ### 🤖 Android
@@ -91,18 +90,12 @@ ${ANDROID_BUILD_URL || "-"}
 ${IOS_BUILD_URL || "-"}
 `;
 
-  for (const issueIdentifier of issues) {
-    const issueId = issueMap.get(issueIdentifier.toLowerCase());
+  for (const issue of issues) {
+    console.log(`Commenting ${issue}`);
 
-    if (!issueId) {
-      throw new Error(`Issue not found: ${issueIdentifier}`);
-    }
+    const issueId = await getIssueId(issue);
 
-    console.log(`Commenting ${issueIdentifier} (${issueId})`);
-
-    const result = await createComment(issueId, body);
-
-    console.log(JSON.stringify(result, null, 2));
+    await createComment(issueId, body);
   }
 
   console.log("Done");

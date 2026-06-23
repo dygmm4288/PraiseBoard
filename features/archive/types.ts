@@ -1,6 +1,7 @@
 export type ArchiveDetailRequest = {
   boardId: string;
   month: string;
+  todayKey: string;
 };
 
 export type ArchiveDailyStickerCount = {

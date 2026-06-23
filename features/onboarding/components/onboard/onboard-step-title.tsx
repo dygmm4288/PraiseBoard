@@ -1,12 +1,13 @@
-import { BoardSetupFormValues } from "@/features/board/schema";
+import { BoardSetupFormValues, TITLE_MAX_LENGTH } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
 } from "react-native-keyboard-controller";
+import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
 import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
@@ -26,6 +27,12 @@ const CHIPS = [
 const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isDirectMode, setIsDirectMode] = useState(false);
+  const actionLock = useOnboardActionLock();
+  const showMaxLengthToast = useCallback(() => {
+    toast.chatError("보드 제목은 15자까지 입력할 수 있어요", {
+      refresh: true,
+    });
+  }, []);
 
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
@@ -38,13 +45,14 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
     ],
   });
 
-  const onSelectOption = async (item: OnboardSelectListItem) => {
+  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
     setShowOptions(false);
 
     if (item.value === null) {
       await addUserMessage(item.text, { runNext: false });
       setIsDirectMode(true);
       form.setValue("boards.emoji", "🌱");
+      actionLock.reset();
       return;
     }
 
@@ -52,27 +60,28 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
     form.setValue("boards.title", item.text);
     form.setValue("boards.emoji", item.icon);
     onNext();
-  };
+  });
 
-  const onSendForm = async (
-    field: ControllerRenderProps<BoardSetupFormValues, "boards.title">,
-  ) => {
-    const title = (field.value ?? "").trim();
-    const error = await validateBeforeNext(form, {
-      fields: "boards.title",
-      shouldFocus: true,
-    });
-    if (error) {
-      toast.chatError(error);
-      return;
-    }
-    form.clearErrors("boards.title");
-    field.onChange("");
-    await addUserMessage(title);
-    form.setValue("boards.emoji", "🌱");
-    onNext();
-    field.onChange(title);
-  };
+  const onSendForm = actionLock.guard(
+    async (field: ControllerRenderProps<BoardSetupFormValues, "boards.title">) => {
+      const title = (field.value ?? "").trim();
+      const error = await validateBeforeNext(form, {
+        fields: "boards.title",
+        shouldFocus: true,
+      });
+      if (error) {
+        actionLock.reset();
+        toast.chatError(error);
+        return;
+      }
+      form.clearErrors("boards.title");
+      field.onChange("");
+      await addUserMessage(title);
+      form.setValue("boards.emoji", "🌱");
+      onNext();
+      field.onChange(title);
+    },
+  );
 
   useEffect(() => {
     run();
@@ -98,7 +107,11 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
               />
               {showOptions && v.role === "system" && i === 0 && (
                 <View className="mt-[24px]">
-                  <OnboardSelectList items={CHIPS} onPress={onSelectOption} />
+                  <OnboardSelectList
+                    items={CHIPS}
+                    onPress={onSelectOption}
+                    disabled={actionLock.disabled}
+                  />
                 </View>
               )}
             </View>
@@ -113,19 +126,23 @@ const OnboardStepTitle = ({ form, onNext }: OnboardStepProps) => {
           <Controller
             name="boards.title"
             control={form.control}
-            render={({ field }) =>
-              isDirectMode ? (
-                <ChatInput
-                  placeholder="보드 제목을 알려주세요"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  disabled={disabled}
-                  onSend={() => onSendForm(field)}
-                />
-              ) : (
-                <></>
-              )
-            }
+            render={({ field }) => (
+              <>
+                {isDirectMode ? (
+                  <ChatInput
+                    placeholder="보드 제목을 알려주세요"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    disabled={disabled || actionLock.disabled}
+                    onSend={() => onSendForm(field)}
+                    maxLength={TITLE_MAX_LENGTH}
+                    onMaxLengthExceeded={showMaxLengthToast}
+                    autoFocus={isDirectMode}
+                    focusTrigger={isDirectMode}
+                  />
+                ) : null}
+              </>
+            )}
           />
         </View>
       </KeyboardStickyView>

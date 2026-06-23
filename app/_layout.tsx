@@ -1,7 +1,7 @@
-import { FnbContainer } from "@/features/navigation";
+import { FnbContainer, useRootBackExit } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
-import { toastConfig } from "@/shared/toasts/toast";
+import { ToastKeyboardSync, toastConfig } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
   focusManager,
@@ -68,6 +68,7 @@ const RootLayoutNav = () => {
   const pathname = usePathname();
   const segments = useSegments();
   const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
+  useRootBackExit(pathname);
 
   if (!isInitialized) return null;
 
@@ -117,6 +118,7 @@ export default function RootLayout() {
         <KeyboardProvider>
           <UserProvider>
             <RootLayoutNav />
+            <ToastKeyboardSync />
             <Toast config={toastConfig} />
             <StatusBar style="auto" />
           </UserProvider>

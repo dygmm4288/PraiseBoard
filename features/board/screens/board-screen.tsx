@@ -1,53 +1,22 @@
 import OnboardCompletionPreview from "@/features/onboarding/components/onboard/onboard-completion-preview";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { Screen } from "@/shared/ui";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";
 import { useBoardSheet } from "../hooks/use-board-sheet";
+import useHomeCompletionPreview from "../hooks/use-home-completion-preview";
 import BoardToday from "../components/board-today/board-today";
 import BoardHomeWhaleMessage from "../components/board/board-home-whale-message";
 import BoardList from "../components/board/board-list";
 import { useHomeBoardsQuery } from "../queries/use-board-query";
 
 export const BoardScreenContent = () => {
-  const router = useRouter();
-  const params = useLocalSearchParams<{ from?: string; boardId?: string }>();
   const { profileId } = useUser();
   const { nickname } = useCurrentProfile(profileId);
   const { data: homeBoards } = useHomeBoardsQuery(profileId);
   const { openCreateSheet } = useBoardSheet();
-  const [completionPreviewDone, setCompletionPreviewDone] = useState(false);
-  const previewBoard =
-    params.from === "onboarding" && typeof params.boardId === "string"
-      ? homeBoards?.find((board) => board.id === params.boardId)
-      : null;
-  const showCompletionPreview = !!previewBoard && !completionPreviewDone;
-
-  const handleCompletionPreviewDone = useCallback(() => {
-    setCompletionPreviewDone(true);
-    router.setParams({ from: undefined, boardId: undefined });
-  }, [router]);
-
-  useEffect(() => {
-    if (
-      params.from === "onboarding" &&
-      typeof params.boardId === "string" &&
-      homeBoards &&
-      !previewBoard &&
-      !completionPreviewDone
-    ) {
-      router.setParams({ from: undefined, boardId: undefined });
-    }
-  }, [
-    completionPreviewDone,
-    homeBoards,
-    params.boardId,
-    params.from,
-    previewBoard,
-    router,
-  ]);
+  const { previewBoard, showCompletionPreview, closePreview } =
+    useHomeCompletionPreview({ boards: homeBoards });
 
   return (
     <>
@@ -67,11 +36,11 @@ export const BoardScreenContent = () => {
         <BoardToday />
         <BoardList onCreateBoardPress={openCreateSheet} />
       </ScrollView>
-      {showCompletionPreview ? (
+      {showCompletionPreview && previewBoard ? (
         <OnboardCompletionPreview
           nickname={nickname}
           board={previewBoard}
-          onDone={handleCompletionPreviewDone}
+          onDone={closePreview}
         />
       ) : null}
     </>
