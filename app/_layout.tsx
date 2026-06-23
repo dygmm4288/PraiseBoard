@@ -27,6 +27,7 @@ import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
 const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
+const FNB_RESERVED_BOTTOM_SPACE = 118;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,22 +83,32 @@ const RootLayoutNav = () => {
     !(pathname === "/" && params.from === "onboarding" && params.boardId);
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-white">
       <TopLevelSheetProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(modals)"
-            options={{ presentation: "modal", headerShown: false }}
-          />
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
-          <Stack.Screen name="settings" options={{ headerShown: false }} />
-          <Stack.Screen name="stats" options={{ headerShown: false }} />
-          <Stack.Screen name="archives" options={{ headerShown: false }} />
-          <Stack.Screen name="(boards)" options={{ headerShown: false }} />
-          <Stack.Screen name="debug" options={{ headerShown: false }} />
-        </Stack>
+        <View
+          className="flex-1 bg-white"
+          style={{
+            paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
+          }}
+        >
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(onboarding)"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(modals)"
+              options={{ presentation: "modal", headerShown: false }}
+            />
+            <Stack.Screen name="signup" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
+            <Stack.Screen name="stats" options={{ headerShown: false }} />
+            <Stack.Screen name="archives" options={{ headerShown: false }} />
+            <Stack.Screen name="(boards)" options={{ headerShown: false }} />
+            <Stack.Screen name="debug" options={{ headerShown: false }} />
+          </Stack>
+        </View>
         {shouldShowFnb && <FnbContainer />}
       </TopLevelSheetProvider>
     </View>

@@ -41,9 +41,11 @@ export type ArchiveDetail = {
 };
 
 export type IArchiveRepository = {
+  forceSetComplete: (boardId: string) => Promise<void>;
   getDetail: (payload: ArchiveDetailRequest) => Promise<ArchiveDetail>;
 };
 
 export type IArchiveService = {
   getDetail: (payload: ArchiveDetailRequest) => Promise<ArchiveDetail>;
+  forceSetComplete: (boardId: string) => Promise<void>;
 };

@@ -13,7 +13,7 @@ const SettingsScreen = () => {
     useSettingsSheets();
 
   return (
-    <Screen className="pb-[118px]" padded={false}>
+    <Screen padded={false}>
       <ScreenHeader title="설정" className="px-[8px]" />
       <ScrollView
         className="mt-[12px] flex-1 px-screen"

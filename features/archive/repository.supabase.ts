@@ -1,3 +1,4 @@
+import { boardRepository } from "@/features/board/repository";
 import { supabase } from "@/shared/lib/supabase";
 import { getMonthRange } from "@/shared/utils/month";
 import {
@@ -24,6 +25,10 @@ const getSelectedDate = (month: string, todayKey: string) => {
 };
 
 export const archiveRepository: IArchiveRepository = {
+  async forceSetComplete(boardId) {
+    await boardRepository.forceSetComplete(boardId);
+  },
+
   async getDetail({
     boardId,
     month,

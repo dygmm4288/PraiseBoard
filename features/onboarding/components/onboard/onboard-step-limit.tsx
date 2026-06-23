@@ -9,7 +9,6 @@ import ChatBubbleList from "../chat/chat-bubble-list";
 import OnboardSelectList, {
   OnboardSelectListItem,
 } from "./onboard-select-list";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
   { icon: "🌟", text: "30개", value: "30" },
@@ -42,39 +41,37 @@ const OnboardStepLimit = ({ form, onNext }: OnboardStepProps) => {
   });
 
   return (
-    <OnboardStepLayout stepName="limit">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <Fragment key={`onboard-step-name${i}`}>
-                <ChatBubble
-                  showTyping={v.type === "typing"}
-                  message={v.message ?? ""}
-                  side={v.role === "system" ? "left" : "right"}
-                />
-                {showOptions && v.role === "system" && i === 0 && (
-                  <View className="mt-[24px]">
-                    <OnboardSelectList
-                      items={CHIPS}
-                      onPress={onSelectOption}
-                      disabled={actionLock.disabled}
-                    />
-                  </View>
-                )}
-              </Fragment>
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-      </View>
-    </OnboardStepLayout>
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <Fragment key={`onboard-step-name${i}`}>
+              <ChatBubble
+                showTyping={v.type === "typing"}
+                message={v.message ?? ""}
+                side={v.role === "system" ? "left" : "right"}
+              />
+              {showOptions && v.role === "system" && i === 0 && (
+                <View className="mt-[24px]">
+                  <OnboardSelectList
+                    items={CHIPS}
+                    onPress={onSelectOption}
+                    disabled={actionLock.disabled}
+                  />
+                </View>
+              )}
+            </Fragment>
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 

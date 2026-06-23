@@ -1,14 +1,13 @@
+import {
+  ONBOARD_STEP_VALUES,
+  OnboardScreenContent,
+} from "@/features/onboarding/screens/onboard-screen";
+import { AppButton, AppText } from "@/shared/ui";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { fn } from "storybook/test";
 import type { OnboardStepProps } from "../types/onboard-step.type";
-import OnboardStepLayout from "../components/onboard/onboard-step-layout";
-import { AppButton, AppText } from "@/shared/ui";
-import {
-  ONBOARD_STEP_VALUES,
-  OnboardScreenContent,
-} from "@/features/onboarding/screens/onboard-screen";
 
 const STORY_INITIAL_VALUES = {
   profiles: {
@@ -23,40 +22,34 @@ const STORY_INITIAL_VALUES = {
 
 const StorybookNotificationStep = ({ form }: OnboardStepProps) => {
   return (
-    <OnboardStepLayout stepName="notification">
-      <View className="flex-1 justify-center gap-4 px-4">
-        <View className="rounded-[24px] bg-[#F7F7F9] px-5 py-5">
-          <AppText variant="title3" className="text-gray-700">
-            알림 권한 요청 미리보기
-          </AppText>
-          <AppText variant="body3" className="mt-2 text-gray-500">
-            Storybook에서는 실제 저장과 권한 요청 대신 마지막 단계 요약만
-            보여줍니다.
-          </AppText>
-        </View>
-
-        <View className="rounded-[24px] bg-white px-5 py-5">
-          <AppText variant="body3" className="text-gray-500">
-            이름: {form.getValues("profiles.nickname") || "-"}
-          </AppText>
-          <AppText variant="body3" className="mt-2 text-gray-500">
-            보드 제목: {form.getValues("boards.title") || "-"}
-          </AppText>
-          <AppText variant="body3" className="mt-2 text-gray-500">
-            목표 개수: {form.getValues("boards.target_count") || "-"}
-          </AppText>
-          <AppText variant="body3" className="mt-2 text-gray-500">
-            보상: {form.getValues("boards.reward_memo") || "미입력"}
-          </AppText>
-        </View>
-
-        <AppButton
-          fullWidth
-          label="온보딩 완료 액션"
-          onPress={fn()}
-        />
+    <View className="flex-1 justify-center gap-4 px-4">
+      <View className="rounded-[24px] bg-[#F7F7F9] px-5 py-5">
+        <AppText variant="title3" className="text-gray-700">
+          알림 권한 요청 미리보기
+        </AppText>
+        <AppText variant="body3" className="mt-2 text-gray-500">
+          Storybook에서는 실제 저장과 권한 요청 대신 마지막 단계 요약만
+          보여줍니다.
+        </AppText>
       </View>
-    </OnboardStepLayout>
+
+      <View className="rounded-[24px] bg-white px-5 py-5">
+        <AppText variant="body3" className="text-gray-500">
+          이름: {form.getValues("profiles.nickname") || "-"}
+        </AppText>
+        <AppText variant="body3" className="mt-2 text-gray-500">
+          보드 제목: {form.getValues("boards.title") || "-"}
+        </AppText>
+        <AppText variant="body3" className="mt-2 text-gray-500">
+          목표 개수: {form.getValues("boards.target_count") || "-"}
+        </AppText>
+        <AppText variant="body3" className="mt-2 text-gray-500">
+          보상: {form.getValues("boards.reward_memo") || "미입력"}
+        </AppText>
+      </View>
+
+      <AppButton fullWidth label="온보딩 완료 액션" onPress={fn()} />
+    </View>
   );
 };
 
@@ -88,7 +81,7 @@ const meta = {
   render: (args) => (
     <OnboardScreenContent
       {...args}
-      renderNotificationStep={(props) => (
+      SBrenderNotificationStep={(props) => (
         <StorybookNotificationStep {...props} />
       )}
     />

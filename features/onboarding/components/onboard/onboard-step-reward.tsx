@@ -1,7 +1,4 @@
-import {
-  BoardSetupFormValues,
-  REWARD_MEMO_LENGTH,
-} from "@/features/board";
+import { BoardSetupFormValues, REWARD_MEMO_LENGTH } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
@@ -21,7 +18,6 @@ import ChatInput from "../chat/chat-input";
 import OnboardSelectList, {
   OnboardSelectListItem,
 } from "./onboard-select-list";
-import OnboardStepLayout from "./onboard-step-layout";
 
 const CHIPS = [
   { icon: "🍗", text: "치팅데이" },
@@ -93,6 +89,7 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
         return;
       }
 
+      toast.hideToast();
       form.clearErrors("boards.reward_memo");
       submittedRewardMemoRef.current = rewardMemo;
       field.onChange("");
@@ -100,84 +97,84 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
     },
   );
 
-  const onSelectOption = actionLock.guard(async (item: OnboardSelectListItem) => {
-    setShowOptions(false);
+  const onSelectOption = actionLock.guard(
+    async (item: OnboardSelectListItem) => {
+      setShowOptions(false);
 
-    if (item.value === null) {
-      await addUserMessage(item.text, { runNext: false });
-      setIsDirectMode(true);
-      actionLock.reset();
-      return;
-    }
+      if (item.value === null) {
+        await addUserMessage(item.text, { runNext: false });
+        setIsDirectMode(true);
+        actionLock.reset();
+        return;
+      }
 
-    const rewardMemo = item.value === "" ? null : item.text;
-    submittedRewardMemoRef.current = rewardMemo;
-    form.setValue("boards.reward_memo", rewardMemo);
-    await addUserMessage(item.text);
-  });
+      const rewardMemo = item.value === "" ? null : item.text;
+      submittedRewardMemoRef.current = rewardMemo;
+      form.setValue("boards.reward_memo", rewardMemo);
+      await addUserMessage(item.text);
+    },
+  );
 
   return (
-    <OnboardStepLayout stepName="reward">
-      <View className="flex-1">
-        <KeyboardAwareScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bottomOffset={12}
-          extraKeyboardSpace={8}
-        >
-          <ChatBubbleList>
-            {messages.map((v, i) => (
-              <Fragment key={`onboard-step-name${i}`}>
-                <ChatBubble
-                  showTyping={v.type === "typing"}
-                  message={v.message ?? ""}
-                  side={v.role === "system" ? "left" : "right"}
-                />
-                {showOptions && v.role === "system" && i === 0 && (
-                  <View className="mt-[24px]">
-                    <OnboardSelectList
-                      items={CHIPS}
-                      onPress={onSelectOption}
-                      disabled={actionLock.disabled}
-                    />
-                  </View>
-                )}
-              </Fragment>
-            ))}
-          </ChatBubbleList>
-        </KeyboardAwareScrollView>
-        <KeyboardStickyView
-          offset={{ closed: 0, opened: 0 }}
-          style={{ backgroundColor: "#FFFFFF" }}
-        >
-          <View className="bg-white py-[8px]">
-            <Controller
-              name="boards.reward_memo"
-              control={form.control}
-              render={({ field }) => (
-                <View className="gap-2">
-                  {isDirectMode && (
-                    <ChatInput
-                      placeholder="보상을 알려주세요"
-                      value={field.value || ""}
-                      onChangeText={field.onChange}
-                      onSend={() => onSendForm(field)}
-                      disabled={disabled || actionLock.disabled}
-                      maxLength={REWARD_MEMO_LENGTH}
-                      onMaxLengthExceeded={showMaxLengthToast}
-                      autoFocus={isDirectMode}
-                      focusTrigger={isDirectMode}
-                    />
-                  )}
+    <View className="flex-1">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={12}
+        extraKeyboardSpace={8}
+      >
+        <ChatBubbleList>
+          {messages.map((v, i) => (
+            <Fragment key={`onboard-step-name${i}`}>
+              <ChatBubble
+                showTyping={v.type === "typing"}
+                message={v.message ?? ""}
+                side={v.role === "system" ? "left" : "right"}
+              />
+              {showOptions && v.role === "system" && i === 0 && (
+                <View className="mt-[24px]">
+                  <OnboardSelectList
+                    items={CHIPS}
+                    onPress={onSelectOption}
+                    disabled={actionLock.disabled}
+                  />
                 </View>
               )}
-            />
-          </View>
-        </KeyboardStickyView>
-      </View>
-    </OnboardStepLayout>
+            </Fragment>
+          ))}
+        </ChatBubbleList>
+      </KeyboardAwareScrollView>
+      <KeyboardStickyView
+        offset={{ closed: 0, opened: 0 }}
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
+        <View className="bg-white py-[8px]">
+          <Controller
+            name="boards.reward_memo"
+            control={form.control}
+            render={({ field }) => (
+              <View className="gap-2">
+                {isDirectMode && (
+                  <ChatInput
+                    placeholder="보상을 알려주세요"
+                    value={field.value || ""}
+                    onChangeText={field.onChange}
+                    onSend={() => onSendForm(field)}
+                    disabled={disabled || actionLock.disabled}
+                    maxLength={REWARD_MEMO_LENGTH}
+                    onMaxLengthExceeded={showMaxLengthToast}
+                    autoFocus={isDirectMode}
+                    focusTrigger={isDirectMode}
+                  />
+                )}
+              </View>
+            )}
+          />
+        </View>
+      </KeyboardStickyView>
+    </View>
   );
 };
 

@@ -77,7 +77,7 @@ const ChatInput = ({
   }, [autoFocus, disabled, focusTrigger]);
 
   return (
-    <View className="items-center bg-white py-[18px]">
+    <View className="items-center bg-white">
       <View className="h-[42px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white pl-[15px] pr-[4px]">
         <TextInput
           ref={inputRef}

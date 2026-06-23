@@ -53,6 +53,10 @@ async function getIssueId(identifier) {
     },
   );
 
+  if (!data.issueV2?.id) {
+    throw new Error(`Issue not found: ${identifier}`);
+  }
+
   return data.issueV2.id;
 }
 

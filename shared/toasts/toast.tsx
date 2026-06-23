@@ -27,13 +27,19 @@ type ToastOverrides = Partial<
   >
 >;
 
-const CHAT_INPUT_TOAST_OFFSET = 88;
+const CHAT_INPUT_TOAST_OFFSET = 70;
 let activeChatToastMessage: string | null = null;
 
 const chatInputBottomToastOptions: ToastOverrides = {
   position: "bottom",
   bottomOffset: CHAT_INPUT_TOAST_OFFSET,
   avoidKeyboard: false,
+};
+
+const clearActiveChatToastMessage = (message: string) => {
+  if (activeChatToastMessage === message) {
+    activeChatToastMessage = null;
+  }
 };
 
 const getChatToastOptions = (): ToastOverrides => {
@@ -100,16 +106,21 @@ export const toast = {
         onShow?.();
       },
       onHide: () => {
-        activeChatToastMessage = null;
+        clearActiveChatToastMessage(message);
         onHide?.();
       },
     });
+  },
+
+  hideToast() {
+    activeChatToastMessage = null;
+    Toast.hide();
   },
 };
 
 export const ToastKeyboardSync = () => {
   useEffect(() => {
-    const subscription = KeyboardEvents.addListener("keyboardDidHide", () => {
+    const subscription = KeyboardEvents.addListener("keyboardWillHide", () => {
       const message = activeChatToastMessage;
 
       if (!message) {
@@ -124,7 +135,7 @@ export const ToastKeyboardSync = () => {
           activeChatToastMessage = message;
         },
         onHide: () => {
-          activeChatToastMessage = null;
+          clearActiveChatToastMessage(message);
         },
       });
     });

@@ -97,6 +97,7 @@ export type IBoardRepository = {
     boardId: string,
     source: BoardStickerSource,
   ) => Promise<BoardRecord>;
+  forceSetComplete: (boardId: string) => Promise<BoardRecord>;
 };
 
 export type IBoardService = {
@@ -116,6 +117,7 @@ export type IBoardService = {
     boardId: string,
     source: BoardStickerSource,
   ) => Promise<BoardRecord>;
+  forceSetComplete: (boardId: string) => Promise<BoardRecord>;
 };
 
 export type BoardListParams = {

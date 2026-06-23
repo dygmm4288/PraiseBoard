@@ -281,4 +281,61 @@ export const boardRepository: IBoardRepository = {
       count: count ?? 0,
     };
   },
+
+  async forceSetComplete(boardId) {
+    const { data: boardSnapshot, error: selectError } = await supabase
+      .from("boards")
+      .select("target_count, completed_at")
+      .eq("id", boardId)
+      .single();
+
+    if (selectError) {
+      throwLoggedSupabaseError(selectError, {
+        domain: "board",
+        operation: "forceSetComplete.selectBoard",
+        params: {
+          boardId,
+        },
+      });
+    }
+
+    const boardData = ensureSupabaseData(boardSnapshot, {
+      domain: "board",
+      operation: "forceSetComplete.selectBoard.emptyData",
+      params: {
+        boardId,
+      },
+    });
+
+    const { data, error } = await supabase
+      .from("boards")
+      .update({
+        status: "completed",
+        current_count: boardData.target_count,
+        completed_at: boardData.completed_at ?? new Date().toISOString(),
+      })
+      .eq("id", boardId)
+      .select(BOARD_FIELDS)
+      .single();
+
+    if (error) {
+      throwLoggedSupabaseError(error, {
+        domain: "board",
+        operation: "forceSetComplete.updateBoard",
+        params: {
+          boardId,
+        },
+      });
+    }
+
+    const completedBoardData = ensureSupabaseData(data, {
+      domain: "board",
+      operation: "forceSetComplete.updateBoard.emptyData",
+      params: {
+        boardId,
+      },
+    });
+
+    return toBoardRecord(completedBoardData);
+  },
 };
