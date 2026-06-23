@@ -1,23 +1,17 @@
+import type {
+  BottomSheetBackdropProps,
+  BottomSheetProps,
+} from "@gorhom/bottom-sheet";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
-import type {
-  BottomSheetBackdropProps,
-  BottomSheetProps,
-} from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Easing } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
 type Props = {
@@ -31,7 +25,7 @@ type Props = {
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
 const TOP_INSET_OFFSET = 8;
-const ANIMATION_DURATION = 280;
+const ANIMATION_DURATION = 500;
 
 const AppBottomSheet = ({
   index,
