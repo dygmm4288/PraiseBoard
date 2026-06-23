@@ -1,7 +1,4 @@
-import {
-  BoardSetupFormValues,
-  NICKNAME_MAX_LENGTH,
-} from "@/features/board";
+import { BoardSetupFormValues, NICKNAME_MAX_LENGTH } from "@/features/board";
 import { toast } from "@/shared/toasts/toast";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
@@ -91,24 +88,22 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
         offset={{ closed: 0, opened: 0 }}
         style={{ backgroundColor: "#FFFFFF" }}
       >
-        <View className="bg-white py-[8px]">
+        <View className="bg-white">
           <Controller
             name="profiles.nickname"
             control={form.control}
             render={({ field }) => (
-              <View className="gap-2">
-                <ChatInput
-                  placeholder="이름을 알려주세요"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onSend={() => onSendForm(field)}
-                  disabled={disabled || !canInput || actionLock.disabled}
-                  maxLength={NICKNAME_MAX_LENGTH}
-                  onMaxLengthExceeded={showMaxLengthToast}
-                  autoFocus={canInput}
-                  focusTrigger={canInput}
-                />
-              </View>
+              <ChatInput
+                placeholder="이름을 알려주세요"
+                value={field.value}
+                onChangeText={field.onChange}
+                onSend={() => onSendForm(field)}
+                disabled={disabled || !canInput || actionLock.disabled}
+                maxLength={NICKNAME_MAX_LENGTH}
+                onMaxLengthExceeded={showMaxLengthToast}
+                autoFocus={canInput}
+                focusTrigger={canInput}
+              />
             )}
           />
         </View>
