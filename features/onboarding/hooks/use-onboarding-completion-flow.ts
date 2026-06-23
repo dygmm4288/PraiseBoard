@@ -8,6 +8,7 @@ import {
 } from "@/features/board";
 import { notification } from "@/services/notification";
 import { useUser, userRepository } from "@/services/user";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -42,6 +43,7 @@ type Props = {
 const useOnboardingCompletionFlow = ({ form }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const todayKey = useTodayKey();
   const { completeOnboarding, overrideMode, profileId, setOverrideMode } =
     useUser();
 
@@ -77,7 +79,7 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       }
 
       queryClient.setQueryData<BoardListResult | null>(
-        boardKeys.homeLists(profileId),
+        boardKeys.homeLists(profileId, todayKey),
         (boardList) => addBoardToHomeList(boardList, createdBoard),
       );
       await queryClient.invalidateQueries({
@@ -85,7 +87,7 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
         refetchType: "active",
       });
     },
-    [profileId, queryClient],
+    [profileId, queryClient, todayKey],
   );
 
   const openHomePreview = useCallback(
