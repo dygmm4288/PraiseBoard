@@ -21,12 +21,18 @@ const ArchiveScreen = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <ArchiveSection title={`진행 습관 ${activeBoards.length}개`}>
+        <ArchiveSection
+          title={`진행 습관 ${activeBoards.length}개`}
+          emptyMessage="진행 중인 습관이 없어요."
+        >
           {activeBoards.map((board) => (
             <BoardItem board={board} key={board.id} actionType="goto" />
           ))}
         </ArchiveSection>
-        <ArchiveSection title={`완료 습관 ${completedBoards.length}개`}>
+        <ArchiveSection
+          title={`완료 습관 ${completedBoards.length}개`}
+          emptyMessage="완료한 습관이 없어요."
+        >
           {completedBoards.map((board) => (
             <BoardItem board={board} key={board.id} actionType="goto" />
           ))}
