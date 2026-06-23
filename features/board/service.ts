@@ -42,6 +42,10 @@ export const board: IBoardService = {
     return boardRepository.collectSticker(boardId, source);
   },
 
+  async forceSetComplete(boardId) {
+    return boardRepository.forceSetComplete(boardId);
+  },
+
   async getActiveBoards() {
     return boardRepository.getBoards({ status: "active" });
   },
