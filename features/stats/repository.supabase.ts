@@ -1,4 +1,5 @@
 import { supabase } from "@/shared/lib/supabase";
+import { formatMonthKey } from "@/shared/utils/date";
 import { getMonthRange } from "@/shared/utils/month";
 import {
   StatsBoardRow,
@@ -10,21 +11,14 @@ import { IStatsRepository, StatsMonth, StatsMonthRequest } from "./types";
 
 const BOARD_FIELDS = "id, title, emoji, target_count, created_at";
 
-const getCurrentMonthKey = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-};
-
 const getBoardStartMonth = (boards: StatsBoardRow[]) => {
   const firstCreatedAt = boards.find((board) => board.created_at)?.created_at;
-  if (!firstCreatedAt) return getCurrentMonthKey();
+  if (!firstCreatedAt) return formatMonthKey(new Date());
 
   const createdDate = new Date(firstCreatedAt);
-  if (Number.isNaN(createdDate.getTime())) return getCurrentMonthKey();
+  if (Number.isNaN(createdDate.getTime())) return formatMonthKey(new Date());
 
-  return `${createdDate.getFullYear()}-${String(
-    createdDate.getMonth() + 1,
-  ).padStart(2, "0")}`;
+  return formatMonthKey(createdDate);
 };
 
 const getMaxStreak = (dates: string[]) => {

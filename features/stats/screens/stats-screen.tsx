@@ -1,6 +1,7 @@
 import { useUser } from "@/services/user";
 import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
+import { formatMonthKey, getMonthDate, parseMonthKey } from "@/shared/utils/date";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import MonthAchievementCard from "../components/month-achievement-card";
@@ -10,18 +11,6 @@ import { useStatsMonthQuery } from "../queries/use-stats-month-query";
 
 const getMonthTitle = (date: Date) =>
   `${date.getFullYear()}년 ${date.getMonth() + 1}월 통계`;
-
-const formatMonthKey = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-
-const parseMonthKey = (month?: string) => {
-  if (!month) return undefined;
-
-  const [year, monthIndex] = month.split("-").map(Number);
-  if (!year || !monthIndex) return undefined;
-
-  return new Date(year, monthIndex - 1, 1);
-};
 
 const StatsStatusText = ({ message }: { message: string }) => {
   return (
@@ -34,8 +23,7 @@ const StatsStatusText = ({ message }: { message: string }) => {
 const StatsScreen = () => {
   const { profileId } = useUser();
   const [monthDate, setMonthDate] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
+    return getMonthDate(new Date());
   });
   const { data, isLoading, error } = useStatsMonthQuery(
     profileId,

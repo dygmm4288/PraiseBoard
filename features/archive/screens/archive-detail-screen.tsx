@@ -8,13 +8,11 @@ import { toast } from "@/shared/toasts/toast";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { cn } from "@/shared/utils/cn";
+import { formatMonthKey } from "@/shared/utils/date";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-
-const formatMonthKey = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
 const ArchiveDetailScreen = () => {
   const router = useRouter();

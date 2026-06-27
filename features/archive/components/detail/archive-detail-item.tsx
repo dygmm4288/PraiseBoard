@@ -7,6 +7,11 @@ import { AppText } from "@/shared/ui";
 import AppCheckbox from "@/shared/ui/checkbox";
 import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { cn } from "@/shared/utils/cn";
+import {
+  formatKoreanMonthDay,
+  formatShortDate,
+  parseMonthKey,
+} from "@/shared/utils/date";
 import { PropsWithChildren, useState } from "react";
 import { View } from "react-native";
 
@@ -26,15 +31,6 @@ const CARD_SHADOW_COLOR = COLOR.textDarkPurple;
 const DEFAULT_PROGRESS_CELL_COUNT = 30;
 const PROGRESS_GRID_COLUMNS = 10;
 
-const getMonthDate = (month?: string) => {
-  if (!month) return new Date();
-
-  const [year, monthIndex] = month.split("-").map(Number);
-  if (!year || !monthIndex) return new Date();
-
-  return new Date(year, monthIndex - 1, 1);
-};
-
 const getBoardStartDate = (detail?: ArchiveDetail) => {
   const startedAt = detail?.board.startedAt;
   if (!startedAt) return undefined;
@@ -43,28 +39,6 @@ const getBoardStartDate = (detail?: ArchiveDetail) => {
   if (Number.isNaN(parsedDate.getTime())) return undefined;
 
   return parsedDate;
-};
-
-const formatShortDate = (date?: string | null) => {
-  if (!date) return "-";
-
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "-";
-
-  const year = String(parsedDate.getFullYear()).slice(2);
-  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
-  const day = String(parsedDate.getDate()).padStart(2, "0");
-
-  return `${year}.${month}.${day}`;
-};
-
-const formatKoreanDate = (date?: string) => {
-  if (!date) return "-";
-
-  const parsedDate = new Date(date);
-  if (Number.isNaN(parsedDate.getTime())) return "-";
-
-  return `${parsedDate.getMonth() + 1}월 ${parsedDate.getDate()}일`;
 };
 
 const getProgressCellCount = (detail?: ArchiveDetail) => {
@@ -177,7 +151,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
       <View className="gap-[6px] pt-[16px]">
         <ArchiveDetailRow
           label="시작일"
-          value={formatShortDate(board?.startedAt)}
+          value={formatShortDate(board?.startedAt, "-")}
         />
         <ArchiveDetailRow
           label="목표 개수"
@@ -196,7 +170,7 @@ const ArchiveDetailCalendar = ({
 }: ArchiveDetailItemProps) => {
   return (
     <Calendar
-      defaultDate={getMonthDate(detail?.calendar.month)}
+      defaultDate={parseMonthKey(detail?.calendar.month) ?? new Date()}
       minDate={getBoardStartDate(detail)}
       onMonthChange={onMonthChange}
       stickerCounts={detail?.calendar.dailyStickerCounts ?? []}
@@ -233,7 +207,7 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
       <AppText variant="caption1" weight="semibold" className="text-labelGray">
-        {formatKoreanDate(detail?.selectedDay.date)}
+        {formatKoreanMonthDay(detail?.selectedDay.date, "-")}
       </AppText>
 
       <View className="flex-row items-center gap-[12px]">

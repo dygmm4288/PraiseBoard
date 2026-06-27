@@ -1,3 +1,4 @@
+import { getBoardProgress } from "@/features/board/utils/board-progress";
 import { ArchiveDailyStickerCount, ArchiveDetail } from "./types";
 
 export type ArchiveBoardDetailRow = {
@@ -27,14 +28,6 @@ export type ArchiveBoardStreakResult = {
 export type ArchiveStickerDailyRow = {
   d: string;
   count: number;
-};
-
-export const getArchiveProgressPercent = (
-  currentCount: number,
-  targetCount: number,
-) => {
-  if (targetCount <= 0) return 0;
-  return Math.min(100, Math.round((currentCount / targetCount) * 100));
 };
 
 export const toArchiveDailyStickerCounts = (
@@ -78,10 +71,10 @@ export const toArchiveDetail = ({
       targetCount: boardRow.target_count,
       limitCount: boardRow.limit_count,
       currentCount: boardRow.current_count,
-      progressPercent: getArchiveProgressPercent(
-        boardRow.current_count,
+      progressPercent: getBoardProgress(
         boardRow.target_count,
-      ),
+        boardRow.current_count,
+      ).progressPercent,
       startedAt: boardRow.created_at,
     },
     calendar: {

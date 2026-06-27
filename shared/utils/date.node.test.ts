@@ -5,7 +5,9 @@ import test from "node:test";
 import type * as DateUtils from "./date";
 
 const require = createRequire(import.meta.url);
-const { getCalendarDateDiff, getLastDate } = require("./date.ts") as typeof DateUtils;
+const { getCalendarDateDiff, getLastDate, getTodayRange } = require(
+  "./date.ts",
+) as typeof DateUtils;
 
 test("getLastDate returns 31 for a 31-day month", () => {
   assert.equal(getLastDate(new Date(2026, 0, 10)), 31);
@@ -38,4 +40,11 @@ test("getCalendarDateDiff returns elapsed calendar days", () => {
     getCalendarDateDiff(new Date(2026, 3, 30), new Date(2026, 4, 5)),
     5,
   );
+});
+
+test("getTodayRange returns the KST calendar day regardless of local timezone", () => {
+  const { start, end } = getTodayRange(new Date("2026-06-27T16:30:00.000Z"));
+
+  assert.equal(start.toISOString(), "2026-06-27T15:00:00.000Z");
+  assert.equal(end.toISOString(), "2026-06-28T15:00:00.000Z");
 });
