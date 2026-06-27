@@ -141,7 +141,8 @@ export const boardRepository: IBoardRepository = {
         {
           reason: collectResult?.reason,
           currentCount: collectResult?.current_count,
-          todayStickerCount: collectResult?.current_count,
+          todayStickerCount:
+            collectResult?.today_count ?? collectResult?.current_count,
           limitCount: collectResult?.limit_count,
         },
       );

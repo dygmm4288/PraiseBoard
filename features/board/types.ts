@@ -70,12 +70,15 @@ export type BoardProgress = {
 export type CollectStickerFailureReason =
   | "DAILY_LIMIT_EXCEEDED"
   | "BOARD_NOT_FOUND"
-  | "FORBIDDEN";
+  | "FORBIDDEN"
+  | "BOARD_COMPLETED";
 
 export type CollectStickerRpcResult = {
   success: boolean;
   reason?: CollectStickerFailureReason;
   current_count?: number;
+  target_count?: number;
+  today_count?: number;
   limit_count?: number;
 };
 
