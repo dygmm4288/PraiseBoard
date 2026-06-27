@@ -9,7 +9,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard } from "react-native";
+import { Keyboard, Pressable, StyleSheet } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
@@ -21,6 +21,8 @@ type Props = {
   enablePanDownToClose?: boolean;
   enableBackdrop?: boolean;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
+  androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
+  onRequestClose?: () => void;
 } & PropsWithChildren;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
@@ -35,6 +37,8 @@ const AppBottomSheet = ({
   snapPoints = [...DEFAULT_SNAP_POINTS],
   enablePanDownToClose = true,
   enableBackdrop = true,
+  androidKeyboardInputMode = "adjustResize",
+  onRequestClose,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
@@ -66,10 +70,19 @@ const AppBottomSheet = ({
           appearsOnIndex={0}
           disappearsOnIndex={-1}
           opacity={0.5}
-          pressBehavior="close"
-        />
+          pressBehavior={onRequestClose ? "none" : "close"}
+        >
+          {onRequestClose ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="닫기"
+              style={StyleSheet.absoluteFill}
+              onPress={onRequestClose}
+            />
+          ) : null}
+        </BottomSheetBackdrop>
       ) : null,
-    [enableBackdrop],
+    [enableBackdrop, onRequestClose],
   );
 
   useEffect(() => {
@@ -135,7 +148,7 @@ const AppBottomSheet = ({
       enableBlurKeyboardOnGesture
       keyboardBehavior={keyboardBehavior}
       keyboardBlurBehavior="restore"
-      android_keyboardInputMode="adjustResize"
+      android_keyboardInputMode={androidKeyboardInputMode}
       onChange={handleChange}
       handleComponent={BottomSheetHandle}
       backdropComponent={renderBackdrop}

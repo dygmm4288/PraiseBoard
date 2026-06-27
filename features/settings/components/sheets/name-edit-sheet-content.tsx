@@ -1,6 +1,7 @@
-import { AppText } from "@/shared/ui";
-import { KeyboardAvoidingView, Platform, Pressable, TextInput, View } from "react-native";
-import SettingsSheetHeader from "./settings-sheet-header";
+import { BottomSheetHeader } from "@/shared/components";
+import { AppInput, AppText } from "@/shared/ui";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { View } from "react-native";
 
 type NameEditSheetContentProps = {
   draftName: string;
@@ -18,12 +19,10 @@ const NameEditSheetContent = ({
   onConfirm,
 }: NameEditSheetContentProps) => {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 px-[16px]"
-    >
-      <SettingsSheetHeader
+    <>
+      <BottomSheetHeader
         title="이름 변경하기"
+        confirmDisabled={isSaving}
         onClose={onClose}
         onConfirm={onConfirm}
       />
@@ -35,28 +34,17 @@ const NameEditSheetContent = ({
         >
           이름
         </AppText>
-        <View className="h-[42px] flex-row items-center rounded-[12px] border border-primary-50 px-[12px]">
-          <TextInput
-            className="min-w-0 flex-1 p-0 font-pretendard text-[14px] leading-[20px] text-black"
-            value={draftName}
-            maxLength={20}
-            editable={!isSaving}
-            autoFocus
-            onChangeText={onChangeDraftName}
-          />
-          {draftName.length > 0 && (
-            <Pressable
-              className="h-[22px] w-[22px] items-center justify-center"
-              onPress={() => onChangeDraftName("")}
-            >
-              <AppText className="text-[18px] leading-[20px] text-labelGray">
-                ×
-              </AppText>
-            </Pressable>
-          )}
-        </View>
+        <AppInput
+          value={draftName}
+          maxLength={20}
+          editable={!isSaving}
+          autoFocus
+          reset
+          onChangeText={onChangeDraftName}
+          inputComponent={BottomSheetTextInput}
+        />
       </View>
-    </KeyboardAvoidingView>
+    </>
   );
 };
 
