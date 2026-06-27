@@ -21,6 +21,7 @@ type TopLevelSheetConfig = {
   snapPoints: (string | number)[];
   initialIndex?: number;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
+  androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
   onClose?: () => void;
 };
 
@@ -155,6 +156,17 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
     [clearTopLevelSheet],
   );
 
+  const handleRequestClose = useCallback(() => {
+    const onClose = sheetState.config?.onClose;
+
+    if (onClose) {
+      onClose();
+      return;
+    }
+
+    dismissTopLevelSheet();
+  }, [dismissTopLevelSheet, sheetState.config]);
+
   useEffect(() => {
     if (!sheetState.closeEffect) {
       return;
@@ -187,6 +199,8 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
           onChangeIndex={handleChangeIndex}
           snapPoints={sheetState.config.snapPoints}
           keyboardBehavior={sheetState.config.keyboardBehavior}
+          androidKeyboardInputMode={sheetState.config.androidKeyboardInputMode}
+          onRequestClose={handleRequestClose}
         >
           {sheetState.config.children}
         </AppBottomSheet>

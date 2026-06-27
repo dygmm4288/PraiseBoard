@@ -1,13 +1,21 @@
 import { ArchiveDetail } from "@/features/archive/types";
+import { useCollectSticker } from "@/features/board/hooks/use-collect-sticker";
 import { Calendar } from "@/shared/components";
 import { COLOR } from "@/shared/constants/colors.constant";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { AppText } from "@/shared/ui";
+import AppCheckbox from "@/shared/ui/checkbox";
+import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { cn } from "@/shared/utils/cn";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { View } from "react-native";
 
 type Props = {
   detail?: ArchiveDetail;
+};
+
+type ArchiveDetailItemProps = Props & {
+  onMonthChange?: (date: Date) => void;
 };
 
 type DetailCardProps = PropsWithChildren<{
@@ -25,6 +33,16 @@ const getMonthDate = (month?: string) => {
   if (!year || !monthIndex) return new Date();
 
   return new Date(year, monthIndex - 1, 1);
+};
+
+const getBoardStartDate = (detail?: ArchiveDetail) => {
+  const startedAt = detail?.board.startedAt;
+  if (!startedAt) return undefined;
+
+  const parsedDate = new Date(startedAt);
+  if (Number.isNaN(parsedDate.getTime())) return undefined;
+
+  return parsedDate;
 };
 
 const formatShortDate = (date?: string | null) => {
@@ -172,18 +190,45 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
   );
 };
 
-const ArchiveDetailCalendar = ({ detail }: Props) => {
+const ArchiveDetailCalendar = ({
+  detail,
+  onMonthChange,
+}: ArchiveDetailItemProps) => {
   return (
     <Calendar
       defaultDate={getMonthDate(detail?.calendar.month)}
+      minDate={getBoardStartDate(detail)}
+      onMonthChange={onMonthChange}
       stickerCounts={detail?.calendar.dailyStickerCounts ?? []}
     />
   );
 };
 
 const ArchiveDetailDailyRecord = ({ detail }: Props) => {
+  const [burstKey, setBurstKey] = useState(0);
+  const todayKey = useTodayKey();
+  const { mutate: collectSticker, isPending } = useCollectSticker();
+  const board = detail?.board;
   const limitCount = detail?.board.limitCount ?? 0;
   const stickerCount = detail?.selectedDay.stickerCount ?? 0;
+  const isBoardCompleted = board
+    ? board.currentCount >= board.targetCount
+    : false;
+  const isTodayDone = detail?.selectedDay.completed ?? false;
+  const isSelectedDayToday = detail?.selectedDay.date === todayKey;
+  const actionDisabled =
+    !board ||
+    isPending ||
+    isBoardCompleted ||
+    isTodayDone ||
+    !isSelectedDayToday;
+
+  const handleCollectSticker = () => {
+    if (actionDisabled || !board) return;
+
+    setBurstKey((key) => key + 1);
+    collectSticker({ boardId: board.id, source: "app" });
+  };
 
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
@@ -195,14 +240,21 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
         <AppText variant="title3" weight="bold" className="text-primary-500">
           {stickerCount} / {limitCount}
         </AppText>
-        <View className="h-[33px] w-[33px] items-center justify-center rounded-[9px] border border-primary-500 bg-white">
-          <AppText
-            variant="body2"
-            weight="semibold"
-            className="text-primary-500"
-          >
-            ✓
-          </AppText>
+        <View className="relative h-[34px] w-[34px] overflow-visible">
+          <AppCheckbox
+            disabled={actionDisabled}
+            variant={
+              isBoardCompleted
+                ? "completed"
+                : isTodayDone
+                  ? "todayDone"
+                  : "default"
+            }
+            onPress={handleCollectSticker}
+          />
+          {!isBoardCompleted && !isTodayDone && burstKey > 0 ? (
+            <StickerBubbleBurst key={burstKey} onDone={() => setBurstKey(0)} />
+          ) : null}
         </View>
       </View>
     </View>
@@ -279,11 +331,14 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
   );
 };
 
-const ArchiveDetailItem = ({ detail }: Props) => {
+const ArchiveDetailItem = ({
+  detail,
+  onMonthChange,
+}: ArchiveDetailItemProps) => {
   return (
     <View className="gap-[12px]">
       <ArchiveDetailOverview detail={detail} />
-      <ArchiveDetailCalendar detail={detail} />
+      <ArchiveDetailCalendar detail={detail} onMonthChange={onMonthChange} />
       <ArchiveDetailDailyRecord detail={detail} />
       <ArchiveDetailStreakSummary detail={detail} />
       <ArchiveDetailProgressGrid detail={detail} />

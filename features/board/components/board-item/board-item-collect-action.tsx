@@ -1,11 +1,11 @@
 import { BoardRecord } from "@/features/board/types";
 import { AppText } from "@/shared/ui";
 import AppCheckbox from "@/shared/ui/checkbox";
+import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { useState } from "react";
 import { View } from "react-native";
 import { useBoardItemUi } from "../../hooks/use-board-item-ui";
 import { useCollectSticker } from "../../hooks/use-collect-sticker";
-import BoardItemBubbleBurst from "./board-item-bubble-burst";
 
 type Props = {
   board: BoardRecord;
@@ -53,7 +53,7 @@ const BoardItemCollectAction = ({ board }: Props) => {
           onPress={handlePress}
         />
         {!isCompleted && !isTodayDone && burstKey > 0 ? (
-          <BoardItemBubbleBurst key={burstKey} onDone={() => setBurstKey(0)} />
+          <StickerBubbleBurst key={burstKey} onDone={() => setBurstKey(0)} />
         ) : null}
       </View>
     </View>

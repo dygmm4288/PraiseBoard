@@ -1,4 +1,3 @@
-import { Icon } from "@/assets/icons";
 import { AppText } from "@/shared/ui";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
@@ -8,7 +7,7 @@ type SettingInfoProps = {
 } & PropsWithChildren;
 const SettingInfoBox = ({ right, children }: SettingInfoProps) => {
   return (
-    <View className="flex flex-row justify-between items-center px-[12px] py-[10px] rounded-[10px] bg-gray-100 ">
+    <View className="flex flex-row justify-between items-center px-[12px] py-[10px] rounded-[10px] ">
       <AppText variant="body3" className="text-gray-500 flex-shrink">
         {children}
       </AppText>
@@ -18,7 +17,6 @@ const SettingInfoBox = ({ right, children }: SettingInfoProps) => {
             {right}
           </AppText>
         )}
-        <Icon name="ChevronRightSmall" width={5} height={10} />
       </View>
     </View>
   );

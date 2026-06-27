@@ -63,7 +63,7 @@ const CalendarMonthPicker = ({
           disabled={!canGoPreviousYear}
           className={cn(
             "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
-            !canGoPreviousYear && "opacity-40",
+            !canGoPreviousYear && "opacity-20",
           )}
           onPress={() => onChangeYear?.(year - 1)}
         >
@@ -84,11 +84,11 @@ const CalendarMonthPicker = ({
           disabled={!canGoNextYear}
           className={cn(
             "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
-            !canGoNextYear && "opacity-40",
+            !canGoNextYear && "opacity-20",
           )}
           onPress={() => onChangeYear?.(year + 1)}
         >
-          <Icon name="ChevronRightSmall" width={6} height={11} />
+          <Icon name="ChevronRightSmall" size={18} />
         </Pressable>
       </View>
 

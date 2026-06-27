@@ -27,6 +27,8 @@ type CalendarCell = {
 type CalendarProps = {
   className?: string;
   defaultDate?: Date;
+  minDate?: Date;
+  maxDate?: Date;
   onMonthChange?: (date: Date) => void;
   stickerCounts?: CalendarStickerCount[];
 };
@@ -77,8 +79,25 @@ const chunkWeeks = (cells: CalendarCell[]) =>
     cells.slice(weekIndex * 7, weekIndex * 7 + 7),
   );
 
+const isBeforeMonth = (source: Date, target: Date) =>
+  getMonthDate(source).getTime() < getMonthDate(target).getTime();
+
+const isAfterMonth = (source: Date, target: Date) =>
+  getMonthDate(source).getTime() > getMonthDate(target).getTime();
+
+const clampMonthDate = (date: Date, minDate?: Date, maxDate?: Date) => {
+  const monthDate = getMonthDate(date);
+
+  if (minDate && isBeforeMonth(monthDate, minDate))
+    return getMonthDate(minDate);
+  if (maxDate && isAfterMonth(monthDate, maxDate)) return getMonthDate(maxDate);
+
+  return monthDate;
+};
+
 type CalendarMonthPickerSheetProps = {
   currentDate: Date;
+  minDate?: Date;
   maxDate: Date;
   onClose: () => void;
   onSelectMonth: (date: Date) => void;
@@ -86,6 +105,7 @@ type CalendarMonthPickerSheetProps = {
 
 const CalendarMonthPickerSheet = ({
   currentDate,
+  minDate,
   maxDate,
   onClose,
   onSelectMonth,
@@ -96,6 +116,7 @@ const CalendarMonthPickerSheet = ({
     <CalendarMonthPicker
       year={year}
       selectedDate={currentDate}
+      minDate={minDate}
       maxDate={maxDate}
       onChangeYear={setYear}
       onSelectMonth={(nextDate) => {
@@ -109,14 +130,21 @@ const CalendarMonthPickerSheet = ({
 const Calendar = ({
   className,
   defaultDate = new Date(),
+  minDate,
+  maxDate = new Date(),
   onMonthChange,
   stickerCounts = [],
 }: CalendarProps) => {
-  const [date, setDate] = useState<Date>(() => getMonthDate(defaultDate));
+  const [date, setDate] = useState<Date>(() =>
+    clampMonthDate(defaultDate, minDate, maxDate),
+  );
   const todayKey = formatDateKey(new Date());
   const monthLabel = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   const cells = useMemo(() => getCalendarCells(date), [date]);
   const weeks = useMemo(() => chunkWeeks(cells), [cells]);
+  const canGoPreviousMonth =
+    !minDate || !isBeforeMonth(addMonths(date, -1), minDate);
+  const canGoNextMonth = !maxDate || !isAfterMonth(addMonths(date, 1), maxDate);
   const stickerCountMap = useMemo(
     () =>
       new Map(stickerCounts.map((item) => [item.date, item.count] as const)),
@@ -127,12 +155,12 @@ const Calendar = ({
 
   const changeMonth = useCallback(
     (nextDate: Date) => {
-      const nextMonthDate = getMonthDate(nextDate);
+      const nextMonthDate = clampMonthDate(nextDate, minDate, maxDate);
 
       setDate(nextMonthDate);
       onMonthChange?.(nextMonthDate);
     },
-    [onMonthChange],
+    [maxDate, minDate, onMonthChange],
   );
 
   const openMonthPicker = useCallback(() => {
@@ -141,7 +169,8 @@ const Calendar = ({
       children: (
         <CalendarMonthPickerSheet
           currentDate={date}
-          maxDate={new Date()}
+          minDate={minDate}
+          maxDate={maxDate}
           onClose={dismissTopLevelSheet}
           onSelectMonth={changeMonth}
         />
@@ -165,7 +194,12 @@ const Calendar = ({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="이전 달"
-            className="h-[24px] w-[24px] items-start justify-center"
+            accessibilityState={{ disabled: !canGoPreviousMonth }}
+            disabled={!canGoPreviousMonth}
+            className={cn(
+              "h-[24px] w-[24px] items-start justify-center",
+              !canGoPreviousMonth && "opacity-20",
+            )}
             hitSlop={10}
             onPress={() => changeMonth(addMonths(date, -1))}
           >
@@ -189,11 +223,16 @@ const Calendar = ({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="다음 달"
-            className="h-[24px] w-[24px] items-end justify-center"
+            accessibilityState={{ disabled: !canGoNextMonth }}
+            disabled={!canGoNextMonth}
+            className={cn(
+              "h-[24px] w-[24px] items-end justify-center",
+              !canGoNextMonth && "opacity-20",
+            )}
             hitSlop={10}
             onPress={() => changeMonth(addMonths(date, 1))}
           >
-            <Icon name="ChevronRightSmall" width={6} height={11} />
+            <Icon name="ChevronRightSmall" size={18} />
           </Pressable>
         </View>
 

@@ -3,17 +3,21 @@ import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
-import { AppState, Pressable } from "react-native";
+import { AppState, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
-import SettingInfoBox from "../setting-info-box";
 import SettingToggle from "../setting-toggle";
 
 const NoSettingNotification = () => {
   return (
-    <SettingInfoBox>
-      {`기기 설정에서 알림 권한을 허용해 주세요
+    <View className="w-full px-[20px]">
+      <AppText
+        variant="body3"
+        className="text-[14px] leading-[20px] text-black"
+      >
+        {`기기 설정에서 알림 권한을 허용해 주세요
 구슬 모으기를 잊지 않도록 알림을 보내드려요`}
-    </SettingInfoBox>
+      </AppText>
+    </View>
   );
 };
 

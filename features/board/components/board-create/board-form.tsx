@@ -1,4 +1,3 @@
-import { Icon } from "@/assets/icons";
 import {
   boardCreateDraftSchema,
   BoardCreateFormValues,
@@ -6,6 +5,7 @@ import {
   TITLE_MAX_LENGTH,
 } from "@/features/board/schema";
 import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
+import { BottomSheetHeader } from "@/shared/components";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppInput, AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
@@ -13,7 +13,7 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Pressable, View } from "react-native";
 
 const targetCountOptions = [
@@ -49,68 +49,6 @@ type OptionRowProps = {
   selectedValue: number;
   locked?: boolean;
   onSelect: (value: number) => void;
-};
-
-const SheetHeaderButton = ({
-  variant,
-  disabled,
-  onPress,
-}: {
-  variant: "close" | "confirm";
-  disabled?: boolean;
-  onPress: () => void;
-}) => {
-  const isConfirm = variant === "confirm";
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={isConfirm ? "저장" : "닫기"}
-      disabled={disabled}
-      className={cn(
-        "h-[39px] w-[39px] items-center justify-center rounded-full",
-        isConfirm && !disabled ? "bg-primary-10" : "bg-bgLightGray",
-        disabled && "opacity-60",
-      )}
-      onPress={onPress}
-    >
-      <Icon
-        name={isConfirm ? "Check" : "Close"}
-        size={18}
-        color={isConfirm && !disabled ? COLOR.primary50 : COLOR.black}
-      />
-    </Pressable>
-  );
-};
-
-const BoardFormHeader = ({
-  title,
-  submitDisabled,
-  onClose,
-  onSubmit,
-}: {
-  title: string;
-  submitDisabled: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
-}) => {
-  return (
-    <View className="h-[45px] w-full flex-row items-center justify-between px-[8px]">
-      <SheetHeaderButton variant="close" onPress={onClose} />
-      <AppText
-        variant="custom"
-        weight="bold"
-        className="text-[18px] leading-[32px] text-black"
-      >
-        {title}
-      </AppText>
-      <SheetHeaderButton
-        variant="confirm"
-        disabled={submitDisabled}
-        onPress={onSubmit}
-      />
-    </View>
-  );
 };
 
 const OptionRow = ({
@@ -161,7 +99,7 @@ const BoardFormSection = ({
   children,
 }: {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   return (
     <View className="gap-[6px]">
@@ -205,11 +143,11 @@ const BoardForm = ({
 
   return (
     <View className="flex-1">
-      <BoardFormHeader
+      <BottomSheetHeader
         title={title}
-        submitDisabled={submitDisabled}
+        confirmDisabled={submitDisabled}
         onClose={onClose}
-        onSubmit={onSubmit}
+        onConfirm={onSubmit}
       />
 
       <BottomSheetScrollView

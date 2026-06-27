@@ -10,7 +10,11 @@ import useTodayKey from "@/shared/hooks/use-today-key";
 import { cn } from "@/shared/utils/cn";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+
+const formatMonthKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
 const ArchiveDetailScreen = () => {
   const router = useRouter();
@@ -18,7 +22,7 @@ const ArchiveDetailScreen = () => {
   const params = useLocalSearchParams();
   const boardId = typeof params.id === "string" ? params.id : null;
   const todayKey = useTodayKey();
-  const month = todayKey.slice(0, 7);
+  const [month, setMonth] = useState(() => todayKey.slice(0, 7));
   const { openEditSheet } = useBoardSheet();
   const {
     data: detail,
@@ -106,7 +110,10 @@ const ArchiveDetailScreen = () => {
           <AppText>ArchiveDetailError</AppText>
         ) : (
           <>
-            <ArchiveDetailItem detail={detail} />
+            <ArchiveDetailItem
+              detail={detail}
+              onMonthChange={(date) => setMonth(formatMonthKey(date))}
+            />
             <AppButton
               variant="tertiary"
               className="mt-6"

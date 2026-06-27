@@ -1,6 +1,7 @@
+import { Icon } from "@/assets/icons";
 import { useState } from "react";
 import { Pressable } from "react-native";
-import { AppText } from "./text";
+import { COLOR } from "../constants/colors.constant";
 
 type Props = {
   onPress: () => void;
@@ -13,6 +14,15 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
   const isInteractiveHover = !disabled && isHovered;
   const isCompleted = variant === "completed";
   const isTodayDone = variant === "todayDone";
+  const checkColor = isCompleted
+    ? COLOR.secondary50
+    : isTodayDone
+      ? COLOR.primary50
+      : disabled
+        ? COLOR.textGray
+        : isInteractiveHover
+          ? COLOR.primary70
+          : COLOR.primary50;
 
   return (
     <Pressable
@@ -21,36 +31,20 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
       className={[
-        "h-[34px] w-[34px] items-center justify-center rounded-[9px] border-[1.5px]",
+        "h-[33px] w-[33px] items-center justify-center rounded-[9px] border",
         isCompleted
           ? "border-secondary-30 bg-secondary-20"
           : isTodayDone
-          ? "border-primary-20 bg-primary-10"
-          : disabled
-          ? "border-gray-300 bg-gray-100"
-          : [
-              "border-primary-500",
-              isInteractiveHover ? "bg-primary-100" : "bg-transparent",
-            ].join(" "),
+            ? "border-primary-20 bg-primary-10"
+            : disabled
+              ? "border-gray-300 bg-gray-100"
+              : [
+                  "border-primary-500",
+                  isInteractiveHover ? "bg-primary-100" : "bg-white",
+                ].join(" "),
       ].join(" ")}
     >
-      <AppText
-        weight="semibold"
-        className={[
-          "text-[15px] leading-[15px]",
-          isCompleted
-            ? "text-secondary-50"
-            : isTodayDone
-            ? "text-primary-50"
-            : disabled
-            ? "text-gray-300"
-            : isInteractiveHover
-              ? "text-primary-700"
-              : "text-primary-500",
-        ].join(" ")}
-      >
-        ✓
-      </AppText>
+      <Icon name="Check" size={18} color={checkColor} />
     </Pressable>
   );
 };

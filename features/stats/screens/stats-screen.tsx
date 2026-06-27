@@ -14,6 +14,15 @@ const getMonthTitle = (date: Date) =>
 const formatMonthKey = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
+const parseMonthKey = (month?: string) => {
+  if (!month) return undefined;
+
+  const [year, monthIndex] = month.split("-").map(Number);
+  if (!year || !monthIndex) return undefined;
+
+  return new Date(year, monthIndex - 1, 1);
+};
+
 const StatsStatusText = ({ message }: { message: string }) => {
   return (
     <AppText variant="body3" className="text-center text-gray-500">
@@ -60,6 +69,7 @@ const StatsScreen = () => {
       >
         <Calendar
           defaultDate={monthDate}
+          minDate={parseMonthKey(data?.startMonth)}
           onMonthChange={setMonthDate}
           stickerCounts={data?.stickerCounts ?? []}
         />
