@@ -11,9 +11,10 @@ const ArchiveScreen = () => {
     <>
       <ScreenHeader title={"보관함"} className="px-screen" />
       <ScrollView
-        className="flex-1 overflow-visible"
+        className="flex-1"
         contentContainerStyle={{
           gap: 30,
+          flexGrow: 1,
           paddingHorizontal: 16,
           paddingTop: 12,
           paddingBottom: 32,
