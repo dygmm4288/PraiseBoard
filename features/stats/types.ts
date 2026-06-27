@@ -15,6 +15,7 @@ export type StatsMonthRequest = {
 
 export type StatsMonth = {
   month: string;
+  startMonth: string;
   stickerCounts: CalendarStickerCount[];
   boardItems: StatBoardItem[];
   totalCount: number;

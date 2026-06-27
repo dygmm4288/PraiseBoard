@@ -10,6 +10,10 @@ type Props = {
   detail?: ArchiveDetail;
 };
 
+type ArchiveDetailItemProps = Props & {
+  onMonthChange?: (date: Date) => void;
+};
+
 type DetailCardProps = PropsWithChildren<{
   className?: string;
 }>;
@@ -25,6 +29,16 @@ const getMonthDate = (month?: string) => {
   if (!year || !monthIndex) return new Date();
 
   return new Date(year, monthIndex - 1, 1);
+};
+
+const getBoardStartDate = (detail?: ArchiveDetail) => {
+  const startedAt = detail?.board.startedAt;
+  if (!startedAt) return undefined;
+
+  const parsedDate = new Date(startedAt);
+  if (Number.isNaN(parsedDate.getTime())) return undefined;
+
+  return parsedDate;
 };
 
 const formatShortDate = (date?: string | null) => {
@@ -172,10 +186,15 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
   );
 };
 
-const ArchiveDetailCalendar = ({ detail }: Props) => {
+const ArchiveDetailCalendar = ({
+  detail,
+  onMonthChange,
+}: ArchiveDetailItemProps) => {
   return (
     <Calendar
       defaultDate={getMonthDate(detail?.calendar.month)}
+      minDate={getBoardStartDate(detail)}
+      onMonthChange={onMonthChange}
       stickerCounts={detail?.calendar.dailyStickerCounts ?? []}
     />
   );
@@ -279,11 +298,14 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
   );
 };
 
-const ArchiveDetailItem = ({ detail }: Props) => {
+const ArchiveDetailItem = ({
+  detail,
+  onMonthChange,
+}: ArchiveDetailItemProps) => {
   return (
     <View className="gap-[12px]">
       <ArchiveDetailOverview detail={detail} />
-      <ArchiveDetailCalendar detail={detail} />
+      <ArchiveDetailCalendar detail={detail} onMonthChange={onMonthChange} />
       <ArchiveDetailDailyRecord detail={detail} />
       <ArchiveDetailStreakSummary detail={detail} />
       <ArchiveDetailProgressGrid detail={detail} />

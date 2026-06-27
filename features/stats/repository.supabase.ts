@@ -8,7 +8,24 @@ import {
 } from "./mapper";
 import { IStatsRepository, StatsMonth, StatsMonthRequest } from "./types";
 
-const BOARD_FIELDS = "id, title, emoji, target_count";
+const BOARD_FIELDS = "id, title, emoji, target_count, created_at";
+
+const getCurrentMonthKey = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+};
+
+const getBoardStartMonth = (boards: StatsBoardRow[]) => {
+  const firstCreatedAt = boards.find((board) => board.created_at)?.created_at;
+  if (!firstCreatedAt) return getCurrentMonthKey();
+
+  const createdDate = new Date(firstCreatedAt);
+  if (Number.isNaN(createdDate.getTime())) return getCurrentMonthKey();
+
+  return `${createdDate.getFullYear()}-${String(
+    createdDate.getMonth() + 1,
+  ).padStart(2, "0")}`;
+};
 
 const getMaxStreak = (dates: string[]) => {
   const sortedDates = [...new Set(dates)].sort();
@@ -30,10 +47,7 @@ const getMaxStreak = (dates: string[]) => {
 };
 
 export const statsRepository: IStatsRepository = {
-  async getMonth({
-    profileId,
-    month,
-  }: StatsMonthRequest): Promise<StatsMonth> {
+  async getMonth({ profileId, month }: StatsMonthRequest): Promise<StatsMonth> {
     const { startDate, endDate } = getMonthRange(month);
 
     const { data: boardRows, error: boardError } = await supabase
@@ -46,10 +60,12 @@ export const statsRepository: IStatsRepository = {
 
     const boards = (boardRows ?? []) as StatsBoardRow[];
     const boardIds = boards.map((board) => board.id);
+    const startMonth = getBoardStartMonth(boards);
 
     if (boardIds.length === 0) {
       return {
         month,
+        startMonth,
         stickerCounts: [],
         boardItems: [],
         totalCount: 0,
@@ -72,6 +88,7 @@ export const statsRepository: IStatsRepository = {
 
     return {
       month,
+      startMonth,
       stickerCounts,
       boardItems: toStatsBoardItems(boards, rows),
       totalCount: stickerCounts.reduce((total, item) => total + item.count, 0),

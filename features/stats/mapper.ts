@@ -5,6 +5,7 @@ export type StatsBoardRow = {
   title: string;
   emoji: string | null;
   target_count: number;
+  created_at: string | null;
 };
 
 export type StatsStickerDailyRow = {
