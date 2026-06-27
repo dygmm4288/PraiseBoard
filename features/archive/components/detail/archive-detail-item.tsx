@@ -1,9 +1,13 @@
 import { ArchiveDetail } from "@/features/archive/types";
+import { useCollectSticker } from "@/features/board/hooks/use-collect-sticker";
 import { Calendar } from "@/shared/components";
 import { COLOR } from "@/shared/constants/colors.constant";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { AppText } from "@/shared/ui";
+import AppCheckbox from "@/shared/ui/checkbox";
+import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { cn } from "@/shared/utils/cn";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { View } from "react-native";
 
 type Props = {
@@ -201,8 +205,30 @@ const ArchiveDetailCalendar = ({
 };
 
 const ArchiveDetailDailyRecord = ({ detail }: Props) => {
+  const [burstKey, setBurstKey] = useState(0);
+  const todayKey = useTodayKey();
+  const { mutate: collectSticker, isPending } = useCollectSticker();
+  const board = detail?.board;
   const limitCount = detail?.board.limitCount ?? 0;
   const stickerCount = detail?.selectedDay.stickerCount ?? 0;
+  const isBoardCompleted = board
+    ? board.currentCount >= board.targetCount
+    : false;
+  const isTodayDone = detail?.selectedDay.completed ?? false;
+  const isSelectedDayToday = detail?.selectedDay.date === todayKey;
+  const actionDisabled =
+    !board ||
+    isPending ||
+    isBoardCompleted ||
+    isTodayDone ||
+    !isSelectedDayToday;
+
+  const handleCollectSticker = () => {
+    if (actionDisabled || !board) return;
+
+    setBurstKey((key) => key + 1);
+    collectSticker({ boardId: board.id, source: "app" });
+  };
 
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
@@ -214,14 +240,21 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
         <AppText variant="title3" weight="bold" className="text-primary-500">
           {stickerCount} / {limitCount}
         </AppText>
-        <View className="h-[33px] w-[33px] items-center justify-center rounded-[9px] border border-primary-500 bg-white">
-          <AppText
-            variant="body2"
-            weight="semibold"
-            className="text-primary-500"
-          >
-            ✓
-          </AppText>
+        <View className="relative h-[34px] w-[34px] overflow-visible">
+          <AppCheckbox
+            disabled={actionDisabled}
+            variant={
+              isBoardCompleted
+                ? "completed"
+                : isTodayDone
+                  ? "todayDone"
+                  : "default"
+            }
+            onPress={handleCollectSticker}
+          />
+          {!isBoardCompleted && !isTodayDone && burstKey > 0 ? (
+            <StickerBubbleBurst key={burstKey} onDone={() => setBurstKey(0)} />
+          ) : null}
         </View>
       </View>
     </View>

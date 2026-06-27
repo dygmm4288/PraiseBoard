@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
-import { View, Animated, Easing } from "react-native";
+import { Animated, Easing, View } from "react-native";
 
 const BUBBLE_OFFSETS = [-18, 10, -6, 20, -24, 3, 15, -12, 25, -2];
 
-const BoardItemBubbleBurst = ({ onDone }: { onDone: () => void }) => {
+const StickerBubbleBurst = ({ onDone }: { onDone: () => void }) => {
   const progress = useRef(new Animated.Value(0)).current;
   const bubbles = useMemo(
     () =>
@@ -84,4 +84,4 @@ const BoardItemBubbleBurst = ({ onDone }: { onDone: () => void }) => {
   );
 };
 
-export default BoardItemBubbleBurst;
+export default StickerBubbleBurst;

@@ -1,5 +1,6 @@
 import { Icon } from "@/assets/icons";
 import { BoardRecord } from "@/features/board/types";
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
 import { useBoardItemUi } from "../../hooks/use-board-item-ui";
@@ -22,7 +23,7 @@ const BoardItemGotoAction = ({ board }: Props) => {
       >
         {progressPercent}%
       </AppText>
-      <Icon name="ChevronRightSmall" width={5} height={10} />
+      <Icon name="ChevronRightSmall" size={18} color={COLOR["primary50"]} />
     </View>
   );
 };
