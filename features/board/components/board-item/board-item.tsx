@@ -1,5 +1,6 @@
 import { BoardRecord } from "@/features/board/types";
 import { useRouter } from "expo-router";
+import { useBoardItemUi } from "../../hooks/use-board-item-ui";
 import BoardItemCollectAction from "./board-item-collect-action";
 import BoardItemContainer from "./board-item-container";
 import BoardItemGotoAction from "./board-item-goto-action";
@@ -12,6 +13,7 @@ type Props = {
 
 const BoardItem = ({ board, actionType = "collect" }: Props) => {
   const router = useRouter();
+  const ui = useBoardItemUi({ board });
   const isGotoAction = actionType === "goto";
 
   const handlePress = () => {
@@ -22,16 +24,19 @@ const BoardItem = ({ board, actionType = "collect" }: Props) => {
 
   return (
     <BoardItem.Container
-      board={board}
+      ui={ui}
       onPress={isGotoAction ? handlePress : undefined}
       shouldDimTodayDone={!isGotoAction}
     >
       <BoardItem.Meta
         board={board}
+        ui={ui}
         shouldApplyTodayDoneState={!isGotoAction}
       />
-      {actionType === "collect" && <BoardItem.CollectAction board={board} />}
-      {actionType === "goto" && <BoardItem.GotoAction board={board} />}
+      {actionType === "collect" && (
+        <BoardItem.CollectAction board={board} ui={ui} />
+      )}
+      {actionType === "goto" && <BoardItem.GotoAction ui={ui} />}
     </BoardItem.Container>
   );
 };

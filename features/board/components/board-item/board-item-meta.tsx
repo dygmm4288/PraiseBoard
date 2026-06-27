@@ -2,14 +2,19 @@ import { BoardRecord } from "@/features/board/types";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { View } from "react-native";
-import { useBoardItemUi } from "../../hooks/use-board-item-ui";
+import { BoardItemUi } from "../../hooks/use-board-item-ui";
 
 type Props = {
   board: BoardRecord;
+  ui: BoardItemUi;
   shouldApplyTodayDoneState?: boolean;
 };
 
-const BoardItemMeta = ({ board, shouldApplyTodayDoneState = true }: Props) => {
+const BoardItemMeta = ({
+  board,
+  ui,
+  shouldApplyTodayDoneState = true,
+}: Props) => {
   const {
     boardDisabled,
     rewardText,
@@ -17,7 +22,7 @@ const BoardItemMeta = ({ board, shouldApplyTodayDoneState = true }: Props) => {
     isTodayDone,
     boardDDay,
     completedPeriodLabel,
-  } = useBoardItemUi({ board });
+  } = ui;
   const shouldShowTodayDoneState = shouldApplyTodayDoneState && isTodayDone;
   const shouldDisableText = shouldApplyTodayDoneState && boardDisabled;
 

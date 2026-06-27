@@ -4,14 +4,15 @@ import AppCheckbox from "@/shared/ui/checkbox";
 import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { useState } from "react";
 import { View } from "react-native";
-import { useBoardItemUi } from "../../hooks/use-board-item-ui";
+import { BoardItemUi } from "../../hooks/use-board-item-ui";
 import { useCollectSticker } from "../../hooks/use-collect-sticker";
 
 type Props = {
   board: BoardRecord;
+  ui: BoardItemUi;
 };
 
-const BoardItemCollectAction = ({ board }: Props) => {
+const BoardItemCollectAction = ({ board, ui }: Props) => {
   const [burstKey, setBurstKey] = useState(0);
   const {
     progressColor,
@@ -19,9 +20,7 @@ const BoardItemCollectAction = ({ board }: Props) => {
     boardDisabled,
     isCompleted,
     isTodayDone,
-  } = useBoardItemUi({
-    board,
-  });
+  } = ui;
 
   const { mutate: collectSticker, isPending } = useCollectSticker();
   const actionDisabled = boardDisabled || isPending;

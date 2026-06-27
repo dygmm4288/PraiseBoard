@@ -1,18 +1,15 @@
 import { Icon } from "@/assets/icons";
-import { BoardRecord } from "@/features/board/types";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
-import { useBoardItemUi } from "../../hooks/use-board-item-ui";
+import { BoardItemUi } from "../../hooks/use-board-item-ui";
 
 type Props = {
-  board: BoardRecord;
+  ui: BoardItemUi;
 };
 
-const BoardItemGotoAction = ({ board }: Props) => {
-  const { isCompleted, progressPercent } = useBoardItemUi({
-    board,
-  });
+const BoardItemGotoAction = ({ ui }: Props) => {
+  const { isCompleted, progressPercent } = ui;
   const progressColor = isCompleted ? "text-primary-700" : "text-primary-500";
 
   return (

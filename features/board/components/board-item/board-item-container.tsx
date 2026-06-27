@@ -1,22 +1,21 @@
-import { BoardRecord } from "@/features/board/types";
 import { COLOR } from "@/shared/constants/colors.constant";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { Pressable, View } from "react-native";
-import { useBoardItemUi } from "../../hooks/use-board-item-ui";
+import { BoardItemUi } from "../../hooks/use-board-item-ui";
 
 type Props = {
-  board: BoardRecord;
+  ui: BoardItemUi;
   onPress?: () => void;
   shouldDimTodayDone?: boolean;
 } & PropsWithChildren;
 const BoardItemContainer = ({
-  board,
+  ui,
   children,
   onPress,
   shouldDimTodayDone = true,
 }: Props) => {
-  const { isTodayDone, isCompleted } = useBoardItemUi({ board });
+  const { isTodayDone, isCompleted } = ui;
   const shouldDim = shouldDimTodayDone && isTodayDone;
   const contentClassName = cn(
     "rounded-[20px] px-[16px] py-[14px]",
