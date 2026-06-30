@@ -2,9 +2,17 @@ import { useCurrentProfile, useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { useCallback, useEffect, useState } from "react";
 
+const getDeviceTimezone = () => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Seoul";
+  } catch {
+    return "Asia/Seoul";
+  }
+};
+
 export const useSettingsProfile = () => {
   const { profileId, authState } = useUser();
-  const { nickname, updateProfile } = useCurrentProfile(profileId);
+  const { nickname, profile, updateProfile } = useCurrentProfile(profileId);
   const displayName =
     nickname || (authState === "anonymous" ? "김고래" : "이름 없음");
   const [draftName, setDraftName] = useState(displayName);
@@ -39,12 +47,37 @@ export const useSettingsProfile = () => {
     }
   }, [draftName, updateProfile]);
 
+  const saveReminderTime = useCallback(
+    async ({
+      reminderHour,
+      reminderMinute,
+    }: {
+      reminderHour: number;
+      reminderMinute: number;
+    }) => {
+      try {
+        await updateProfile({
+          reminderHour,
+          reminderMinute,
+          timezone: getDeviceTimezone(),
+        });
+        return true;
+      } catch {
+        toast.error("알림 시간을 저장하는 중 오류가 발생했어요.");
+        return false;
+      }
+    },
+    [updateProfile],
+  );
+
   return {
     displayName,
     draftName,
+    profile,
     isSavingName,
     resetDraftName,
     saveDraftName,
+    saveReminderTime,
     setDraftName,
   };
 };

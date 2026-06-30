@@ -8,7 +8,10 @@ export type CurrentAuthUser = {
 };
 
 export type UpdateProfileInput = {
-  nickname: string | null;
+  nickname?: string | null;
+  reminderHour?: number;
+  reminderMinute?: number;
+  timezone?: string;
 };
 
 export type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];

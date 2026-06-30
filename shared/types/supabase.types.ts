@@ -161,33 +161,51 @@ export type Database = {
           channel: string
           created_at: string
           id: string
+          expo_error: string | null
+          expo_receipt_checked_at: string | null
+          expo_receipt_status: string | null
+          expo_ticket_ids: string[] | null
+          expo_ticket_token_map: Json | null
           message_body: string | null
           message_trigger: string
           open_at: string | null
           profile_id: string
           sent_at: string
+          sent_local_date: string | null
           type: string
         }
         Insert: {
           channel?: string
           created_at?: string
           id?: string
+          expo_error?: string | null
+          expo_receipt_checked_at?: string | null
+          expo_receipt_status?: string | null
+          expo_ticket_ids?: string[] | null
+          expo_ticket_token_map?: Json | null
           message_body?: string | null
           message_trigger: string
           open_at?: string | null
           profile_id: string
           sent_at?: string
+          sent_local_date?: string | null
           type: string
         }
         Update: {
           channel?: string
           created_at?: string
           id?: string
+          expo_error?: string | null
+          expo_receipt_checked_at?: string | null
+          expo_receipt_status?: string | null
+          expo_ticket_ids?: string[] | null
+          expo_ticket_token_map?: Json | null
           message_body?: string | null
           message_trigger?: string
           open_at?: string | null
           profile_id?: string
           sent_at?: string
+          sent_local_date?: string | null
           type?: string
         }
         Relationships: [
@@ -208,6 +226,9 @@ export type Database = {
           last_login_at: string
           mbti: Database["public"]["Enums"]["mbti_type"] | null
           nickname: string | null
+          reminder_hour: number
+          reminder_minute: number
+          timezone: string
           updated_at: string
         }
         Insert: {
@@ -217,6 +238,9 @@ export type Database = {
           last_login_at?: string
           mbti?: Database["public"]["Enums"]["mbti_type"] | null
           nickname?: string | null
+          reminder_hour?: number
+          reminder_minute?: number
+          timezone?: string
           updated_at?: string
         }
         Update: {
@@ -226,6 +250,9 @@ export type Database = {
           last_login_at?: string
           mbti?: Database["public"]["Enums"]["mbti_type"] | null
           nickname?: string | null
+          reminder_hour?: number
+          reminder_minute?: number
+          timezone?: string
           updated_at?: string
         }
         Relationships: []

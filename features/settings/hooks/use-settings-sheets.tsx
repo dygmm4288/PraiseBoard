@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Keyboard, View } from "react-native";
 import AlarmTimeSheetContent from "../components/sheets/alarm-time-sheet-content";
 import NameEditSheetContent from "../components/sheets/name-edit-sheet-content";
-import { useAlarmTimeDraft } from "./use-alarm-time-draft";
+import { toReminderTime, useAlarmTimeDraft } from "./use-alarm-time-draft";
 import { useSettingsProfile } from "./use-settings-profile";
 
 type EditingSheet = "name" | "time" | null;
@@ -13,10 +13,12 @@ export const useSettingsSheets = () => {
   const [editingSheet, setEditingSheet] = useState<EditingSheet>(null);
   const {
     displayName,
+    profile,
     draftName,
     isSavingName,
     resetDraftName,
     saveDraftName,
+    saveReminderTime,
     setDraftName,
   } = useSettingsProfile();
   const {
@@ -27,7 +29,10 @@ export const useSettingsSheets = () => {
     setAlarmHour,
     setAlarmMinute,
     setAlarmPeriod,
-  } = useAlarmTimeDraft();
+  } = useAlarmTimeDraft({
+    initialHour: profile?.reminder_hour,
+    initialMinute: profile?.reminder_minute,
+  });
 
   const closeNameSheet = useCallback(
     ({ resetName }: { resetName: boolean }) => {
@@ -66,6 +71,21 @@ export const useSettingsSheets = () => {
       closeNameSheet({ resetName: false });
     }
   }, [closeNameSheet, saveDraftName]);
+
+  const confirmAlarmTime = useCallback(async () => {
+    const saved = await saveReminderTime(
+      toReminderTime({ alarmPeriod, alarmHour, alarmMinute }),
+    );
+
+    if (saved) {
+      setEditingSheet(null);
+    }
+  }, [
+    alarmHour,
+    alarmMinute,
+    alarmPeriod,
+    saveReminderTime,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -109,7 +129,7 @@ export const useSettingsSheets = () => {
             onChangeMinute={setAlarmMinute}
             onChangePeriod={setAlarmPeriod}
             onClose={closeSheet}
-            onConfirm={() => setEditingSheet(null)}
+            onConfirm={confirmAlarmTime}
           />
         ),
     });
@@ -118,6 +138,7 @@ export const useSettingsSheets = () => {
     alarmMinute,
     alarmPeriod,
     closeSheet,
+    confirmAlarmTime,
     dismissTopLevelSheet,
     draftName,
     editingSheet,

@@ -2,7 +2,7 @@ import { supabase } from "@/shared/lib/supabase";
 import { IUserRepository } from "../model/user.interface";
 
 const PROFILE_SELECT =
-  "id, auth_user_id, nickname, mbti, created_at, updated_at, last_login_at";
+  "id, auth_user_id, nickname, mbti, reminder_hour, reminder_minute, timezone, created_at, updated_at, last_login_at";
 
 export const userRepository: IUserRepository = {
   ensureAnonymousSession: async () => {
@@ -35,11 +35,20 @@ export const userRepository: IUserRepository = {
     return data;
   },
   updateProfile: async (profileId, input) => {
+    const payload = {
+      ...(input.nickname !== undefined ? { nickname: input.nickname } : {}),
+      ...(input.reminderHour !== undefined
+        ? { reminder_hour: input.reminderHour }
+        : {}),
+      ...(input.reminderMinute !== undefined
+        ? { reminder_minute: input.reminderMinute }
+        : {}),
+      ...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
+    };
+
     const { data, error } = await supabase
       .from("profiles")
-      .update({
-        nickname: input.nickname,
-      })
+      .update(payload)
       .eq("id", profileId)
       .select(PROFILE_SELECT)
       .single();

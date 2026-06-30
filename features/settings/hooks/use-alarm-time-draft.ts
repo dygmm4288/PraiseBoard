@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const ALARM_PERIODS = ["오전", "오후"] as const;
 export const ALARM_HOURS = [7, 8, 9, 10, 11] as const;
@@ -6,10 +6,59 @@ export const ALARM_MINUTES = [58, 59, 0, 1, 2] as const;
 
 export type AlarmPeriod = (typeof ALARM_PERIODS)[number];
 
-export const useAlarmTimeDraft = () => {
-  const [alarmPeriod, setAlarmPeriod] = useState<AlarmPeriod>("오후");
-  const [alarmHour, setAlarmHour] = useState(9);
-  const [alarmMinute, setAlarmMinute] = useState(0);
+export const toAlarmDraftTime = (
+  reminderHour: number | null | undefined,
+  reminderMinute: number | null | undefined,
+) => {
+  const hour24 = reminderHour ?? 21;
+  const minute = reminderMinute ?? 0;
+  const period: AlarmPeriod = hour24 >= 12 ? "오후" : "오전";
+  const hour12 = hour24 % 12 || 12;
+
+  return {
+    alarmPeriod: period,
+    alarmHour: hour12,
+    alarmMinute: minute,
+  };
+};
+
+export const toReminderTime = ({
+  alarmPeriod,
+  alarmHour,
+  alarmMinute,
+}: {
+  alarmPeriod: AlarmPeriod;
+  alarmHour: number;
+  alarmMinute: number;
+}) => {
+  const hour = alarmHour % 12;
+
+  return {
+    reminderHour: alarmPeriod === "오후" ? hour + 12 : hour,
+    reminderMinute: alarmMinute,
+  };
+};
+
+export const useAlarmTimeDraft = ({
+  initialHour,
+  initialMinute,
+}: {
+  initialHour?: number | null;
+  initialMinute?: number | null;
+} = {}) => {
+  const initialTime = toAlarmDraftTime(initialHour, initialMinute);
+  const [alarmPeriod, setAlarmPeriod] = useState<AlarmPeriod>(
+    initialTime.alarmPeriod,
+  );
+  const [alarmHour, setAlarmHour] = useState(initialTime.alarmHour);
+  const [alarmMinute, setAlarmMinute] = useState(initialTime.alarmMinute);
+
+  useEffect(() => {
+    const nextTime = toAlarmDraftTime(initialHour, initialMinute);
+    setAlarmPeriod(nextTime.alarmPeriod);
+    setAlarmHour(nextTime.alarmHour);
+    setAlarmMinute(nextTime.alarmMinute);
+  }, [initialHour, initialMinute]);
 
   const alarmTimeLabel = useMemo(
     () =>
