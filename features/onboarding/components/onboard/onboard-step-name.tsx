@@ -1,28 +1,23 @@
 import { BoardSetupFormValues, NICKNAME_MAX_LENGTH } from "@/features/board";
-import { toast } from "@/shared/toasts/toast";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
-import { View } from "react-native";
-import {
-  KeyboardAwareScrollView,
-  KeyboardStickyView,
-} from "react-native-keyboard-controller";
 import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
+import useOnboardInputError from "../../hooks/use-onboard-input-error";
 import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
+import OnboardChatStepLayout from "./onboard-chat-step-layout";
 
 const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   const [canInput, setCanInput] = useState(false);
   const actionLock = useOnboardActionLock();
-  const showMaxLengthToast = useCallback(() => {
-    toast.chatError("이름은 15자까지 입력할 수 있어요", {
-      refresh: true,
-    });
-  }, []);
+  const { inputError, showInputError, hideInputError } = useOnboardInputError();
+  const showMaxLengthError = useCallback(() => {
+    showInputError("이름은 15자까지 입력할 수 있어요");
+  }, [showInputError]);
 
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
@@ -47,11 +42,11 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
 
       if (error) {
         actionLock.reset();
-        toast.chatError(error);
+        showInputError(error);
         return;
       }
 
-      toast.hideToast();
+      hideInputError();
       form.clearErrors("profiles.nickname");
       field.onChange("");
       await addUserMessage(nickname);
@@ -65,51 +60,39 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
   }, []);
 
   return (
-    <View className="flex-1">
-      <KeyboardAwareScrollView
-        className="flex-1"
-        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        bottomOffset={12}
-        extraKeyboardSpace={8}
-      >
-        <ChatBubbleList>
-          {messages.map((v, i) => (
-            <ChatBubble
-              key={`onboard-step-name${i}`}
-              showTyping={v.type === "typing"}
-              message={v.message ?? ""}
-              side={v.role === "system" ? "left" : "right"}
+    <OnboardChatStepLayout
+      inputError={inputError}
+      footer={
+        <Controller
+          name="profiles.nickname"
+          control={form.control}
+          render={({ field }) => (
+            <ChatInput
+              placeholder="이름을 알려주세요"
+              value={field.value}
+              onChangeText={field.onChange}
+              onSend={() => onSendForm(field)}
+              disabled={disabled || !canInput || actionLock.disabled}
+              maxLength={NICKNAME_MAX_LENGTH}
+              onMaxLengthExceeded={showMaxLengthError}
+              autoFocus={canInput}
+              focusTrigger={canInput}
             />
-          ))}
-        </ChatBubbleList>
-      </KeyboardAwareScrollView>
-      <KeyboardStickyView
-        offset={{ closed: 0, opened: 0 }}
-        style={{ backgroundColor: "#FFFFFF" }}
-      >
-        <View className="bg-white">
-          <Controller
-            name="profiles.nickname"
-            control={form.control}
-            render={({ field }) => (
-              <ChatInput
-                placeholder="이름을 알려주세요"
-                value={field.value}
-                onChangeText={field.onChange}
-                onSend={() => onSendForm(field)}
-                disabled={disabled || !canInput || actionLock.disabled}
-                maxLength={NICKNAME_MAX_LENGTH}
-                onMaxLengthExceeded={showMaxLengthToast}
-                autoFocus={canInput}
-                focusTrigger={canInput}
-              />
-            )}
+          )}
+        />
+      }
+    >
+      <ChatBubbleList>
+        {messages.map((v, i) => (
+          <ChatBubble
+            key={`onboard-step-name${i}`}
+            showTyping={v.type === "typing"}
+            message={v.message ?? ""}
+            side={v.role === "system" ? "left" : "right"}
           />
-        </View>
-      </KeyboardStickyView>
-    </View>
+        ))}
+      </ChatBubbleList>
+    </OnboardChatStepLayout>
   );
 };
 

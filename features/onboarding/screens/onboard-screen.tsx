@@ -3,11 +3,11 @@ import {
   type BoardSetupFormValues,
 } from "@/features/board";
 import { Stepper } from "@/shared/components";
-import { Screen } from "@/shared/ui";
 import { ReactNode } from "react";
 import { FormProvider } from "react-hook-form";
 import { View } from "react-native";
 import OnboardHeader from "../components/onboard/onboard-header";
+import OnboardScreenLayout from "../components/onboard/onboard-screen-layout";
 import OnboardStepCount from "../components/onboard/onboard-step-count";
 import OnboardStepLimit from "../components/onboard/onboard-step-limit";
 import OnboardStepName from "../components/onboard/onboard-step-name";
@@ -52,7 +52,7 @@ export const OnboardScreenContent = ({
   const { form } = useOnboardingSetupForm(buildInitialValues(initialValues));
 
   return (
-    <Screen>
+    <OnboardScreenLayout>
       <FormProvider {...form}>
         <Stepper steps={steps as any} defaultValue={defaultStep}>
           {({ currentValue, next }) => (
@@ -89,7 +89,7 @@ export const OnboardScreenContent = ({
           )}
         </Stepper>
       </FormProvider>
-    </Screen>
+    </OnboardScreenLayout>
   );
 };
 

@@ -1,20 +1,17 @@
 import { BoardSetupFormValues, REWARD_MEMO_LENGTH } from "@/features/board";
-import { toast } from "@/shared/toasts/toast";
 import sleep from "@/shared/utils/sleep";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { View } from "react-native";
-import {
-  KeyboardAwareScrollView,
-  KeyboardStickyView,
-} from "react-native-keyboard-controller";
 import useOnboardActionLock from "../../hooks/use-onboard-action-lock";
 import useOnboardChat from "../../hooks/use-onboard-chat";
+import useOnboardInputError from "../../hooks/use-onboard-input-error";
 import { validateBeforeNext } from "../../hooks/use-onboarding-setup-form";
 import { OnboardStepProps } from "../../types/onboard-step.type";
 import { ChatBubble } from "../chat/chat-bubble";
 import ChatBubbleList from "../chat/chat-bubble-list";
 import ChatInput from "../chat/chat-input";
+import OnboardChatStepLayout from "./onboard-chat-step-layout";
 import OnboardSelectList, {
   OnboardSelectListItem,
 } from "./onboard-select-list";
@@ -27,16 +24,16 @@ const CHIPS = [
   { icon: "✍️", text: "직접 입력하기", value: null },
   { icon: "🫥", text: "보상 비워두기", value: "" },
 ];
+
 const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [isDirectMode, setIsDirectMode] = useState(false);
   const submittedRewardMemoRef = useRef<string | null | undefined>(undefined);
   const actionLock = useOnboardActionLock();
-  const showMaxLengthToast = useCallback(() => {
-    toast.chatError("보상은 20자까지 입력할 수 있어요", {
-      refresh: true,
-    });
-  }, []);
+  const { inputError, showInputError, hideInputError } = useOnboardInputError();
+  const showMaxLengthError = useCallback(() => {
+    showInputError("보상은 20자까지 입력할 수 있어요");
+  }, [showInputError]);
 
   const { messages, addUserMessage, run, disabled } = useOnboardChat({
     whaleMessages: [
@@ -85,11 +82,11 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
 
       if (error) {
         actionLock.reset();
-        toast.chatError(error);
+        showInputError(error);
         return;
       }
 
-      toast.hideToast();
+      hideInputError();
       form.clearErrors("boards.reward_memo");
       submittedRewardMemoRef.current = rewardMemo;
       field.onChange("");
@@ -116,65 +113,51 @@ const OnboardStepReward = ({ form, onNext }: OnboardStepProps) => {
   );
 
   return (
-    <View className="flex-1">
-      <KeyboardAwareScrollView
-        className="flex-1"
-        contentContainerStyle={{ flexGrow: 1, paddingTop: 36 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        bottomOffset={12}
-        extraKeyboardSpace={8}
-      >
-        <ChatBubbleList>
-          {messages.map((v, i) => (
-            <Fragment key={`onboard-step-name${i}`}>
-              <ChatBubble
-                showTyping={v.type === "typing"}
-                message={v.message ?? ""}
-                side={v.role === "system" ? "left" : "right"}
-              />
-              {showOptions && v.role === "system" && i === 0 && (
-                <View className="mt-[24px]">
-                  <OnboardSelectList
-                    items={CHIPS}
-                    onPress={onSelectOption}
-                    disabled={actionLock.disabled}
-                  />
-                </View>
-              )}
-            </Fragment>
-          ))}
-        </ChatBubbleList>
-      </KeyboardAwareScrollView>
-      <KeyboardStickyView
-        offset={{ closed: 0, opened: 0 }}
-        style={{ backgroundColor: "#FFFFFF" }}
-      >
-        <View className="bg-white py-[8px]">
+    <OnboardChatStepLayout
+      inputError={inputError}
+      footer={
+        isDirectMode ? (
           <Controller
             name="boards.reward_memo"
             control={form.control}
             render={({ field }) => (
-              <View className="gap-2">
-                {isDirectMode && (
-                  <ChatInput
-                    placeholder="보상을 알려주세요"
-                    value={field.value || ""}
-                    onChangeText={field.onChange}
-                    onSend={() => onSendForm(field)}
-                    disabled={disabled || actionLock.disabled}
-                    maxLength={REWARD_MEMO_LENGTH}
-                    onMaxLengthExceeded={showMaxLengthToast}
-                    autoFocus={isDirectMode}
-                    focusTrigger={isDirectMode}
-                  />
-                )}
-              </View>
+              <ChatInput
+                placeholder="보상을 알려주세요"
+                value={field.value || ""}
+                onChangeText={field.onChange}
+                onSend={() => onSendForm(field)}
+                disabled={disabled || actionLock.disabled}
+                maxLength={REWARD_MEMO_LENGTH}
+                onMaxLengthExceeded={showMaxLengthError}
+                autoFocus={isDirectMode}
+                focusTrigger={isDirectMode}
+              />
             )}
           />
-        </View>
-      </KeyboardStickyView>
-    </View>
+        ) : null
+      }
+    >
+      <ChatBubbleList>
+        {messages.map((v, i) => (
+          <Fragment key={`onboard-step-name${i}`}>
+            <ChatBubble
+              showTyping={v.type === "typing"}
+              message={v.message ?? ""}
+              side={v.role === "system" ? "left" : "right"}
+            />
+            {showOptions && v.role === "system" && i === 0 && (
+              <View className="mt-[24px]">
+                <OnboardSelectList
+                  items={CHIPS}
+                  onPress={onSelectOption}
+                  disabled={actionLock.disabled}
+                />
+              </View>
+            )}
+          </Fragment>
+        ))}
+      </ChatBubbleList>
+    </OnboardChatStepLayout>
   );
 };
 
