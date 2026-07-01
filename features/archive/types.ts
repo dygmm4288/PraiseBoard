@@ -30,6 +30,10 @@ export type ArchiveDetail = {
     stickerCount: number;
     completed: boolean;
   };
+  bestAchievementDay: {
+    date: string;
+    count: number;
+  } | null;
   streak: {
     currentStreak: number;
     maxStreak: number;

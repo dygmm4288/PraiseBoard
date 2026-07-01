@@ -30,6 +30,8 @@ export type ArchiveStickerDailyRow = {
   count: number;
 };
 
+export type ArchiveBestAchievementRow = ArchiveStickerDailyRow;
+
 export const toArchiveDailyStickerCounts = (
   rows: ArchiveStickerDailyRow[],
 ): ArchiveDailyStickerCount[] =>
@@ -51,12 +53,14 @@ export const toArchiveDetail = ({
   month,
   selectedDate,
   dailyStickerCounts,
+  bestAchievementRow,
   streak,
 }: {
   boardRow: ArchiveBoardDetailRow;
   month: string;
   selectedDate: string;
   dailyStickerCounts: ArchiveDailyStickerCount[];
+  bestAchievementRow: ArchiveBestAchievementRow | null;
   streak: ArchiveDetail["streak"];
 }): ArchiveDetail => {
   const selectedDayCount =
@@ -86,6 +90,12 @@ export const toArchiveDetail = ({
       stickerCount: selectedDayCount,
       completed: selectedDayCount >= boardRow.limit_count,
     },
+    bestAchievementDay: bestAchievementRow
+      ? {
+          date: bestAchievementRow.d,
+          count: bestAchievementRow.count,
+        }
+      : null,
     streak,
     progressGrid: {
       totalCount: boardRow.target_count,

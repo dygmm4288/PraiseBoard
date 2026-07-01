@@ -103,6 +103,15 @@ const ArchiveDetailRow = ({
   );
 };
 
+const formatArchiveDateKey = (dateKey?: string | null) => {
+  if (!dateKey) return "-";
+
+  const [year, month, day] = dateKey.split("-");
+  if (!year || !month || !day) return "-";
+
+  return `${year}.${month}.${day}`;
+};
+
 const ArchiveDetailOverview = ({ detail }: Props) => {
   const board = detail?.board;
 
@@ -236,17 +245,25 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
 };
 
 const ArchiveDetailStreakSummary = ({ detail }: Props) => {
+  const bestAchievement = detail?.bestAchievementDay;
+
   return (
     <DetailCard className="gap-[6px] px-[20px] py-[16px]">
       <ArchiveDetailRow
         label="최다 성취일"
-        value={detail?.streak.maxStreak ? `${detail.streak.maxStreak}일` : "-"}
+        value={
+          bestAchievement
+            ? `${formatArchiveDateKey(bestAchievement.date)} · ${
+                bestAchievement.count
+              }번`
+            : "-"
+        }
       />
       <ArchiveDetailRow
         label="연속 성취"
         value={
           detail?.streak.currentStreak
-            ? `${detail.streak.currentStreak}일`
+            ? `연속 ${detail.streak.currentStreak}일`
             : "-"
         }
       />
