@@ -81,13 +81,15 @@ const RootLayoutNav = () => {
     !hiddenPathnames.includes(pathname) &&
     !hiddenGroups.includes(routeGroup) &&
     !(pathname === "/" && params.from === "onboarding" && params.boardId);
+  const rootBackgroundColor = pathname === "/intro" ? "#000000" : "#FFFFFF";
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1" style={{ backgroundColor: rootBackgroundColor }}>
       <TopLevelSheetProvider>
         <View
-          className="flex-1 bg-white"
+          className="flex-1"
           style={{
+            backgroundColor: rootBackgroundColor,
             paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
           }}
         >

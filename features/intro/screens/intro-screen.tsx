@@ -1,10 +1,11 @@
 import { useUser } from "@/services/user";
 import { Stepper } from "@/shared/components";
-import { AppButton } from "@/shared/ui";
+import { AppText } from "@/shared/ui";
 import { useRouter } from "expo-router";
-import { useWindowDimensions, View } from "react-native";
+import { Pressable } from "react-native";
 import IntroContent from "../components/intro-content";
 import IntroPageLayout from "../components/intro-page-layout";
+import IntroVisual from "../components/intro-visual";
 
 export const INTRO_STEP_VALUES = ["intro0", "intro1"] as const;
 export type IntroStepValue = (typeof INTRO_STEP_VALUES)[number];
@@ -16,34 +17,42 @@ type IntroScreenContentProps = {
   onComplete: () => Promise<void> | void;
 };
 
+const IntroActionButton = ({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => Promise<void> | void;
+}) => {
+  return (
+    <Pressable
+      className="h-[48px] w-full items-center justify-center rounded-[9px] bg-white"
+      onPress={onPress}
+    >
+      <AppText
+        variant="custom"
+        weight="medium"
+        style={{ color: "#483970", fontSize: 15, lineHeight: 25 }}
+      >
+        {label}
+      </AppText>
+    </Pressable>
+  );
+};
+
 export const IntroScreenContent = ({
   defaultStep = "intro0",
   onComplete,
 }: IntroScreenContentProps) => {
-  const { height: screenHeight } = useWindowDimensions();
-  const visualHeight = Math.min(
-    360,
-    Math.max(220, Math.floor(screenHeight * 0.42)),
-  );
-
   return (
     <Stepper steps={INTRO_STEPS} defaultValue={defaultStep}>
       {({ currentValue, currentIndex, direction, next }) => (
         <IntroPageLayout
           currentValue={currentValue}
           direction={direction}
-          visual={
-            <View
-              className="w-full bg-surface-disabled"
-              style={{
-                height: visualHeight,
-              }}
-            />
-          }
+          visual={<IntroVisual currentIndex={currentIndex} />}
           footer={
-            <AppButton
-              fullWidth
-              variant="primary"
+            <IntroActionButton
               label={currentIndex === 0 ? "다음" : "시작하기"}
               onPress={async () => {
                 const isLastStep = currentIndex === INTRO_STEPS.length - 1;

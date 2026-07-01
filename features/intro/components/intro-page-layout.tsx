@@ -1,4 +1,3 @@
-import Screen from "@/shared/ui/screen";
 import React from "react";
 import { View } from "react-native";
 import Animated, {
@@ -10,6 +9,7 @@ import Animated, {
   SlideOutLeft,
   SlideOutRight,
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   visual: React.ReactNode;
@@ -27,11 +27,12 @@ const IntroPageLayout = ({
   direction,
 }: Props) => {
   return (
-    <Screen className="flex-1 bg-white">
-      <View className="flex-1 justify-between">
+    <View className="flex-1 overflow-hidden bg-black">
+      {visual}
+      <SafeAreaView className="flex-1">
         <Animated.View
           key={currentValue}
-          className="w-full flex-1 items-center gap-[30px] overflow-hidden"
+          className="w-full flex-1 justify-end gap-[50px] px-[20px] pb-[20px]"
           entering={
             direction === "forward"
               ? SlideInRight.duration(220).reduceMotion(ReduceMotion.System)
@@ -47,12 +48,11 @@ const IntroPageLayout = ({
                 : FadeOut.duration(120).reduceMotion(ReduceMotion.System)
           }
         >
-          {visual}
-          {children}
+          <View className="w-full items-center">{children}</View>
+          <View className="w-full">{footer}</View>
         </Animated.View>
-        <View>{footer}</View>
-      </View>
-    </Screen>
+      </SafeAreaView>
+    </View>
   );
 };
 

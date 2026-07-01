@@ -12,6 +12,8 @@ type Props = {
   name?: string;
   totalCnt: number;
   currentIndex: number;
+  activeColor?: string;
+  inactiveColor?: string;
 };
 
 const INACTIVE = {
@@ -31,7 +33,15 @@ const DOT_BASE_STYLE: ViewStyle = {
   backgroundColor: INACTIVE.backgroundColor,
 };
 
-const IndicatorItem = ({ active }: { active: boolean }) => {
+const IndicatorItem = ({
+  active,
+  activeColor,
+  inactiveColor,
+}: {
+  active: boolean;
+  activeColor: string;
+  inactiveColor: string;
+}) => {
   const width = useSharedValue(active ? ACTIVE.width : INACTIVE.width);
 
   useEffect(() => {
@@ -50,7 +60,7 @@ const IndicatorItem = ({ active }: { active: boolean }) => {
       style={[
         DOT_BASE_STYLE,
         {
-          backgroundColor: active ? ACTIVE.backgroundColor : INACTIVE.backgroundColor,
+          backgroundColor: active ? activeColor : inactiveColor,
         },
         style,
       ]}
@@ -58,13 +68,21 @@ const IndicatorItem = ({ active }: { active: boolean }) => {
   );
 };
 
-const PaginationIndicator = ({ name, totalCnt, currentIndex }: Props) => {
+const PaginationIndicator = ({
+  name,
+  totalCnt,
+  currentIndex,
+  activeColor = ACTIVE.backgroundColor,
+  inactiveColor = INACTIVE.backgroundColor,
+}: Props) => {
   return (
     <View className="h-[18px] flex-row items-center gap-[6px]">
       {Array.from({ length: totalCnt }, (_, i) => (
         <IndicatorItem
           key={`indicator-${name ?? ""}-${i}`}
           active={currentIndex === i}
+          activeColor={activeColor}
+          inactiveColor={inactiveColor}
         />
       ))}
     </View>
