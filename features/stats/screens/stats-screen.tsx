@@ -46,7 +46,7 @@ const StatsScreen = () => {
       </View>
 
       <ScrollView
-        className="flex-1 overflow-visible"
+        className="flex-1"
         contentContainerStyle={{
           gap: 12,
           paddingHorizontal: 16,

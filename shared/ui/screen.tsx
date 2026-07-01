@@ -6,16 +6,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 interface Props extends PropsWithChildren {
   className?: string;
   padded?: boolean;
+  backgroundColor?: string;
 }
 
 /**
  * 레이아웃 스크린. 기본 패딩 적용
  */
-const Screen = ({ children, className = "", padded = true }: Props) => {
+const Screen = ({
+  children,
+  className = "",
+  padded = true,
+  backgroundColor = "#FFF",
+}: Props) => {
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#FFF", position: "relative" }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor, position: "relative" }}>
       <View className={cn("flex-1", padded && "px-screen", className)}>
         {children}
       </View>

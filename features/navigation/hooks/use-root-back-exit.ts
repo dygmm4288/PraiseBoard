@@ -30,7 +30,7 @@ export const useRootBackExit = (pathname: string) => {
         }
 
         lastBackPressedAtRef.current = now;
-        toast.chatError(BACK_EXIT_TOAST_MESSAGE, {
+        toast.error(BACK_EXIT_TOAST_MESSAGE, {
           visibilityTime: BACK_EXIT_INTERVAL_MS,
         });
         return true;

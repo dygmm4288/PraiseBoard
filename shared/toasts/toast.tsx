@@ -27,8 +27,14 @@ type ToastOverrides = Partial<
   >
 >;
 
-const CHAT_INPUT_TOAST_OFFSET = 70;
+const CHAT_INPUT_TOAST_OFFSET = 77;
 let activeChatToastMessage: string | null = null;
+
+const toSafeOffset = (value: number | null | undefined) => {
+  if (typeof value !== "number") return 0;
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, value);
+};
 
 const chatInputBottomToastOptions: ToastOverrides = {
   position: "bottom",
@@ -45,7 +51,7 @@ const clearActiveChatToastMessage = (message: string) => {
 const getChatToastOptions = (): ToastOverrides => {
   try {
     const keyboardHeight = KeyboardController.isVisible()
-      ? KeyboardController.state().height
+      ? toSafeOffset(KeyboardController.state().height)
       : 0;
 
     if (keyboardHeight > 0) {
