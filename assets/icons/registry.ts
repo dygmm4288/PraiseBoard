@@ -5,6 +5,7 @@ import Check from "./check.svg";
 import ChevronLeft from "./chevron-left.svg";
 import ChevronRightSmall from "./chevron-right.svg";
 import Close from "./close.svg";
+import Delete from "./delete.svg";
 import Edit from "./edit.svg";
 import Chart from "./fnb/chart.svg";
 import Folder from "./fnb/folder.svg";
@@ -26,6 +27,7 @@ export const ICONS = {
   Home,
   Folder,
   Chart,
+  Delete,
 } as const;
 
 export type IconName = keyof typeof ICONS;

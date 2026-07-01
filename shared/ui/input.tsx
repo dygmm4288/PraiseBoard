@@ -1,27 +1,75 @@
+import { Icon } from "@/assets/icons";
 import { cn } from "@/shared/utils/cn";
-import { ElementType } from "react";
-import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
+import { ElementType, useCallback } from "react";
+import {
+  NativeSyntheticEvent,
+  Pressable,
+  TextInput,
+  TextInputKeyPressEventData,
+  TextInputProps,
+  View,
+} from "react-native";
 
 export interface AppInputProps extends TextInputProps {
   reset?: boolean;
   inputClassName?: string;
-  onReset?: () => void;
   className?: string;
   placeholder?: string;
   inputComponent?: ElementType<TextInputProps>;
+  onReset?: () => void;
+  onMaxLengthExceeded?: () => void;
 }
 
 export const AppInput = ({
   inputClassName = "",
   reset = false,
-  onReset = () => {},
   value = "",
   className = "",
   placeholder,
   inputComponent: InputComponent = TextInput,
+  maxLength,
+  onChangeText,
+  onKeyPress,
+  onMaxLengthExceeded,
+  onReset,
   ...props
 }: AppInputProps) => {
   const hasValue = typeof value === "string" && value.length > 0;
+
+  const handleChangeText = useCallback(
+    (nextValue: string) => {
+      onChangeText?.(nextValue);
+    },
+    [onChangeText],
+  );
+
+  const handleKeyPress = useCallback(
+    (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+      onKeyPress?.(event);
+
+      const key = event.nativeEvent.key;
+      const isEditingKey = key === "Backspace" || key === "Enter";
+
+      if (
+        maxLength !== undefined &&
+        typeof value === "string" &&
+        value.length >= maxLength &&
+        !isEditingKey
+      ) {
+        onMaxLengthExceeded?.();
+      }
+    },
+    [maxLength, onKeyPress, onMaxLengthExceeded, value],
+  );
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+      return;
+    }
+
+    onChangeText?.("");
+  };
 
   return (
     <View
@@ -36,17 +84,19 @@ export const AppInput = ({
         underlineColorAndroid="transparent"
         placeholder={placeholder}
         value={value}
+        maxLength={maxLength}
+        onChangeText={handleChangeText}
+        onKeyPress={handleKeyPress}
         {...props}
       />
       {reset && hasValue ? (
         <Pressable
-          onPress={onReset}
+          onPress={handleReset}
           hitSlop={8}
           accessibilityRole="button"
           accessibilityLabel="입력값 지우기"
-          className="ml-2 h-6 w-6 items-center justify-center rounded-full bg-gray-100"
         >
-          <Text className="text-gray-500">x</Text>
+          <Icon name="Delete" size={14} />
         </Pressable>
       ) : null}
     </View>

@@ -2,6 +2,7 @@ import { KOR_ENG_SYMBOL_SPACE_REGEX } from "@/shared/utils/regex";
 import { z } from "zod";
 
 export const NICKNAME_MAX_LENGTH = 15;
+export const NICKNAME_MAX_LENGTH_MESSAGE = "이름은 15자까지 입력할 수 있어요.";
 export const TITLE_MAX_LENGTH = 15;
 export const REWARD_MEMO_LENGTH = 20;
 
@@ -33,6 +34,16 @@ const limitCountSchema = z
   .min(1, "하루 최대 개수는 1 이상이어야 해요.")
   .max(5, "하루 최대 개수는 5개까지 입력할 수 있어요.");
 
+export const nicknameSchema = z
+  .string()
+  .trim()
+  .min(1, "이름은 최소 1자이상 입력해 주세요")
+  .max(NICKNAME_MAX_LENGTH, NICKNAME_MAX_LENGTH_MESSAGE)
+  .regex(
+    KOR_ENG_SYMBOL_SPACE_REGEX,
+    "닉네임은 한글/영문/특수문자/공백만 입력할 수 있어요.",
+  );
+
 export const boardSetupDraftSchema = z.object({
   boards: z.object({
     title: titleSchema,
@@ -51,15 +62,7 @@ export const boardSetupDraftSchema = z.object({
     emoji: emojiSchema,
   }),
   profiles: z.object({
-    nickname: z
-      .string()
-      .trim()
-      .min(1, "이름은 최소 1자이상 입력해 주세요")
-      .max(NICKNAME_MAX_LENGTH, "이름은 15자까지 입력할 수 있어요.")
-      .regex(
-        KOR_ENG_SYMBOL_SPACE_REGEX,
-        "닉네임은 한글/영문/특수문자/공백만 입력할 수 있어요.",
-      ),
+    nickname: nicknameSchema,
   }),
 });
 

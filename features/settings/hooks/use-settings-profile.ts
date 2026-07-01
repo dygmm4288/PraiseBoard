@@ -1,6 +1,7 @@
+import { nicknameSchema } from "@/features/board/schema";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
 const getDeviceTimezone = () => {
   try {
@@ -15,37 +16,23 @@ export const useSettingsProfile = () => {
   const { nickname, profile, updateProfile } = useCurrentProfile(profileId);
   const displayName =
     nickname || (authState === "anonymous" ? "김고래" : "이름 없음");
-  const [draftName, setDraftName] = useState(displayName);
-  const [isSavingName, setIsSavingName] = useState(false);
 
-  useEffect(() => {
-    setDraftName(displayName);
-  }, [displayName]);
+  const saveName = useCallback(async (name: string) => {
+    const parsedName = nicknameSchema.safeParse(name);
 
-  const resetDraftName = useCallback(() => {
-    setDraftName(displayName);
-  }, [displayName]);
-
-  const saveDraftName = useCallback(async () => {
-    const nextName = draftName.trim();
-
-    if (!nextName) {
-      toast.error("이름을 입력해 주세요.");
+    if (!parsedName.success) {
+      toast.error(parsedName.error.issues[0]?.message);
       return false;
     }
 
-    setIsSavingName(true);
-
     try {
-      await updateProfile({ nickname: nextName });
+      await updateProfile({ nickname: parsedName.data });
       return true;
     } catch {
       toast.error("이름을 저장하는 중 오류가 발생했어요.");
       return false;
-    } finally {
-      setIsSavingName(false);
     }
-  }, [draftName, updateProfile]);
+  }, [updateProfile]);
 
   const saveReminderTime = useCallback(
     async ({
@@ -72,12 +59,8 @@ export const useSettingsProfile = () => {
 
   return {
     displayName,
-    draftName,
     profile,
-    isSavingName,
-    resetDraftName,
-    saveDraftName,
+    saveName,
     saveReminderTime,
-    setDraftName,
   };
 };

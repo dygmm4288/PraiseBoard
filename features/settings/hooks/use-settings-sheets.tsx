@@ -11,16 +11,9 @@ type EditingSheet = "name" | "time" | null;
 export const useSettingsSheets = () => {
   const { dismissTopLevelSheet, presentTopLevelSheet } = useTopLevelSheet();
   const [editingSheet, setEditingSheet] = useState<EditingSheet>(null);
-  const {
-    displayName,
-    profile,
-    draftName,
-    isSavingName,
-    resetDraftName,
-    saveDraftName,
-    saveReminderTime,
-    setDraftName,
-  } = useSettingsProfile();
+  const [nameSheetInitialName, setNameSheetInitialName] = useState("");
+  const { displayName, profile, saveName, saveReminderTime } =
+    useSettingsProfile();
   const {
     alarmHour,
     alarmMinute,
@@ -34,43 +27,28 @@ export const useSettingsSheets = () => {
     initialMinute: profile?.reminder_minute,
   });
 
-  const closeNameSheet = useCallback(
-    ({ resetName }: { resetName: boolean }) => {
-      Keyboard.dismiss();
-      setEditingSheet(null);
-
-      if (resetName) {
-        resetDraftName();
-      }
-    },
-    [resetDraftName],
-  );
+  const closeNameSheet = useCallback(() => {
+    Keyboard.dismiss();
+    setEditingSheet(null);
+  }, []);
 
   const closeSheet = useCallback(() => {
     if (editingSheet === "name") {
-      closeNameSheet({ resetName: true });
+      closeNameSheet();
       return;
     }
 
     setEditingSheet(null);
-    resetDraftName();
-  }, [closeNameSheet, editingSheet, resetDraftName]);
+  }, [closeNameSheet, editingSheet]);
 
   const openNameSheet = useCallback(() => {
-    resetDraftName();
+    setNameSheetInitialName(displayName);
     setEditingSheet("name");
-  }, [resetDraftName]);
+  }, [displayName]);
 
   const openAlarmTimeSheet = useCallback(() => {
     setEditingSheet("time");
   }, []);
-
-  const handleSaveName = useCallback(async () => {
-    const saved = await saveDraftName();
-    if (saved) {
-      closeNameSheet({ resetName: false });
-    }
-  }, [closeNameSheet, saveDraftName]);
 
   const confirmAlarmTime = useCallback(async () => {
     const saved = await saveReminderTime(
@@ -113,11 +91,9 @@ export const useSettingsSheets = () => {
         editingSheet === "name" ? (
           <View className="flex-1 px-[16px] pb-[16px]">
             <NameEditSheetContent
-              draftName={draftName}
-              isSaving={isSavingName}
-              onChangeDraftName={setDraftName}
+              initialName={nameSheetInitialName}
               onClose={closeSheet}
-              onConfirm={handleSaveName}
+              onConfirm={saveName}
             />
           </View>
         ) : (
@@ -140,16 +116,14 @@ export const useSettingsSheets = () => {
     closeSheet,
     confirmAlarmTime,
     dismissTopLevelSheet,
-    draftName,
     editingSheet,
-    handleSaveName,
-    isSavingName,
+    nameSheetInitialName,
     presentTopLevelSheet,
     setAlarmHour,
     setAlarmMinute,
     setAlarmPeriod,
-    setDraftName,
     snapPoints,
+    saveName,
   ]);
 
   return {
