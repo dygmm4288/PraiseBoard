@@ -5,11 +5,7 @@ import { useHomeBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
 
-type BoardListProps = {
-  onCreateBoardPress: () => void;
-};
-
-const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
+const BoardList = () => {
   const { profileId } = useUser();
   const { isLoading, data, error } = useHomeBoardsQuery(profileId);
 
@@ -30,9 +26,7 @@ const BoardList = ({ onCreateBoardPress }: BoardListProps) => {
       {data?.map((board) => (
         <BoardItem key={board.id} board={board} actionType="collect" />
       ))}
-      {data?.length === 0 && (
-        <BoardEmptyItem onCreateBoardPress={onCreateBoardPress} />
-      )}
+      {data?.length === 0 && <BoardEmptyItem />}
     </View>
   );
 };

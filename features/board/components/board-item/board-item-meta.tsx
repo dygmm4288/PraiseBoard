@@ -25,6 +25,12 @@ const BoardItemMeta = ({
   } = ui;
   const shouldShowTodayDoneState = shouldApplyTodayDoneState && isTodayDone;
   const shouldDisableText = shouldApplyTodayDoneState && boardDisabled;
+  const displayStreak =
+    board.currentStreak > 0
+      ? board.currentStreak
+      : board.todaySuccess || board.todayStickerCount > 0
+        ? 1
+        : 0;
 
   return (
     <View className="min-w-0 flex-1 flex-row items-center gap-[11px]">
@@ -67,14 +73,14 @@ const BoardItemMeta = ({
               </AppText>
             </View>
           )}
-          {board.currentStreak > 0 ? (
+          {displayStreak > 0 ? (
             <View className="rounded-[10px] bg-secondary-20 px-[6px] py-[2px]">
               <AppText
                 variant="custom"
                 weight="semibold"
                 className="text-[9px] leading-[12px] text-secondary-50"
               >
-                🔥 연속 {board.currentStreak}일
+                🔥 연속 {displayStreak}일
               </AppText>
             </View>
           ) : null}

@@ -24,7 +24,7 @@ const useHomeCompletionPreview = ({ boards }: Props) => {
 
   const closePreview = useCallback(() => {
     setIsDone(true);
-    router.replace("/");
+    router.setParams({ from: undefined, boardId: undefined });
   }, [router]);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const useHomeCompletionPreview = ({ boards }: Props) => {
       return;
     }
 
-    router.replace("/");
+    router.setParams({ from: undefined, boardId: undefined });
   }, [boards, isDone, isPreviewRoute, previewBoard, router]);
 
   return {

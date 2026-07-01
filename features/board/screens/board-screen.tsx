@@ -6,7 +6,6 @@ import { ScrollView } from "react-native";
 import BoardToday from "../components/board-today/board-today";
 import BoardHomeWhaleMessage from "../components/board/board-home-whale-message";
 import BoardList from "../components/board/board-list";
-import { useBoardSheet } from "../hooks/use-board-sheet";
 import useHomeCompletionPreview from "../hooks/use-home-completion-preview";
 import { useHomeBoardsQuery } from "../queries/use-board-query";
 
@@ -14,7 +13,6 @@ export const BoardScreenContent = () => {
   const { profileId } = useUser();
   const { nickname } = useCurrentProfile(profileId);
   const { data: homeBoards } = useHomeBoardsQuery(profileId);
-  const { openCreateSheet } = useBoardSheet();
   const { previewBoard, showCompletionPreview, closePreview } =
     useHomeCompletionPreview({ boards: homeBoards });
 
@@ -34,7 +32,7 @@ export const BoardScreenContent = () => {
       >
         <BoardHomeWhaleMessage />
         <BoardToday />
-        <BoardList onCreateBoardPress={openCreateSheet} />
+        <BoardList />
       </ScrollView>
       {showCompletionPreview && previewBoard ? (
         <OnboardCompletionPreview
