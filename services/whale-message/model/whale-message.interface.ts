@@ -23,6 +23,7 @@ export type WhaleMessageBoardInput = {
   targetCount: number;
   limitCount: number;
   currentCount: number;
+  todayStickerCount?: number;
   rewardMemo: string | null;
   status: string;
 };

@@ -5,6 +5,11 @@ import {
 } from "../model/whale-message.interface";
 
 const FALLBACK_NICKNAME = "고래친구";
+const DAILY_LIMIT_REACHED_MESSAGE: WhaleMessage = {
+  trigger: "daily_limit_reached",
+  body: "우와 대단해 ! 오늘의 목표를 다 채웠어. 내일 다시 도전해보자 ~",
+  pushEnabled: false,
+};
 const RANDOM_TRANSITION_MESSAGES = [
   "완벽하지 않아도 괜찮아. 중요한 건 멈추지 않는 마음인 거 알지?",
   "앗, 혹시 손가락이 근질근질하지 않아? 얼른 스티커 붙여달라고 난리네! 😂",
@@ -20,20 +25,19 @@ export const resolveWhaleMessage = ({
   lastLoginAt,
 }: ResolveWhaleMessageInput): WhaleMessage => {
   const displayName = nickname?.trim() || FALLBACK_NICKNAME;
+  const dailyLimitMessage = resolveDailyLimitMessage(
+    boards,
+    todayStickerCount,
+  );
+
+  if (dailyLimitMessage) return dailyLimitMessage;
+
   const boardMilestoneMessage = resolveBoardMilestoneMessage(
     boards,
     displayName,
   );
 
   if (boardMilestoneMessage) return boardMilestoneMessage;
-
-  if (boards.length > 0 && todayStickerCount >= getDailyLimit(boards)) {
-    return {
-      trigger: "daily_limit_reached",
-      body: "우와 대단해 ! 오늘의 목표를 다 채웠어. 내일 다시 도전해보자 ~",
-      pushEnabled: false,
-    };
-  }
 
   if (todayStickerCount >= 2) {
     return {
@@ -137,6 +141,36 @@ const resolveBoardMilestoneMessage = (
       body: "절반이나 채웠어! 네 속도는 지금 딱 좋아.\n조급해하지 말고 우리 끝까지 가보자.",
       pushEnabled: false,
     };
+  }
+
+  return null;
+};
+
+const resolveDailyLimitMessage = (
+  boards: WhaleMessageBoardInput[],
+  todayStickerCount: number,
+): WhaleMessage | null => {
+  if (boards.length === 0) return null;
+
+  const hasCompletedBoard = boards.some(
+    (board) => board.status === "completed",
+  );
+  const hasBoardReachedDailyLimit = boards.some((board) => {
+    const limitCount = Math.max(0, Math.trunc(board.limitCount));
+    const boardTodayStickerCount = Math.max(
+      0,
+      Math.trunc(board.todayStickerCount ?? 0),
+    );
+
+    return limitCount > 0 && boardTodayStickerCount >= limitCount;
+  });
+
+  if (
+    hasCompletedBoard ||
+    hasBoardReachedDailyLimit ||
+    todayStickerCount >= getDailyLimit(boards)
+  ) {
+    return DAILY_LIMIT_REACHED_MESSAGE;
   }
 
   return null;
