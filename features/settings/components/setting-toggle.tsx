@@ -20,28 +20,29 @@ const SettingToggle = ({
 }: SettingToggleProps) => {
   return (
     <View className="w-full flex-row items-center justify-between gap-[16px] px-[20px]">
-      <Pressable
-        className="min-w-0 flex-1 gap-[3px]"
-        disabled={disabled}
-        onPress={() => onToggle(!value)}
-      >
-        <AppText
-          variant="custom"
-          className="text-[14px] leading-[20px] text-black"
-          numberOfLines={1}
+      <View className="min-w-0 flex-1 gap-[3px]">
+        <Pressable
+          disabled={disabled}
+          onPress={() => onToggle(!value)}
         >
-          {label}
-        </AppText>
-        {description && (
           <AppText
             variant="custom"
-            className="text-[12px] leading-[20px] text-labelGray"
+            className="text-[14px] leading-[20px] text-black"
+            numberOfLines={1}
           >
-            {description}
+            {label}
           </AppText>
-        )}
+          {description && (
+            <AppText
+              variant="custom"
+              className="text-[12px] leading-[20px] text-labelGray"
+            >
+              {description}
+            </AppText>
+          )}
+        </Pressable>
         {accessory}
-      </Pressable>
+      </View>
       <Toggle
         value={value}
         disabled={disabled}

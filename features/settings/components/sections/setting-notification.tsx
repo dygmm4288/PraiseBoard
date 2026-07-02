@@ -7,6 +7,10 @@ import { AppState, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingToggle from "../setting-toggle";
 
+const TOP_TOAST_OPTIONS = {
+  position: "top" as const,
+};
+
 const NoSettingNotification = () => {
   return (
     <View className="w-full px-[20px]">
@@ -80,6 +84,9 @@ const SettingNotification = ({
   const handleToggle = async (nextValue: boolean) => {
     if (isUpdating) return;
 
+    const previousValue = isNotifications;
+
+    setIsNotifications(nextValue);
     setIsUpdating(true);
 
     try {
@@ -93,12 +100,31 @@ const SettingNotification = ({
       setIsNotifications(enabled);
       setHasPermission(permissions.status === "granted");
 
-      if (nextValue && permissions.status !== "granted") {
-        toast.error("기기 설정에서 알림 권한을 허용해 주세요.");
+      if (!nextValue) {
+        return;
+      }
+
+      if (permissions.status !== "granted") {
+        toast.error(
+          "기기 설정에서 알림 권한을 허용해 주세요.",
+          TOP_TOAST_OPTIONS,
+        );
+        return;
+      }
+
+      if (!enabled) {
+        toast.error(
+          "알림을 켜지 못했어요. 잠시 후 다시 시도해 주세요.",
+          TOP_TOAST_OPTIONS,
+        );
       }
     } catch (error) {
       console.error("알림 설정 변경 중 오류 발생", error);
-      toast.error("알림 설정을 변경하는 중 오류가 발생했어요.");
+      setIsNotifications(previousValue);
+      toast.error(
+        "알림 설정을 변경하는 중 오류가 발생했어요.",
+        TOP_TOAST_OPTIONS,
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -106,7 +132,7 @@ const SettingNotification = ({
 
   return (
     <SettingSectionLayout title="알림">
-      {!isLoading && hasPermission && (
+      {!isLoading && (
         <SettingToggle
           label="정기 알림"
           description="설정한 시간에 알림을 보내드려요"
