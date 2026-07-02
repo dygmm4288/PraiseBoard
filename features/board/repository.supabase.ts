@@ -5,6 +5,7 @@ import {
 } from "@/shared/lib/supabase-error";
 import { getTodayRange } from "@/shared/utils/date";
 import {
+  BoardListParams,
   BoardTodayAchievement,
   CollectStickerRpcResult,
   IBoardRepository,
@@ -13,6 +14,31 @@ import { toBoardRecord } from "./mapper";
 
 const BOARD_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, status, created_at, completed_at";
+
+const DEFAULT_BOARD_LIST_ORDER = {
+  orderBy: "created_at",
+  order: "desc",
+} satisfies Pick<Required<BoardListParams>, "orderBy" | "order">;
+
+type OrderableQuery = {
+  order: (
+    column: NonNullable<BoardListParams["orderBy"]>,
+    options: { ascending: boolean; nullsFirst: boolean },
+  ) => unknown;
+};
+
+const applyBoardListOrder = (
+  query: OrderableQuery,
+  params: Pick<BoardListParams, "orderBy" | "order"> = {},
+) => {
+  const orderBy = params.orderBy ?? DEFAULT_BOARD_LIST_ORDER.orderBy;
+  const order = params.order ?? DEFAULT_BOARD_LIST_ORDER.order;
+
+  query.order(orderBy, {
+    ascending: order === "asc",
+    nullsFirst: false,
+  });
+};
 
 export const boardRepository: IBoardRepository = {
   async createBoard({
@@ -180,6 +206,8 @@ export const boardRepository: IBoardRepository = {
     });
 
     if (params.status) res.eq("status", params.status);
+    applyBoardListOrder(res, params);
+
     if (params.page) {
       const limit = params.limit ?? 10;
       const page = params.page ?? 1;
@@ -226,6 +254,7 @@ export const boardRepository: IBoardRepository = {
         `and(status.eq.completed,completed_at.gte.${start.toISOString()},completed_at.lt.${end.toISOString()})`,
       ].join(","),
     );
+    applyBoardListOrder(res);
 
     const { data, error, count } = await res;
 
