@@ -50,7 +50,7 @@ export const useBoardItemUi = ({ board }: Props) => {
       : isTodayDone
         ? "text-gray-300"
         : "text-primary-500",
-    rewardText: board.rewardMemo || "보상이 아직 정해지지 않았어요",
+    rewardText: board.rewardMemo || null,
     opacity: isCompleted ? 0.6 : isTodayDone ? 0.5 : 1,
     boardDisabled,
     boardDDay,
