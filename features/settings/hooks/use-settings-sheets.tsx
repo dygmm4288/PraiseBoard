@@ -3,10 +3,39 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Keyboard, View } from "react-native";
 import AlarmTimeSheetContent from "../components/sheets/alarm-time-sheet-content";
 import NameEditSheetContent from "../components/sheets/name-edit-sheet-content";
-import { toReminderTime, useAlarmTimeDraft } from "./use-alarm-time-draft";
+import {
+  toAlarmDraftTime,
+  toReminderTime,
+  useAlarmTimeDraft,
+} from "./use-alarm-time-draft";
 import { useSettingsProfile } from "./use-settings-profile";
 
 type EditingSheet = "name" | "time" | null;
+
+const getPrimaryReminderTime = (
+  reminderTimes: unknown,
+  fallbackHour: number | null | undefined,
+  fallbackMinute: number | null | undefined,
+) => {
+  if (Array.isArray(reminderTimes)) {
+    const firstTime = reminderTimes.find(
+      (time): time is { hour: number; minute: number } =>
+        typeof time === "object" &&
+        time !== null &&
+        typeof (time as { hour?: unknown }).hour === "number" &&
+        typeof (time as { minute?: unknown }).minute === "number",
+    );
+
+    if (firstTime) {
+      return firstTime;
+    }
+  }
+
+  return {
+    hour: fallbackHour,
+    minute: fallbackMinute,
+  };
+};
 
 export const useSettingsSheets = () => {
   const { dismissTopLevelSheet, presentTopLevelSheet } = useTopLevelSheet();
@@ -14,18 +43,32 @@ export const useSettingsSheets = () => {
   const [nameSheetInitialName, setNameSheetInitialName] = useState("");
   const { displayName, profile, saveName, saveReminderTime } =
     useSettingsProfile();
+  const primaryReminderTime = getPrimaryReminderTime(
+    profile?.reminder_times,
+    profile?.reminder_hour,
+    profile?.reminder_minute,
+  );
   const {
     alarmHour,
     alarmMinute,
     alarmPeriod,
-    alarmTimeLabel,
     setAlarmHour,
     setAlarmMinute,
     setAlarmPeriod,
   } = useAlarmTimeDraft({
-    initialHour: profile?.reminder_hour,
-    initialMinute: profile?.reminder_minute,
+    initialHour: primaryReminderTime.hour,
+    initialMinute: primaryReminderTime.minute,
   });
+  const savedAlarmTimeLabel = useMemo(() => {
+    const savedTime = toAlarmDraftTime(
+      primaryReminderTime.hour,
+      primaryReminderTime.minute,
+    );
+
+    return `${savedTime.alarmPeriod} ${savedTime.alarmHour}:${String(
+      savedTime.alarmMinute,
+    ).padStart(2, "0")}`;
+  }, [primaryReminderTime.hour, primaryReminderTime.minute]);
 
   const closeNameSheet = useCallback(() => {
     Keyboard.dismiss();
@@ -47,8 +90,22 @@ export const useSettingsSheets = () => {
   }, [displayName]);
 
   const openAlarmTimeSheet = useCallback(() => {
+    const savedTime = toAlarmDraftTime(
+      primaryReminderTime.hour,
+      primaryReminderTime.minute,
+    );
+
+    setAlarmPeriod(savedTime.alarmPeriod);
+    setAlarmHour(savedTime.alarmHour);
+    setAlarmMinute(savedTime.alarmMinute);
     setEditingSheet("time");
-  }, []);
+  }, [
+    primaryReminderTime.hour,
+    primaryReminderTime.minute,
+    setAlarmHour,
+    setAlarmMinute,
+    setAlarmPeriod,
+  ]);
 
   const confirmAlarmTime = useCallback(async () => {
     const saved = await saveReminderTime(
@@ -72,7 +129,7 @@ export const useSettingsSheets = () => {
   }, [dismissTopLevelSheet]);
 
   const snapPoints = useMemo(() => {
-    return editingSheet === "time" ? [345, "50%"] : [300];
+    return editingSheet === "time" ? [345] : [300];
   }, [editingSheet]);
 
   useEffect(() => {
@@ -87,6 +144,7 @@ export const useSettingsSheets = () => {
       keyboardBehavior: "interactive",
       androidKeyboardInputMode:
         editingSheet === "name" ? "adjustPan" : undefined,
+      enableContentPanningGesture: editingSheet !== "time",
       children:
         editingSheet === "name" ? (
           <View className="flex-1 px-[16px] pb-[16px]">
@@ -127,7 +185,7 @@ export const useSettingsSheets = () => {
   ]);
 
   return {
-    alarmTimeLabel,
+    alarmTimeLabel: savedAlarmTimeLabel,
     displayName,
     openAlarmTimeSheet,
     openNameSheet,

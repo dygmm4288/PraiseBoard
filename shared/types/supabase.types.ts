@@ -172,6 +172,7 @@ export type Database = {
           profile_id: string
           sent_at: string
           sent_local_date: string | null
+          sent_local_time: string | null
           type: string
         }
         Insert: {
@@ -189,6 +190,7 @@ export type Database = {
           profile_id: string
           sent_at?: string
           sent_local_date?: string | null
+          sent_local_time?: string | null
           type: string
         }
         Update: {
@@ -206,6 +208,7 @@ export type Database = {
           profile_id?: string
           sent_at?: string
           sent_local_date?: string | null
+          sent_local_time?: string | null
           type?: string
         }
         Relationships: [
@@ -228,6 +231,7 @@ export type Database = {
           nickname: string | null
           reminder_hour: number
           reminder_minute: number
+          reminder_times: Json
           timezone: string
           updated_at: string
         }
@@ -240,6 +244,7 @@ export type Database = {
           nickname?: string | null
           reminder_hour?: number
           reminder_minute?: number
+          reminder_times?: Json
           timezone?: string
           updated_at?: string
         }
@@ -252,6 +257,7 @@ export type Database = {
           nickname?: string | null
           reminder_hour?: number
           reminder_minute?: number
+          reminder_times?: Json
           timezone?: string
           updated_at?: string
         }

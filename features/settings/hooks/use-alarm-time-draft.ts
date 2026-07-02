@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 export const ALARM_PERIODS = ["오전", "오후"] as const;
-export const ALARM_HOURS = [7, 8, 9, 10, 11] as const;
-export const ALARM_MINUTES = [58, 59, 0, 1, 2] as const;
+export const ALARM_HOURS = Array.from({ length: 12 }, (_, index) => index + 1);
+export const ALARM_MINUTES = Array.from({ length: 60 }, (_, index) => index);
 
 export type AlarmPeriod = (typeof ALARM_PERIODS)[number];
 

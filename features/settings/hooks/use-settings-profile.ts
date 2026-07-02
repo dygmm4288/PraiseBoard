@@ -46,6 +46,7 @@ export const useSettingsProfile = () => {
         await updateProfile({
           reminderHour,
           reminderMinute,
+          reminderTimes: [{ hour: reminderHour, minute: reminderMinute }],
           timezone: getDeviceTimezone(),
         });
         return true;

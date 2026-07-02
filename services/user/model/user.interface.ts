@@ -11,6 +11,7 @@ export type UpdateProfileInput = {
   nickname?: string | null;
   reminderHour?: number;
   reminderMinute?: number;
+  reminderTimes?: { hour: number; minute: number }[];
   timezone?: string;
 };
 

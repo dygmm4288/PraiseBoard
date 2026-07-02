@@ -11,6 +11,7 @@ create table notification_logs(
     message_trigger text not null,
     message_body text null,
     sent_local_date date null,
+    sent_local_time text null,
     expo_ticket_ids text[] null,
     expo_ticket_token_map jsonb null,
     expo_receipt_status text null,
@@ -20,9 +21,18 @@ create table notification_logs(
     profile_id uuid not null references profiles(id) on delete cascade
 );
 
-create unique index idx_notification_logs_push_once_per_day
-on notification_logs(profile_id, type, channel, message_trigger, sent_local_date)
-where channel = 'push' and sent_local_date is not null;
+create unique index idx_notification_logs_push_once_per_time
+on notification_logs(
+  profile_id,
+  type,
+  channel,
+  message_trigger,
+  sent_local_date,
+  sent_local_time
+)
+where channel = 'push'
+  and sent_local_date is not null
+  and sent_local_time is not null;
 
 create index idx_notification_logs_expo_receipt_pending
 on notification_logs(created_at)

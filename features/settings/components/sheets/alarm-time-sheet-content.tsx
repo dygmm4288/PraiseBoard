@@ -5,8 +5,14 @@ import {
   AlarmPeriod,
 } from "@/features/settings/hooks/use-alarm-time-draft";
 import { AppText } from "@/shared/ui";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import type { ReactNode } from "react";
 import { Pressable, View } from "react-native";
 import SettingsSheetHeader from "./settings-sheet-header";
+
+const PICKER_COLUMN_HEIGHT = 181;
+const PICKER_COLUMN_WIDTH = 90;
+const PICKER_CELL_GAP = 9;
 
 const PickerCell = ({
   label,
@@ -39,6 +45,35 @@ const PickerCell = ({
   );
 };
 
+const PickerStaticColumn = ({ children }: { children: ReactNode }) => {
+  return (
+    <View
+      className="justify-center"
+      style={{
+        height: PICKER_COLUMN_HEIGHT,
+        width: PICKER_COLUMN_WIDTH,
+        gap: PICKER_CELL_GAP,
+      }}
+    >
+      {children}
+    </View>
+  );
+};
+
+const PickerScrollColumn = ({ children }: { children: ReactNode }) => {
+  return (
+    <BottomSheetScrollView
+      style={{ height: PICKER_COLUMN_HEIGHT, width: PICKER_COLUMN_WIDTH }}
+      contentContainerStyle={{ gap: PICKER_CELL_GAP }}
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled
+      showsVerticalScrollIndicator={false}
+    >
+      {children}
+    </BottomSheetScrollView>
+  );
+};
+
 type AlarmTimeSheetContentProps = {
   alarmPeriod: AlarmPeriod;
   alarmHour: number;
@@ -67,36 +102,38 @@ const AlarmTimeSheetContent = ({
         onClose={onClose}
         onConfirm={onConfirm}
       />
-      <View className="flex-row justify-center gap-[9px] py-[21px]">
-        <View className="w-[90px] gap-[9px] pt-[51px]">
-          {ALARM_PERIODS.map((period) => (
-            <PickerCell
-              key={period}
-              label={period}
-              selected={period === alarmPeriod}
-              onPress={() => onChangePeriod(period)}
-            />
-          ))}
-        </View>
-        <View className="w-[90px] gap-[9px]">
-          {ALARM_HOURS.map((hour) => (
-            <PickerCell
-              key={hour}
-              label={String(hour)}
-              selected={hour === alarmHour}
-              onPress={() => onChangeHour(hour)}
-            />
-          ))}
-        </View>
-        <View className="w-[90px] gap-[9px]">
-          {ALARM_MINUTES.map((minute) => (
-            <PickerCell
-              key={minute}
-              label={String(minute).padStart(2, "0")}
-              selected={minute === alarmMinute}
-              onPress={() => onChangeMinute(minute)}
-            />
-          ))}
+      <View className="h-[223px] py-[21px]">
+        <View className="h-[181px] w-full flex-row items-center justify-center gap-[9px]">
+          <PickerStaticColumn>
+            {ALARM_PERIODS.map((period) => (
+              <PickerCell
+                key={period}
+                label={period}
+                selected={period === alarmPeriod}
+                onPress={() => onChangePeriod(period)}
+              />
+            ))}
+          </PickerStaticColumn>
+          <PickerScrollColumn>
+            {ALARM_HOURS.map((hour) => (
+              <PickerCell
+                key={hour}
+                label={String(hour)}
+                selected={hour === alarmHour}
+                onPress={() => onChangeHour(hour)}
+              />
+            ))}
+          </PickerScrollColumn>
+          <PickerScrollColumn>
+            {ALARM_MINUTES.map((minute) => (
+              <PickerCell
+                key={minute}
+                label={String(minute).padStart(2, "0")}
+                selected={minute === alarmMinute}
+                onPress={() => onChangeMinute(minute)}
+              />
+            ))}
+          </PickerScrollColumn>
         </View>
       </View>
     </View>

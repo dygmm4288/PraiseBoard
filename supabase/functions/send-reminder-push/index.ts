@@ -13,6 +13,7 @@ type ProfileRow = {
   nickname: string | null;
   reminder_hour: number;
   reminder_minute: number;
+  reminder_times: unknown;
   timezone: string;
 };
 
@@ -67,6 +68,38 @@ const getLocalTimeParts = (timeZone: string, now = new Date()) => {
   };
 };
 
+const isValidReminderTime = (
+  value: unknown,
+): value is { hour: number; minute: number } => {
+  if (typeof value !== "object" || value === null) return false;
+
+  const time = value as { hour?: unknown; minute?: unknown };
+  if (typeof time.hour !== "number" || typeof time.minute !== "number") {
+    return false;
+  }
+
+  return (
+    Number.isInteger(time.hour) &&
+    Number.isInteger(time.minute) &&
+    time.hour >= 0 &&
+    time.hour <= 23 &&
+    time.minute >= 0 &&
+    time.minute <= 59
+  );
+};
+
+const getReminderTimes = (profile: ProfileRow) => {
+  if (Array.isArray(profile.reminder_times)) {
+    const times = profile.reminder_times.filter(isValidReminderTime);
+    if (times.length > 0) return times;
+  }
+
+  return [{ hour: profile.reminder_hour, minute: profile.reminder_minute }];
+};
+
+const formatLocalTime = ({ hour, minute }: { hour: number; minute: number }) =>
+  `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
 const chunk = <T>(items: T[], size: number) => {
   const chunks: T[][] = [];
   for (let index = 0; index < items.length; index += size) {
@@ -90,7 +123,7 @@ serve(async (request: Request) => {
     const { data: devices, error: deviceError } = await supabase
       .from("devices")
       .select(
-        "device_id, profile_id, push_token, profiles!inner(id, nickname, reminder_hour, reminder_minute, timezone)",
+        "device_id, profile_id, push_token, profiles!inner(id, nickname, reminder_hour, reminder_minute, reminder_times, timezone)",
       )
       .eq("push_enabled", true)
       .eq("push_permission_status", "granted")
@@ -101,7 +134,12 @@ serve(async (request: Request) => {
 
     const grouped = new Map<
       string,
-      { profile: ProfileRow; localDate: string; tokens: string[] }
+      {
+        profile: ProfileRow;
+        localDate: string;
+        localTime: string;
+        tokens: string[];
+      }
     >();
 
     for (const device of (devices ?? []) as DeviceRow[]) {
@@ -109,20 +147,26 @@ serve(async (request: Request) => {
       if (!profile || !device.push_token) continue;
 
       const localTime = getLocalTimeParts(profile.timezone);
-      if (
-        localTime.hour !== profile.reminder_hour ||
-        localTime.minute !== profile.reminder_minute
-      ) {
+      const matchedReminderTime = getReminderTimes(profile).find(
+        (reminderTime) =>
+          reminderTime.hour === localTime.hour &&
+          reminderTime.minute === localTime.minute,
+      );
+
+      if (!matchedReminderTime) {
         continue;
       }
 
-      const existing = grouped.get(profile.id);
+      const localTimeKey = formatLocalTime(matchedReminderTime);
+      const groupKey = `${profile.id}:${localTime.localDate}:${localTimeKey}`;
+      const existing = grouped.get(groupKey);
       if (existing) {
         existing.tokens.push(device.push_token);
       } else {
-        grouped.set(profile.id, {
+        grouped.set(groupKey, {
           profile,
           localDate: localTime.localDate,
+          localTime: localTimeKey,
           tokens: [device.push_token],
         });
       }
@@ -133,7 +177,7 @@ serve(async (request: Request) => {
     const invalidTokens = new Set<string>();
     const errors: string[] = [];
 
-    for (const { profile, localDate, tokens } of grouped.values()) {
+    for (const { profile, localDate, localTime, tokens } of grouped.values()) {
       const { data: log, error: logError } = await supabase
         .from("notification_logs")
         .insert({
@@ -143,6 +187,7 @@ serve(async (request: Request) => {
           message_trigger: MESSAGE_TRIGGER,
           message_body: MESSAGE_BODY,
           sent_local_date: localDate,
+          sent_local_time: localTime,
         })
         .select("id")
         .single();

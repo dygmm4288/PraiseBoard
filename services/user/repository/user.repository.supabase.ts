@@ -2,7 +2,7 @@ import { supabase } from "@/shared/lib/supabase";
 import { IUserRepository } from "../model/user.interface";
 
 const PROFILE_SELECT =
-  "id, auth_user_id, nickname, mbti, reminder_hour, reminder_minute, timezone, created_at, updated_at, last_login_at";
+  "id, auth_user_id, nickname, mbti, reminder_hour, reminder_minute, reminder_times, timezone, created_at, updated_at, last_login_at";
 
 export const userRepository: IUserRepository = {
   ensureAnonymousSession: async () => {
@@ -42,6 +42,9 @@ export const userRepository: IUserRepository = {
         : {}),
       ...(input.reminderMinute !== undefined
         ? { reminder_minute: input.reminderMinute }
+        : {}),
+      ...(input.reminderTimes !== undefined
+        ? { reminder_times: input.reminderTimes }
         : {}),
       ...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
     };

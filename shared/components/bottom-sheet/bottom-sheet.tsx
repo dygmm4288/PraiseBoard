@@ -19,6 +19,7 @@ type Props = {
   onChangeIndex: (index: number) => void;
   snapPoints?: (string | number)[];
   enablePanDownToClose?: boolean;
+  enableContentPanningGesture?: boolean;
   enableBackdrop?: boolean;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
   androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
@@ -36,6 +37,7 @@ const AppBottomSheet = ({
   keyboardBehavior,
   snapPoints = [...DEFAULT_SNAP_POINTS],
   enablePanDownToClose = true,
+  enableContentPanningGesture = true,
   enableBackdrop = true,
   androidKeyboardInputMode = "adjustResize",
   onRequestClose,
@@ -145,6 +147,7 @@ const AppBottomSheet = ({
       animationConfigs={animationConfigs}
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
+      enableContentPanningGesture={enableContentPanningGesture}
       enableBlurKeyboardOnGesture
       keyboardBehavior={keyboardBehavior}
       keyboardBlurBehavior="restore"

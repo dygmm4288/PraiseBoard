@@ -22,6 +22,7 @@ type TopLevelSheetConfig = {
   initialIndex?: number;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
   androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
+  enableContentPanningGesture?: BottomSheetProps["enableContentPanningGesture"];
   onClose?: () => void;
 };
 
@@ -200,6 +201,9 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
           snapPoints={sheetState.config.snapPoints}
           keyboardBehavior={sheetState.config.keyboardBehavior}
           androidKeyboardInputMode={sheetState.config.androidKeyboardInputMode}
+          enableContentPanningGesture={
+            sheetState.config.enableContentPanningGesture
+          }
           onRequestClose={handleRequestClose}
         >
           {sheetState.config.children}
