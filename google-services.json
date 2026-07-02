@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930935130690",
+    "project_id": "whaledone-6fd26",
+    "storage_bucket": "whaledone-6fd26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930935130690:android:333c0272ca25da87dbbbdb",
+        "android_client_info": {
+          "package_name": "com.whaledone.whaledone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFsXg4v6MpYnAkkxNi-NhHDRgo24CgSRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

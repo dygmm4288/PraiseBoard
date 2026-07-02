@@ -29,6 +29,30 @@ const resolvePermissionStatus = (status: string): PushPermissionStatus => {
   return "undetermined";
 };
 
+const isAndroidFirebaseNotInitializedError = (error: unknown) => {
+  if (Platform.OS !== "android") return false;
+  if (!(error instanceof Error)) return false;
+
+  return error.message.includes("Default FirebaseApp is not initialized");
+};
+
+const hasAndroidFcmConfig = () => {
+  if (Platform.OS !== "android") return true;
+
+  return Boolean(Constants.expoConfig?.android?.googleServicesFile);
+};
+
+let didLogMissingAndroidFcmConfig = false;
+
+const logMissingAndroidFcmConfig = () => {
+  if (!__DEV__ || didLogMissingAndroidFcmConfig) return;
+
+  didLogMissingAndroidFcmConfig = true;
+  console.info(
+    "Android FCM 설정이 없어 푸시 토큰 동기화를 건너뜁니다. google-services.json 설정 후 앱을 다시 빌드하면 토큰이 발급됩니다.",
+  );
+};
+
 const savePushState = async ({
   pushEnabled,
   pushToken,
@@ -75,10 +99,20 @@ const getExpoPushToken = async () => {
     return null;
   }
 
+  if (!hasAndroidFcmConfig()) {
+    logMissingAndroidFcmConfig();
+    return null;
+  }
+
   try {
     const token = await Notifications.getExpoPushTokenAsync({ projectId });
     return token.data;
   } catch (error) {
+    if (isAndroidFirebaseNotInitializedError(error)) {
+      logMissingAndroidFcmConfig();
+      return null;
+    }
+
     console.warn("푸시 토큰 발급에 실패했습니다.", error);
     return null;
   }
@@ -106,11 +140,11 @@ const requestPermissionAndSave = async () => {
 
   const pushToken = await getExpoPushToken();
   await savePushState({
-    pushEnabled: true,
+    pushEnabled: pushToken !== null,
     pushToken,
     permissionStatus: "granted",
   });
-  return true;
+  return pushToken !== null;
 };
 
 export const notification: INotificationService = {
@@ -166,7 +200,7 @@ export const notification: INotificationService = {
       ? await getExpoPushToken()
       : null;
     await savePushState({
-      pushEnabled: currentState.pushEnabled,
+      pushEnabled: currentState.pushEnabled && pushToken !== null,
       pushToken,
       permissionStatus: "granted",
     });

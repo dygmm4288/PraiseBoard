@@ -21,7 +21,8 @@
       "package": "com.whaledone.whaledone",
       "icon": "./assets/images/app-icon.png",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
