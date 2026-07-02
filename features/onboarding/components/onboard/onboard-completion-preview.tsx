@@ -1,4 +1,5 @@
-import { BoardItem, type BoardRecord } from "@/features/board";
+import BoardItem from "@/features/board/components/board-item/board-item";
+import type { BoardRecord } from "@/features/board/types";
 import { AppText } from "@/shared/ui";
 import { useEffect } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
