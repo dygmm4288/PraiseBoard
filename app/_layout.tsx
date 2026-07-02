@@ -18,7 +18,7 @@ import {
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { AppState, Platform, View } from "react-native";
+import { AppState, LogBox, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -28,6 +28,10 @@ import "../global.css";
 
 const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 const FNB_RESERVED_BOTTOM_SPACE = 118;
+
+LogBox.ignoreLogs([
+  "SafeAreaView has been deprecated and will be removed in a future release.",
+]);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -107,8 +111,10 @@ const RootLayoutNav = () => {
             <Stack.Screen name="settings" options={{ headerShown: false }} />
             <Stack.Screen name="stats" options={{ headerShown: false }} />
             <Stack.Screen name="archives" options={{ headerShown: false }} />
-            <Stack.Screen name="(boards)" options={{ headerShown: false }} />
-            <Stack.Screen name="debug" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="debug-settings"
+              options={{ headerShown: false }}
+            />
           </Stack>
         </View>
         {shouldShowFnb && <FnbContainer />}
