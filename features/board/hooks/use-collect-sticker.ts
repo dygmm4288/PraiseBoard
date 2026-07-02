@@ -6,6 +6,7 @@ import {
   BoardTodayAchievement,
   CollectStickerError,
 } from "@/features/board/types";
+import { statsKeys } from "@/features/stats/queries/stats.query.key";
 import {
   whaleMessageKeys,
   whaleMessageService,
@@ -39,6 +40,20 @@ const patchBoardInList = (
 const isBoardListQueryKey = (queryKey: readonly unknown[]) =>
   queryKey[0] === boardKeys.all[0] &&
   (queryKey[1] === "list" || queryKey[1] === "home-list");
+
+const getBoardListProfileId = (queryKey: readonly unknown[]) => {
+  const profileId = queryKey[2];
+
+  return typeof profileId === "string" ? profileId : null;
+};
+
+const isProfileStatsQueryKey = (
+  queryKey: readonly unknown[],
+  profileId: string,
+) =>
+  queryKey[0] === statsKeys.all[0] &&
+  queryKey[1] === "month" &&
+  queryKey[2] === profileId;
 
 type BoardListKind = "all" | "home" | "active" | "completed";
 
@@ -128,6 +143,32 @@ const syncBoardListQueries = (
     });
 };
 
+const resetStatsQueriesForBoardLists = async (
+  queryClient: QueryClient,
+  fallbackProfileId: string,
+) => {
+  const profileIds = new Set<string>([fallbackProfileId]);
+
+  queryClient
+    .getQueryCache()
+    .findAll({
+      predicate: (query) => isBoardListQueryKey(query.queryKey),
+    })
+    .forEach((query) => {
+      const profileId = getBoardListProfileId(query.queryKey);
+      if (profileId) profileIds.add(profileId);
+    });
+
+  await Promise.all(
+    [...profileIds].map((profileId) =>
+      queryClient.resetQueries({
+        predicate: (query) =>
+          isProfileStatsQueryKey(query.queryKey, profileId),
+      }),
+    ),
+  );
+};
+
 export const useCollectSticker = () => {
   const queryClient = useQueryClient();
   const { profileId } = useUser();
@@ -190,6 +231,7 @@ export const useCollectSticker = () => {
           queryKey: boardKeys.todayAchievement(profileId, todayKey),
           refetchType: "active",
         });
+        await resetStatsQueriesForBoardLists(queryClient, profileId);
       }
 
       await queryClient.invalidateQueries({
