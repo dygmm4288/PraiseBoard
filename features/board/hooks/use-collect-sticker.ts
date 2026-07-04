@@ -2,6 +2,7 @@ import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { board } from "@/features/board/service";
 import {
   BoardListResult,
+  BoardRecord,
   BoardStickerSource,
   BoardTodayAchievement,
   CollectStickerError,
@@ -22,18 +23,60 @@ import {
 } from "@tanstack/react-query";
 import { boardKeys } from "../queries/board.query.key";
 
+type BoardListItem = BoardListResult["items"][number];
+type BoardListKind = "all" | "home" | "active" | "completed";
+
+const getTime = (dateValue: string | null) => {
+  if (!dateValue) return Number.NEGATIVE_INFINITY;
+
+  const time = new Date(dateValue).getTime();
+
+  return Number.isNaN(time) ? Number.NEGATIVE_INFINITY : time;
+};
+
+const compareDateDesc = (
+  aDateValue: string | null,
+  bDateValue: string | null,
+) => getTime(bDateValue) - getTime(aDateValue);
+
+const getHomeBoardSortRank = (board: BoardRecord) => {
+  if (board.status === "completed") return 2;
+  if (board.todayStickerCount >= board.limitCount) return 1;
+
+  return 0;
+};
+
+const sortBoardListItems = (items: BoardListItem[], kind: BoardListKind) => {
+  return [...items].sort((a, b) => {
+    if (kind === "home") {
+      const rankDiff = getHomeBoardSortRank(a) - getHomeBoardSortRank(b);
+
+      if (rankDiff !== 0) return rankDiff;
+    }
+
+    if (kind === "completed") {
+      return compareDateDesc(a.completedAt, b.completedAt);
+    }
+
+    return compareDateDesc(a.createdAt, b.createdAt);
+  });
+};
+
 const patchBoardInList = (
   boardList: BoardListResult | null | undefined,
   boardId: string,
-  patch: Partial<BoardListResult["items"][number]>,
+  patch: Partial<BoardListItem>,
+  kind: BoardListKind,
 ) => {
   if (!boardList) return boardList;
 
+  const items = boardList.items.map((board) =>
+    board.id === boardId ? { ...board, ...patch } : board,
+  );
+
   return {
     ...boardList,
-    items: boardList.items.map((board) =>
-      board.id === boardId ? { ...board, ...patch } : board,
-    ),
+    items: sortBoardListItems(items, kind),
   };
 };
 
@@ -55,8 +98,6 @@ const isProfileStatsQueryKey = (
   queryKey[1] === "month" &&
   queryKey[2] === profileId;
 
-type BoardListKind = "all" | "home" | "active" | "completed";
-
 const getBoardListKind = (queryKey: readonly unknown[]): BoardListKind | null => {
   if (queryKey[0] !== boardKeys.all[0]) return null;
   if (queryKey[1] === "home-list") return "home";
@@ -69,7 +110,7 @@ const getBoardListKind = (queryKey: readonly unknown[]): BoardListKind | null =>
 
 const shouldIncludeBoard = (
   kind: BoardListKind,
-  board: BoardListResult["items"][number],
+  board: BoardListItem,
 ) => {
   if (kind === "active") return board.status === "active";
   if (kind === "completed") return board.status === "completed";
@@ -79,7 +120,7 @@ const shouldIncludeBoard = (
 
 const upsertBoardInList = (
   boardList: BoardListResult | null | undefined,
-  updatedBoard: BoardListResult["items"][number],
+  updatedBoard: BoardListItem,
   kind: BoardListKind,
 ) => {
   if (!boardList) return boardList;
@@ -104,15 +145,18 @@ const upsertBoardInList = (
   if (exists) {
     return {
       ...boardList,
-      items: boardList.items.map((board) =>
-        board.id === updatedBoard.id ? updatedBoard : board,
+      items: sortBoardListItems(
+        boardList.items.map((board) =>
+          board.id === updatedBoard.id ? updatedBoard : board,
+        ),
+        kind,
       ),
     };
   }
 
   return {
     ...boardList,
-    items: [updatedBoard, ...boardList.items],
+    items: sortBoardListItems([updatedBoard, ...boardList.items], kind),
     pageInfo: {
       ...boardList.pageInfo,
       totalCount:
@@ -249,19 +293,32 @@ export const useCollectSticker = () => {
     ) => {
       if (error.reason === "DAILY_LIMIT_EXCEEDED") {
         if (profileId) {
-          queryClient.setQueriesData<BoardListResult | null>(
-            {
+          queryClient
+            .getQueryCache()
+            .findAll({
               predicate: (query) => isBoardListQueryKey(query.queryKey),
-            },
-            (boardList) =>
-              patchBoardInList(boardList, variables.boardId, {
-                todayStickerCount:
-                  error.todayStickerCount ?? error.limitCount ?? 0,
-                ...(typeof error.limitCount === "number"
-                  ? { limitCount: error.limitCount }
-                  : {}),
-              }),
-          );
+            })
+            .forEach((query) => {
+              const kind = getBoardListKind(query.queryKey);
+              if (!kind) return;
+
+              queryClient.setQueryData<BoardListResult | null>(
+                query.queryKey as QueryKey,
+                (boardList) =>
+                  patchBoardInList(
+                    boardList,
+                    variables.boardId,
+                    {
+                      todayStickerCount:
+                        error.todayStickerCount ?? error.limitCount ?? 0,
+                      ...(typeof error.limitCount === "number"
+                        ? { limitCount: error.limitCount }
+                        : {}),
+                    },
+                    kind,
+                  ),
+              );
+            });
 
           await Promise.all([
             queryClient.invalidateQueries({

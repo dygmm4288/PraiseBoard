@@ -47,10 +47,18 @@ export const board: IBoardService = {
   },
 
   async getActiveBoards() {
-    return boardRepository.getBoards({ status: "active" });
+    return boardRepository.getBoards({
+      status: "active",
+      orderBy: "created_at",
+      order: "desc",
+    });
   },
 
   async getCompletedBoards() {
-    return boardRepository.getBoards({ status: "completed" });
+    return boardRepository.getBoards({
+      status: "completed",
+      orderBy: "completed_at",
+      order: "desc",
+    });
   },
 };

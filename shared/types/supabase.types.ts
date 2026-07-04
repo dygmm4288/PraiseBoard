@@ -354,14 +354,16 @@ export type Database = {
         Args: never
         Returns: {
           created_at: string
+          completed_at: string | null
           current_count: number
           current_streak: number
           emoji: string
+          home_sort_rank: number
           id: string
-          latest_sticker_collected_at: string
+          latest_sticker_collected_at: string | null
           limit_count: number
           max_streak: number
-          reward_memo: string
+          reward_memo: string | null
           status: Database["public"]["Enums"]["board_status"]
           target_count: number
           title: string

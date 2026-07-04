@@ -254,7 +254,9 @@ export const boardRepository: IBoardRepository = {
         `and(status.eq.completed,completed_at.gte.${start.toISOString()},completed_at.lt.${end.toISOString()})`,
       ].join(","),
     );
-    applyBoardListOrder(res);
+    res
+      .order("home_sort_rank", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: false, nullsFirst: false });
 
     const { data, error, count } = await res;
 

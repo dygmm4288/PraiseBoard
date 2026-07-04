@@ -128,7 +128,11 @@ export type BoardListParams = {
   status?: BoardStatus;
   page?: number;
   limit?: number;
-  orderBy?: "created_at" | "latest_sticker_collected_at";
+  orderBy?:
+    | "created_at"
+    | "completed_at"
+    | "latest_sticker_collected_at"
+    | "home_sort_rank";
   order?: "asc" | "desc";
 };
 
