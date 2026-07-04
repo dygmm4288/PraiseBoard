@@ -1,6 +1,6 @@
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Keyboard, View } from "react-native";
+import { View } from "react-native";
 import AlarmTimeSheetContent from "../components/sheets/alarm-time-sheet-content";
 import NameEditSheetContent from "../components/sheets/name-edit-sheet-content";
 import {
@@ -71,7 +71,6 @@ export const useSettingsSheets = () => {
   }, [primaryReminderTime.hour, primaryReminderTime.minute]);
 
   const closeNameSheet = useCallback(() => {
-    Keyboard.dismiss();
     setEditingSheet(null);
   }, []);
 

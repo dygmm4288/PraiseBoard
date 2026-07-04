@@ -9,8 +9,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import { KeyboardController } from "react-native-keyboard-controller";
 
 type DismissTopLevelSheetOptions = {
   runOnClose?: boolean;
@@ -85,8 +87,14 @@ const getClosedSheetState = (): TopLevelSheetState => ({
 export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const [sheetState, setSheetState] =
     useState<TopLevelSheetState>(getClosedSheetState);
+  const sheetStateRef = useRef(sheetState);
+  const dismissRequestIdRef = useRef(0);
+
+  sheetStateRef.current = sheetState;
 
   const presentTopLevelSheet = useCallback((config: TopLevelSheetConfig) => {
+    dismissRequestIdRef.current += 1;
+
     setSheetState((current) => {
       if (config.snapPoints.length === 0) {
         return getClosedSheetState();
@@ -105,17 +113,53 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
 
   const dismissTopLevelSheet = useCallback(
     (options?: DismissTopLevelSheetOptions) => {
-      setSheetState((current) => {
-        if (!current.config) {
-          return current;
+      const current = sheetStateRef.current;
+
+      if (!current.config) {
+        return;
+      }
+
+      const closeSheet = () => {
+        setSheetState((current) => {
+          if (!current.config) {
+            return current;
+          }
+
+          return {
+            ...current,
+            index: -1,
+            closeEffect: null,
+            runOnCloseAfterDismiss: options?.runOnClose ?? false,
+          };
+        });
+      };
+
+      if (!KeyboardController.isVisible()) {
+        closeSheet();
+        return;
+      }
+
+      const requestId = dismissRequestIdRef.current + 1;
+      dismissRequestIdRef.current = requestId;
+      const targetConfig = current.config;
+
+      KeyboardController.dismiss().finally(() => {
+        if (dismissRequestIdRef.current !== requestId) {
+          return;
         }
 
-        return {
-          ...current,
-          index: -1,
-          closeEffect: null,
-          runOnCloseAfterDismiss: options?.runOnClose ?? false,
-        };
+        setSheetState((current) => {
+          if (!current.config || current.config !== targetConfig) {
+            return current;
+          }
+
+          return {
+            ...current,
+            index: -1,
+            closeEffect: null,
+            runOnCloseAfterDismiss: options?.runOnClose ?? false,
+          };
+        });
       });
     },
     [],
