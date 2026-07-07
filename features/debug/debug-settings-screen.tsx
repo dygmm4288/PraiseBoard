@@ -1,8 +1,16 @@
 import { useHomeBoardsQuery } from "@/features/board";
+import { localStorage } from "@/infra/storage";
+import {
+  notification,
+  PushState,
+  PushTokenDebugInfo,
+} from "@/services/notification";
 import { UserFlowOverrideMode, useUser } from "@/services/user";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
+import * as Notifications from "expo-notifications";
 import { Stack, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 
 const USER_FLOW_OPTIONS: {
@@ -61,6 +69,168 @@ const StatusRow = ({ label, value }: { label: string; value: string }) => {
       <AppText variant="button1" className="text-gray-700">
         {value}
       </AppText>
+    </View>
+  );
+};
+
+const formatNullable = (value: string | null | undefined) => value ?? "-";
+
+const formatPushToken = (token: string | null | undefined) => {
+  if (!token) return "-";
+  if (token.length <= 28) return token;
+
+  return `${token.slice(0, 18)}...${token.slice(-8)}`;
+};
+
+type NotificationDebugState = {
+  profileId: string | null;
+  deviceId: string | null;
+  osPermissionStatus: string;
+  pushState: PushState | null;
+  tokenDebugInfo: PushTokenDebugInfo | null;
+  errorMessage: string | null;
+};
+
+const NotificationDebugCard = () => {
+  const [state, setState] = useState<NotificationDebugState>({
+    profileId: null,
+    deviceId: null,
+    osPermissionStatus: "-",
+    pushState: null,
+    tokenDebugInfo: null,
+    errorMessage: null,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDiagnosingToken, setIsDiagnosingToken] = useState(false);
+
+  const refresh = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const [profileId, deviceId, permissions, pushState] = await Promise.all([
+        localStorage.getItem("profile_id"),
+        localStorage.getItem("device_id"),
+        Notifications.getPermissionsAsync(),
+        notification.getPushStateFromSettings().catch(() => null),
+      ]);
+
+      setState({
+        profileId,
+        deviceId,
+        osPermissionStatus: permissions.status,
+        pushState,
+        tokenDebugInfo: state.tokenDebugInfo,
+        errorMessage: pushState ? null : "push state를 불러오지 못했어요.",
+      });
+    } catch (error) {
+      console.error("알림 디버그 상태 조회 중 오류 발생", error);
+      setState((current) => ({
+        ...current,
+        errorMessage: "알림 디버그 상태 조회 중 오류가 발생했어요.",
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [state.tokenDebugInfo]);
+
+  const diagnosePushToken = useCallback(async () => {
+    try {
+      setIsDiagnosingToken(true);
+
+      const tokenDebugInfo = await notification.getPushTokenDebugInfo();
+
+      setState((current) => ({
+        ...current,
+        tokenDebugInfo,
+        errorMessage: tokenDebugInfo.errorMessage,
+      }));
+    } catch (error) {
+      console.error("푸시 토큰 진단 중 오류 발생", error);
+      setState((current) => ({
+        ...current,
+        errorMessage: "푸시 토큰 진단 중 오류가 발생했어요.",
+      }));
+    } finally {
+      setIsDiagnosingToken(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  return (
+    <View className="rounded-[28px] bg-white px-5 py-5">
+      <AppText variant="button1" className="text-gray-700">
+        알림 디버그
+      </AppText>
+      <AppText variant="body3" className="mt-2 text-gray-500">
+        현재 기기와 프로필 기준으로 저장된 푸시 상태입니다.
+      </AppText>
+      <View className="mt-4 gap-3">
+        <StatusRow label="profile_id" value={formatNullable(state.profileId)} />
+        <StatusRow label="device_id" value={formatNullable(state.deviceId)} />
+        <StatusRow label="OS 권한" value={state.osPermissionStatus} />
+        <StatusRow
+          label="push_enabled"
+          value={
+            state.pushState ? formatBooleanState(state.pushState.pushEnabled) : "-"
+          }
+        />
+        <StatusRow
+          label="push_permission"
+          value={state.pushState?.pushPermissionStatus ?? "-"}
+        />
+        <StatusRow
+          label="push_token"
+          value={formatPushToken(state.pushState?.pushToken)}
+        />
+        <StatusRow
+          label="debug platform"
+          value={state.tokenDebugInfo?.platform ?? "-"}
+        />
+        <StatusRow
+          label="debug projectId"
+          value={formatNullable(state.tokenDebugInfo?.projectId)}
+        />
+        <StatusRow
+          label="debug FCM config"
+          value={
+            state.tokenDebugInfo
+              ? formatBooleanState(state.tokenDebugInfo.hasAndroidFcmConfig)
+              : "-"
+          }
+        />
+        <StatusRow
+          label="debug token"
+          value={formatPushToken(state.tokenDebugInfo?.token)}
+        />
+      </View>
+      {state.errorMessage ? (
+        <AppText variant="body3" className="mt-3 text-red">
+          {state.errorMessage}
+        </AppText>
+      ) : null}
+      <AppButton
+        variant="tertiary"
+        className="mt-4"
+        disabled={isLoading}
+        onPress={() => {
+          void refresh();
+        }}
+      >
+        {isLoading ? "새로고침 중" : "알림 상태 새로고침"}
+      </AppButton>
+      <AppButton
+        variant="secondary"
+        className="mt-3"
+        disabled={isDiagnosingToken}
+        onPress={() => {
+          void diagnosePushToken();
+        }}
+      >
+        {isDiagnosingToken ? "진단 중" : "푸시 토큰 진단"}
+      </AppButton>
     </View>
   );
 };
@@ -132,6 +302,8 @@ export const DebugSettingsScreenContent = ({
               <StatusRow label="현재 진입 화면" value={currentRoute} />
             </View>
           </View>
+
+          <NotificationDebugCard />
 
           <View className="rounded-[28px] bg-white px-5 py-5">
             <AppText variant="button1" className="text-gray-700">

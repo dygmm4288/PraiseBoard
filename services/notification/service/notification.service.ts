@@ -5,16 +5,26 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import {
   INotificationService,
+  PushTokenDebugInfo,
   PushPermissionStatus,
 } from "../model/notification.interface";
 import { notificationRepository } from "../repository/notification.repository";
 
-const getDeviceId = async () => {
-  const deviceId = await localStorage.getItem("device_id");
+const getDeviceIdentity = async () => {
+  const [profileId, deviceId] = await Promise.all([
+    localStorage.getItem("profile_id"),
+    localStorage.getItem("device_id"),
+  ]);
+
+  if (!profileId) {
+    throw new Error("profile_id is required to save notification permission.");
+  }
+
   if (!deviceId) {
     throw new Error("device_id is required to save notification permission.");
   }
-  return deviceId;
+
+  return { profileId, deviceId };
 };
 
 const resolvePlatform = () => {
@@ -29,28 +39,10 @@ const resolvePermissionStatus = (status: string): PushPermissionStatus => {
   return "undetermined";
 };
 
-const isAndroidFirebaseNotInitializedError = (error: unknown) => {
-  if (Platform.OS !== "android") return false;
-  if (!(error instanceof Error)) return false;
-
-  return error.message.includes("Default FirebaseApp is not initialized");
-};
-
-const hasAndroidFcmConfig = () => {
+const hasRuntimeAndroidFcmConfig = () => {
   if (Platform.OS !== "android") return true;
 
   return Boolean(Constants.expoConfig?.android?.googleServicesFile);
-};
-
-let didLogMissingAndroidFcmConfig = false;
-
-const logMissingAndroidFcmConfig = () => {
-  if (!__DEV__ || didLogMissingAndroidFcmConfig) return;
-
-  didLogMissingAndroidFcmConfig = true;
-  console.info(
-    "Android FCM 설정이 없어 푸시 토큰 동기화를 건너뜁니다. google-services.json 설정 후 앱을 다시 빌드하면 토큰이 발급됩니다.",
-  );
 };
 
 const savePushState = async ({
@@ -62,11 +54,15 @@ const savePushState = async ({
   pushToken: string | null;
   permissionStatus: PushPermissionStatus;
 }) => {
-  const deviceId = await getDeviceId();
-  const currentState = await notificationRepository.getPushState(deviceId);
+  const { profileId, deviceId } = await getDeviceIdentity();
+  const currentState = await notificationRepository.getPushState(
+    profileId,
+    deviceId,
+  );
   const now = new Date().toISOString();
 
   await notificationRepository.savePushToken({
+    profileId,
     deviceId,
     pushToken,
     pushEnabled,
@@ -99,22 +95,64 @@ const getExpoPushToken = async () => {
     return null;
   }
 
-  if (!hasAndroidFcmConfig()) {
-    logMissingAndroidFcmConfig();
-    return null;
-  }
-
   try {
     const token = await Notifications.getExpoPushTokenAsync({ projectId });
     return token.data;
   } catch (error) {
-    if (isAndroidFirebaseNotInitializedError(error)) {
-      logMissingAndroidFcmConfig();
-      return null;
-    }
-
     console.warn("푸시 토큰 발급에 실패했습니다.", error);
     return null;
+  }
+};
+
+const getPushTokenDebugInfo = async (): Promise<PushTokenDebugInfo> => {
+  const permissions = await Notifications.getPermissionsAsync();
+  const projectId =
+    Constants.easConfig?.projectId ??
+    Constants.expoConfig?.extra?.eas?.projectId ??
+    null;
+
+  if (Platform.OS === "web") {
+    return {
+      platform: "web",
+      projectId,
+      hasAndroidFcmConfig: hasRuntimeAndroidFcmConfig(),
+      permissionStatus: resolvePermissionStatus(permissions.status),
+      token: null,
+      errorMessage: "web platform does not support Expo push token.",
+    };
+  }
+
+  if (!projectId) {
+    return {
+      platform: resolvePlatform(),
+      projectId,
+      hasAndroidFcmConfig: hasRuntimeAndroidFcmConfig(),
+      permissionStatus: resolvePermissionStatus(permissions.status),
+      token: null,
+      errorMessage: "EAS projectId를 찾을 수 없습니다.",
+    };
+  }
+
+  try {
+    const token = await Notifications.getExpoPushTokenAsync({ projectId });
+
+    return {
+      platform: resolvePlatform(),
+      projectId,
+      hasAndroidFcmConfig: hasRuntimeAndroidFcmConfig(),
+      permissionStatus: resolvePermissionStatus(permissions.status),
+      token: token.data,
+      errorMessage: null,
+    };
+  } catch (error) {
+    return {
+      platform: resolvePlatform(),
+      projectId,
+      hasAndroidFcmConfig: hasRuntimeAndroidFcmConfig(),
+      permissionStatus: resolvePermissionStatus(permissions.status),
+      token: null,
+      errorMessage: error instanceof Error ? error.message : String(error),
+    };
   }
 };
 
@@ -140,7 +178,7 @@ const requestPermissionAndSave = async () => {
 
   const pushToken = await getExpoPushToken();
   await savePushState({
-    pushEnabled: pushToken !== null,
+    pushEnabled: true,
     pushToken,
     permissionStatus: "granted",
   });
@@ -164,8 +202,15 @@ export const notification: INotificationService = {
     return requestPermissionAndSave();
   },
   async getPushEnabledFromSettings() {
-    const deviceId = await getDeviceId();
-    return notificationRepository.getPushEnabled(deviceId);
+    const { profileId, deviceId } = await getDeviceIdentity();
+    return notificationRepository.getPushEnabled(profileId, deviceId);
+  },
+  async getPushStateFromSettings() {
+    const { profileId, deviceId } = await getDeviceIdentity();
+    return notificationRepository.getPushState(profileId, deviceId);
+  },
+  async getPushTokenDebugInfo() {
+    return getPushTokenDebugInfo();
   },
   async setPushEnabledFromSettings(enabled) {
     if (!enabled) {
@@ -184,8 +229,11 @@ export const notification: INotificationService = {
   async syncPushToken() {
     await ensureAndroidChannels();
 
-    const deviceId = await getDeviceId();
-    const currentState = await notificationRepository.getPushState(deviceId);
+    const { profileId, deviceId } = await getDeviceIdentity();
+    const currentState = await notificationRepository.getPushState(
+      profileId,
+      deviceId,
+    );
     const permissions = await Notifications.getPermissionsAsync();
     if (permissions.status !== "granted") {
       await savePushState({
@@ -200,7 +248,7 @@ export const notification: INotificationService = {
       ? await getExpoPushToken()
       : null;
     await savePushState({
-      pushEnabled: currentState.pushEnabled && pushToken !== null,
+      pushEnabled: currentState.pushEnabled,
       pushToken,
       permissionStatus: "granted",
     });

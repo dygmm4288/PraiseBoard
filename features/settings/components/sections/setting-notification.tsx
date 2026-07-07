@@ -3,7 +3,7 @@ import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
-import { AppState, Pressable, View } from "react-native";
+import { AppState, Linking, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingToggle from "../setting-toggle";
 
@@ -12,8 +12,17 @@ const TOP_TOAST_OPTIONS = {
 };
 
 const NoSettingNotification = () => {
+  const openNotificationSettings = async () => {
+    try {
+      await Linking.openSettings();
+    } catch (error) {
+      console.error("기기 알림 설정 화면을 여는 중 오류 발생", error);
+      toast.error("기기 설정 화면을 열지 못했어요.", TOP_TOAST_OPTIONS);
+    }
+  };
+
   return (
-    <View className="w-full px-[20px]">
+    <View className="w-full gap-[10px] px-[20px]">
       <AppText
         variant="body3"
         className="text-[14px] leading-[20px] text-black"
@@ -21,6 +30,18 @@ const NoSettingNotification = () => {
         {`기기 설정에서 알림 권한을 허용해 주세요
 구슬 모으기를 잊지 않도록 알림을 보내드려요`}
       </AppText>
+      <Pressable
+        className="h-[34px] self-start justify-center rounded-[100px] bg-primary-10 px-[12px]"
+        onPress={openNotificationSettings}
+      >
+        <AppText
+          variant="custom"
+          weight="medium"
+          className="text-[13px] leading-[20px] text-primary-50"
+        >
+          기기 설정 열기
+        </AppText>
+      </Pressable>
     </View>
   );
 };
@@ -44,14 +65,14 @@ const SettingNotification = ({
 
     const syncNotificationState = async () => {
       try {
-        const [enabled, permissions] = await Promise.all([
-          notification.getPushEnabledFromSettings(),
+        const [pushState, permissions] = await Promise.all([
+          notification.getPushStateFromSettings(),
           Notifications.getPermissionsAsync(),
         ]);
 
         if (!isMounted) return;
 
-        setIsNotifications(enabled);
+        setIsNotifications(pushState.pushEnabled);
         setHasPermission(permissions.status === "granted");
       } catch (error) {
         console.error("알림 설정 상태 조회 중 오류 발생", error);
@@ -92,12 +113,12 @@ const SettingNotification = ({
     try {
       await notification.setPushEnabledFromSettings(nextValue);
 
-      const [enabled, permissions] = await Promise.all([
-        notification.getPushEnabledFromSettings(),
+      const [pushState, permissions] = await Promise.all([
+        notification.getPushStateFromSettings(),
         Notifications.getPermissionsAsync(),
       ]);
 
-      setIsNotifications(enabled);
+      setIsNotifications(pushState.pushEnabled);
       setHasPermission(permissions.status === "granted");
 
       if (!nextValue) {
@@ -112,9 +133,17 @@ const SettingNotification = ({
         return;
       }
 
-      if (!enabled) {
+      if (!pushState.pushEnabled) {
         toast.error(
           "알림을 켜지 못했어요. 잠시 후 다시 시도해 주세요.",
+          TOP_TOAST_OPTIONS,
+        );
+        return;
+      }
+
+      if (!pushState.pushToken) {
+        toast.error(
+          "알림 권한은 켰지만 푸시 토큰을 발급받지 못했어요. 앱을 다시 실행한 뒤 확인해 주세요.",
           TOP_TOAST_OPTIONS,
         );
       }
