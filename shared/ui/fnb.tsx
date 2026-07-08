@@ -267,7 +267,7 @@ const Fnb = <T extends string>({
   return (
     <View
       className={cn(
-        "absolute left-0 right-0 items-center bg-white px-[21px]",
+        "absolute left-0 right-0 items-center px-[21px]",
         className,
       )}
       pointerEvents="box-none"

@@ -1,12 +1,12 @@
+import { Icon } from "@/assets/icons";
 import ArchiveDetailItem from "@/features/archive/components/detail/archive-detail-item";
 import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
 import { archive } from "@/features/archive/service";
 import { boardKeys, useBoardSheet } from "@/features/board";
-import { Icon } from "@/assets/icons";
+import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { AppButton, AppText, Screen } from "@/shared/ui";
-import useTodayKey from "@/shared/hooks/use-today-key";
 import { cn } from "@/shared/utils/cn";
 import { formatMonthKey } from "@/shared/utils/date";
 import { useQueryClient } from "@tanstack/react-query";
@@ -94,7 +94,7 @@ const ArchiveDetailScreen = () => {
         </View>
       </View>
       <ScrollView
-        className="flex-1 overflow-visible"
+        className="flex-1"
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingTop: 12,

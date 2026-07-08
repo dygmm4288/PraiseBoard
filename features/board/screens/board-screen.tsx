@@ -20,7 +20,7 @@ export const BoardScreenContent = () => {
     <>
       <ScreenHeader title="홈" className="px-screen" />
       <ScrollView
-        className="flex-1"
+        className="flex-1 "
         contentContainerStyle={{
           gap: 12,
           flexGrow: 1,

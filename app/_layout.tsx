@@ -1,7 +1,7 @@
 import { FnbContainer, useRootBackExit } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
-import { ToastKeyboardSync, toastConfig } from "@/shared/toasts/toast";
+import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
   focusManager,
@@ -27,7 +27,7 @@ import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
 const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
-const FNB_RESERVED_BOTTOM_SPACE = 118;
+const FNB_RESERVED_BOTTOM_SPACE = 80;
 
 LogBox.ignoreLogs([
   "SafeAreaView has been deprecated and will be removed in a future release.",
