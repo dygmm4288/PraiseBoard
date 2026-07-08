@@ -1,3 +1,4 @@
+import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import {
   BOARD_CREATE_DEFAULT_VALUES,
   BoardCreateFormValues,
@@ -6,6 +7,7 @@ import {
 } from "@/features/board/schema";
 import { board } from "@/features/board/service";
 import { BoardListResult, BoardRecord } from "@/features/board/types";
+import { statsKeys } from "@/features/stats/queries/stats.query.key";
 import { useUser } from "@/services/user";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
@@ -60,8 +62,7 @@ export const useCreateBoard = () => {
       return board.createBoard(payload);
     },
     onSuccess: async (createdBoard) => {
-      resetBoard();
-
+      toast.success("등록 중 입니다");
       if (profileId) {
         queryClient.setQueryData<BoardListResult | null>(
           boardKeys.activeLists(profileId, todayKey),
@@ -79,8 +80,18 @@ export const useCreateBoard = () => {
 
       await queryClient.invalidateQueries({
         queryKey: boardKeys.all,
-        refetchType: "active",
+        refetchType: "all",
       });
+      await queryClient.invalidateQueries({
+        queryKey: statsKeys.all,
+        refetchType: "all",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: archiveKeys.all,
+        refetchType: "all",
+      });
+
+      resetBoard();
     },
     onError: (error) => {
       // TODO: error handling
