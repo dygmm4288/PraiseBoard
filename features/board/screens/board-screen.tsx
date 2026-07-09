@@ -16,6 +16,8 @@ export const BoardScreenContent = () => {
   const { previewBoard, showCompletionPreview, closePreview } =
     useHomeCompletionPreview({ boards: homeBoards });
 
+  const showPreviewBoard = !!(showCompletionPreview && previewBoard);
+
   return (
     <>
       <ScreenHeader title="홈" className="px-screen" />
@@ -32,9 +34,9 @@ export const BoardScreenContent = () => {
       >
         <BoardHomeWhaleMessage />
         <BoardToday />
-        <BoardList />
+        <BoardList showPreviewBoard={showPreviewBoard} />
       </ScrollView>
-      {showCompletionPreview && previewBoard ? (
+      {showPreviewBoard ? (
         <OnboardCompletionPreview
           nickname={nickname}
           board={previewBoard}

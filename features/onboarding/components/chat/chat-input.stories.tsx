@@ -24,7 +24,7 @@ const meta = {
     value: "",
     onChangeText: fn(),
     onSend: fn(),
-    placeholder: "이름을 알려주세요",
+    placeholder: "나는___야",
   },
   argTypes: {},
 } satisfies Meta<typeof ChatInput>;

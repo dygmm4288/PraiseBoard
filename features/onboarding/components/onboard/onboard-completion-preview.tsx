@@ -19,16 +19,12 @@ type Props = {
   onDone?: () => void;
 };
 
-const OnboardCompletionPreview = ({
-  nickname,
-  board,
-  onDone,
-}: Props) => {
+const OnboardCompletionPreview = ({ nickname, board, onDone }: Props) => {
   const { height } = useWindowDimensions();
   const settled = useSharedValue(0);
   const displayName = nickname?.trim() || "사용자";
   const cardStartTop = Math.max(340, height * 0.48);
-  const cardEndTop = 286;
+  const cardEndTop = 300;
   const titleStartTop = cardStartTop - 88;
 
   useEffect(() => {

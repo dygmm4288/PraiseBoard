@@ -4,8 +4,10 @@ import { View } from "react-native";
 import { useHomeBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
-
-const BoardList = () => {
+type Props = {
+  showPreviewBoard: boolean;
+};
+const BoardList = ({ showPreviewBoard }: Props) => {
   const { profileId } = useUser();
   const { isLoading, data, error } = useHomeBoardsQuery(profileId);
 
@@ -23,9 +25,10 @@ const BoardList = () => {
 
   return (
     <View className="flex-grow">
-      {data?.map((board) => (
-        <BoardItem key={board.id} board={board} actionType="collect" />
-      ))}
+      {!showPreviewBoard &&
+        data?.map((board) => (
+          <BoardItem key={board.id} board={board} actionType="collect" />
+        ))}
       {data?.length === 0 && <BoardEmptyItem />}
     </View>
   );
