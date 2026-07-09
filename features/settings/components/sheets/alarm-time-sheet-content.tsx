@@ -6,13 +6,37 @@ import {
 } from "@/features/settings/hooks/use-alarm-time-draft";
 import { AppText } from "@/shared/ui";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { ReactNode } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import SettingsSheetHeader from "./settings-sheet-header";
 
 const PICKER_COLUMN_HEIGHT = 181;
 const PICKER_COLUMN_WIDTH = 90;
+const PICKER_CELL_HEIGHT = 42;
 const PICKER_CELL_GAP = 9;
+const PICKER_ITEM_HEIGHT = PICKER_CELL_HEIGHT + PICKER_CELL_GAP;
+
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};
+
+const getSelectedScrollOffset = ({
+  itemCount,
+  selectedIndex,
+}: {
+  itemCount: number;
+  selectedIndex: number;
+}) => {
+  const contentHeight =
+    itemCount * PICKER_CELL_HEIGHT + (itemCount - 1) * PICKER_CELL_GAP;
+  const maxOffset = Math.max(contentHeight - PICKER_COLUMN_HEIGHT, 0);
+  const centeredOffset =
+    selectedIndex * PICKER_ITEM_HEIGHT -
+    (PICKER_COLUMN_HEIGHT - PICKER_CELL_HEIGHT) / 2;
+
+  return clamp(centeredOffset, 0, maxOffset);
+};
 
 const PickerCell = ({
   label,
@@ -60,13 +84,50 @@ const PickerStaticColumn = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const PickerScrollColumn = ({ children }: { children: ReactNode }) => {
+const PickerScrollColumn = ({
+  children,
+  itemCount,
+  selectedIndex,
+}: {
+  children: ReactNode;
+  itemCount: number;
+  selectedIndex: number;
+}) => {
+  const scrollViewRef = useRef<ScrollView>(null);
+  const selectedScrollOffset = useMemo(
+    () => getSelectedScrollOffset({ itemCount, selectedIndex }),
+    [itemCount, selectedIndex],
+  );
+
+  const scrollToSelectedValue = useCallback(
+    (animated = false) => {
+      scrollViewRef.current?.scrollTo({
+        y: selectedScrollOffset,
+        animated,
+      });
+    },
+    [selectedScrollOffset],
+  );
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      scrollToSelectedValue();
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [scrollToSelectedValue]);
+
   return (
     <BottomSheetScrollView
+      ref={scrollViewRef}
       style={{ height: PICKER_COLUMN_HEIGHT, width: PICKER_COLUMN_WIDTH }}
+      contentOffset={{ x: 0, y: selectedScrollOffset }}
       contentContainerStyle={{ gap: PICKER_CELL_GAP }}
       keyboardShouldPersistTaps="handled"
       nestedScrollEnabled
+      onContentSizeChange={() => scrollToSelectedValue()}
       showsVerticalScrollIndicator={false}
     >
       {children}
@@ -114,7 +175,10 @@ const AlarmTimeSheetContent = ({
               />
             ))}
           </PickerStaticColumn>
-          <PickerScrollColumn>
+          <PickerScrollColumn
+            itemCount={ALARM_HOURS.length}
+            selectedIndex={ALARM_HOURS.indexOf(alarmHour)}
+          >
             {ALARM_HOURS.map((hour) => (
               <PickerCell
                 key={hour}
@@ -124,7 +188,10 @@ const AlarmTimeSheetContent = ({
               />
             ))}
           </PickerScrollColumn>
-          <PickerScrollColumn>
+          <PickerScrollColumn
+            itemCount={ALARM_MINUTES.length}
+            selectedIndex={ALARM_MINUTES.indexOf(alarmMinute)}
+          >
             {ALARM_MINUTES.map((minute) => (
               <PickerCell
                 key={minute}
