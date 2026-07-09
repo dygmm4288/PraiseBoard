@@ -23,8 +23,27 @@ const getEnv = (key: string) => {
   return value;
 };
 
+const getSupabaseServiceKey = () => {
+  const legacyServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (legacyServiceRoleKey) return legacyServiceRoleKey;
+
+  const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (!secretKeys) throw new Error("SUPABASE_SECRET_KEYS is required");
+
+  const parsed = JSON.parse(secretKeys) as Record<string, string>;
+  const defaultSecretKey = parsed.default;
+  if (!defaultSecretKey) {
+    throw new Error("SUPABASE_SECRET_KEYS.default is required");
+  }
+
+  return defaultSecretKey;
+};
+
 const authorize = (request: Request) => {
   const cronSecret = getEnv("CRON_SECRET");
+  const schedulerSecret = request.headers.get("x-cron-secret");
+  if (schedulerSecret) return schedulerSecret === cronSecret;
+
   return request.headers.get("authorization") === `Bearer ${cronSecret}`;
 };
 
@@ -36,7 +55,7 @@ serve(async (request: Request) => {
 
     const supabase = createClient(
       getEnv("SUPABASE_URL"),
-      getEnv("SUPABASE_SERVICE_ROLE_KEY"),
+      getSupabaseServiceKey(),
       { auth: { persistSession: false } },
     );
 
