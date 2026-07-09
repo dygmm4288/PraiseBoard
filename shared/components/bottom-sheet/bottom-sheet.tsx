@@ -9,7 +9,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, Pressable, StyleSheet } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
@@ -45,16 +44,12 @@ const AppBottomSheet = ({
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
   const lastEmittedIndexRef = useRef<number | null>(null);
-  const controlledIndexRef = useRef(index);
-  const restoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [initialIndex] = useState(index);
   const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
   const animationConfigs = useBottomSheetTimingConfigs({
     duration: ANIMATION_DURATION,
     easing: Easing.bezier(0.32, 0.72, 0, 1),
   });
-
-  controlledIndexRef.current = index;
 
   const handleChange = useCallback(
     (index: number) => {
@@ -72,17 +67,10 @@ const AppBottomSheet = ({
           appearsOnIndex={0}
           disappearsOnIndex={-1}
           opacity={0.5}
-          pressBehavior={onRequestClose ? "none" : "close"}
-        >
-          {onRequestClose ? (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="닫기"
-              style={StyleSheet.absoluteFill}
-              onPress={onRequestClose}
-            />
-          ) : null}
-        </BottomSheetBackdrop>
+          pressBehavior="close"
+          accessibilityLabel="닫기"
+          onPress={onRequestClose}
+        />
       ) : null,
     [enableBackdrop, onRequestClose],
   );
@@ -101,42 +89,6 @@ const AppBottomSheet = ({
     bottomSheetRef.current?.close();
   }, [index]);
 
-  useEffect(() => {
-    if (!keyboardBehavior) {
-      return;
-    }
-
-    const restoreControlledIndex = () => {
-      const targetIndex = controlledIndexRef.current;
-
-      if (restoreTimerRef.current) {
-        clearTimeout(restoreTimerRef.current);
-      }
-
-      restoreTimerRef.current = setTimeout(() => {
-        if (targetIndex >= 0) {
-          bottomSheetRef.current?.snapToIndex(targetIndex);
-        } else {
-          bottomSheetRef.current?.close();
-        }
-      }, 50);
-    };
-
-    const subscription = Keyboard.addListener(
-      "keyboardDidHide",
-      restoreControlledIndex,
-    );
-
-    return () => {
-      subscription.remove();
-
-      if (restoreTimerRef.current) {
-        clearTimeout(restoreTimerRef.current);
-        restoreTimerRef.current = null;
-      }
-    };
-  }, [keyboardBehavior]);
-
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -148,9 +100,8 @@ const AppBottomSheet = ({
       enableDynamicSizing={false}
       enablePanDownToClose={enablePanDownToClose}
       enableContentPanningGesture={enableContentPanningGesture}
-      enableBlurKeyboardOnGesture
       keyboardBehavior={keyboardBehavior}
-      keyboardBlurBehavior="restore"
+      keyboardBlurBehavior="none"
       android_keyboardInputMode={androidKeyboardInputMode}
       onChange={handleChange}
       handleComponent={BottomSheetHandle}

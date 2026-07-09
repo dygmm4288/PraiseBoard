@@ -9,10 +9,9 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
-import { KeyboardController } from "react-native-keyboard-controller";
+import { Keyboard } from "react-native";
 
 type DismissTopLevelSheetOptions = {
   runOnClose?: boolean;
@@ -87,14 +86,8 @@ const getClosedSheetState = (): TopLevelSheetState => ({
 export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const [sheetState, setSheetState] =
     useState<TopLevelSheetState>(getClosedSheetState);
-  const sheetStateRef = useRef(sheetState);
-  const dismissRequestIdRef = useRef(0);
-
-  sheetStateRef.current = sheetState;
 
   const presentTopLevelSheet = useCallback((config: TopLevelSheetConfig) => {
-    dismissRequestIdRef.current += 1;
-
     setSheetState((current) => {
       if (config.snapPoints.length === 0) {
         return getClosedSheetState();
@@ -113,53 +106,19 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
 
   const dismissTopLevelSheet = useCallback(
     (options?: DismissTopLevelSheetOptions) => {
-      const current = sheetStateRef.current;
+      Keyboard.dismiss();
 
-      if (!current.config) {
-        return;
-      }
-
-      const closeSheet = () => {
-        setSheetState((current) => {
-          if (!current.config) {
-            return current;
-          }
-
-          return {
-            ...current,
-            index: -1,
-            closeEffect: null,
-            runOnCloseAfterDismiss: options?.runOnClose ?? false,
-          };
-        });
-      };
-
-      if (!KeyboardController.isVisible()) {
-        closeSheet();
-        return;
-      }
-
-      const requestId = dismissRequestIdRef.current + 1;
-      dismissRequestIdRef.current = requestId;
-      const targetConfig = current.config;
-
-      KeyboardController.dismiss().finally(() => {
-        if (dismissRequestIdRef.current !== requestId) {
-          return;
+      setSheetState((current) => {
+        if (!current.config) {
+          return current;
         }
 
-        setSheetState((current) => {
-          if (!current.config || current.config !== targetConfig) {
-            return current;
-          }
-
-          return {
-            ...current,
-            index: -1,
-            closeEffect: null,
-            runOnCloseAfterDismiss: options?.runOnClose ?? false,
-          };
-        });
+        return {
+          ...current,
+          index: -1,
+          closeEffect: null,
+          runOnCloseAfterDismiss: options?.runOnClose ?? false,
+        };
       });
     },
     [],
@@ -181,6 +140,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const handleChangeIndex = useCallback(
     (index: number) => {
       if (index === -1) {
+        Keyboard.dismiss();
         clearTopLevelSheet(true);
         return;
       }
@@ -202,10 +162,8 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   );
 
   const handleRequestClose = useCallback(() => {
-    const onClose = sheetState.config?.onClose;
-
-    if (onClose) {
-      onClose();
+    if (sheetState.config?.onClose) {
+      dismissTopLevelSheet({ runOnClose: true });
       return;
     }
 

@@ -61,7 +61,7 @@ export const useCreateBoard = () => {
     mutationFn: (payload: BoardCreatePayload) => {
       return board.createBoard(payload);
     },
-    onSuccess: async (createdBoard) => {
+    onSuccess: (createdBoard) => {
       toast.success("등록 중 입니다");
       if (profileId) {
         queryClient.setQueryData<BoardListResult | null>(
@@ -78,20 +78,22 @@ export const useCreateBoard = () => {
         );
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: boardKeys.all,
-        refetchType: "all",
-      });
-      await queryClient.invalidateQueries({
-        queryKey: statsKeys.all,
-        refetchType: "all",
-      });
-      await queryClient.invalidateQueries({
-        queryKey: archiveKeys.all,
-        refetchType: "all",
-      });
-
       resetBoard();
+
+      void Promise.allSettled([
+        queryClient.invalidateQueries({
+          queryKey: boardKeys.all,
+          refetchType: "all",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: statsKeys.all,
+          refetchType: "all",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: archiveKeys.all,
+          refetchType: "all",
+        }),
+      ]);
     },
     onError: (error) => {
       // TODO: error handling

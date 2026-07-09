@@ -83,6 +83,10 @@ export const useSettingsSheets = () => {
     setEditingSheet(null);
   }, [closeNameSheet, editingSheet]);
 
+  const requestCloseSheet = useCallback(() => {
+    dismissTopLevelSheet({ runOnClose: true });
+  }, [dismissTopLevelSheet]);
+
   const openNameSheet = useCallback(() => {
     setNameSheetInitialName(displayName);
     setEditingSheet("name");
@@ -149,7 +153,7 @@ export const useSettingsSheets = () => {
           <View className="flex-1 px-[16px] pb-[16px]">
             <NameEditSheetContent
               initialName={nameSheetInitialName}
-              onClose={closeSheet}
+              onClose={requestCloseSheet}
               onConfirm={saveName}
             />
           </View>
@@ -161,7 +165,7 @@ export const useSettingsSheets = () => {
             onChangeHour={setAlarmHour}
             onChangeMinute={setAlarmMinute}
             onChangePeriod={setAlarmPeriod}
-            onClose={closeSheet}
+            onClose={requestCloseSheet}
             onConfirm={confirmAlarmTime}
           />
         ),
@@ -176,6 +180,7 @@ export const useSettingsSheets = () => {
     editingSheet,
     nameSheetInitialName,
     presentTopLevelSheet,
+    requestCloseSheet,
     setAlarmHour,
     setAlarmMinute,
     setAlarmPeriod,
