@@ -1,4 +1,5 @@
 import { Icon } from "@/assets/icons";
+import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { PropsWithChildren, ReactNode } from "react";
 import { Pressable, View } from "react-native";
@@ -31,19 +32,15 @@ const SettingLink = ({
       <View className="min-w-0 flex-1 gap-[3px]">
         {label && (
           <AppText
-            variant="custom"
+            variant="label12"
             weight="semibold"
-            className="text-[12px] leading-[20px] text-labelGray"
+            className="text-labelGray"
           >
             {label}
           </AppText>
         )}
         {typeof resolvedValue === "string" ? (
-          <AppText
-            variant="custom"
-            className="text-[14px] leading-[20px] text-black"
-            numberOfLines={1}
-          >
+          <AppText variant="body14" className="text-black" numberOfLines={1}>
             {resolvedValue}
           </AppText>
         ) : (
@@ -52,7 +49,9 @@ const SettingLink = ({
       </View>
       <View className="flex-row items-center gap-[8px]">
         {right}
-        {showChevron && <Icon name="ChevronRightSmall" width={5} height={10} />}
+        {showChevron && (
+          <Icon name="ChevronRightSmall" size={18} color={COLOR["black"]} />
+        )}
       </View>
     </Row>
   );

@@ -5,6 +5,7 @@ import {
 } from "@/shared/lib/supabase-error";
 import { getTodayRange } from "@/shared/utils/date";
 import {
+  ActiveBoardLimitError,
   BoardListParams,
   BoardTodayAchievement,
   CollectStickerRpcResult,
@@ -19,6 +20,8 @@ const DEFAULT_BOARD_LIST_ORDER = {
   orderBy: "created_at",
   order: "desc",
 } satisfies Pick<Required<BoardListParams>, "orderBy" | "order">;
+
+const ACTIVE_BOARD_LIMIT_ERROR_MESSAGE = "ACTIVE_BOARD_LIMIT_REACHED";
 
 type OrderableQuery = {
   order: (
@@ -49,20 +52,23 @@ export const boardRepository: IBoardRepository = {
     rewardMemo,
     limitCount,
   }) {
-    const { data, error } = await supabase
-      .from("boards")
-      .insert({
-        profile_id: profileId,
-        title,
-        emoji,
-        target_count: targetCount,
-        reward_memo: rewardMemo,
-        limit_count: limitCount,
-      })
-      .select(BOARD_FIELDS)
-      .single();
+    const { data, error } = await supabase.rpc(
+      "create_board_with_active_limit",
+      {
+        p_profile_id: profileId,
+        p_title: title,
+        p_emoji: emoji,
+        p_target_count: targetCount,
+        p_reward_memo: rewardMemo ?? null,
+        p_limit_count: limitCount,
+      },
+    );
 
     if (error) {
+      if (error.message === ACTIVE_BOARD_LIMIT_ERROR_MESSAGE) {
+        throw new ActiveBoardLimitError();
+      }
+
       throwLoggedSupabaseError(error, {
         domain: "board",
         operation: "createBoard",

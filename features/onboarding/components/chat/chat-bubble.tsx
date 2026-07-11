@@ -46,9 +46,9 @@ export const ChatBubble = ({
         <WhaleAvatar />
         <View className="max-w-[256px] flex-1 gap-[3px]">
           <AppText
-            variant="custom"
+            variant="label12"
             weight="semibold"
-            className="text-[12px] leading-[20px] text-[#8F7ED0]"
+            className="text-[#8F7ED0]"
           >
             두잉
           </AppText>
@@ -61,11 +61,8 @@ export const ChatBubble = ({
           >
             {!showTyping ? (
               <AppText
-                variant="custom"
-                className={cn(
-                  "text-[14px] leading-[20px] text-gray-900",
-                  textClassName,
-                )}
+                variant="body14"
+                className={cn("text-black", textClassName)}
               >
                 {message}
               </AppText>
@@ -92,10 +89,9 @@ export const ChatBubble = ({
         >
           {!showTyping ? (
             <AppText
-              variant="custom"
+              variant="body14"
               className={cn(
-                "text-[14px] leading-[20px]",
-                side === "right" ? "text-white" : "text-gray-900",
+                side === "right" ? "text-white" : "text-black",
                 textClassName,
               )}
             >

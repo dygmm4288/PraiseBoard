@@ -6,7 +6,11 @@ import {
   normalizeBoardCreatePayload,
 } from "@/features/board/schema";
 import { board } from "@/features/board/service";
-import { BoardListResult, BoardRecord } from "@/features/board/types";
+import {
+  ActiveBoardLimitError,
+  BoardListResult,
+  BoardRecord,
+} from "@/features/board/types";
 import { statsKeys } from "@/features/stats/queries/stats.query.key";
 import { useUser } from "@/services/user";
 import useTodayKey from "@/shared/hooks/use-today-key";
@@ -15,6 +19,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ZodError } from "zod";
 import { boardKeys } from "../queries/board.query.key";
+import { ACTIVE_BOARD_LIMIT_MESSAGE } from "../domain/policies/board-policy";
 
 const addBoardToList = (
   boardList: BoardListResult | null | undefined,
@@ -95,7 +100,11 @@ export const useCreateBoard = () => {
       ]);
     },
     onError: (error) => {
-      // TODO: error handling
+      if (error instanceof ActiveBoardLimitError) {
+        toast.chatError(ACTIVE_BOARD_LIMIT_MESSAGE);
+        return;
+      }
+
       console.log(error);
       toast.chatError("실패했습니다");
     },

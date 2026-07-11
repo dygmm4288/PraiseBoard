@@ -30,6 +30,18 @@ type DetailCardProps = PropsWithChildren<{
 const CARD_SHADOW_COLOR = COLOR.textDarkPurple;
 const DEFAULT_PROGRESS_CELL_COUNT = 30;
 const PROGRESS_GRID_COLUMNS = 10;
+const PROGRESS_CELL_COLORS = [
+  COLOR.progress[10],
+  COLOR.progress[20],
+  COLOR.progress[30],
+  COLOR.progress[40],
+  COLOR.progress[50],
+  COLOR.progress[60],
+  COLOR.progress[70],
+  COLOR.progress[80],
+  COLOR.progress[90],
+  COLOR.progress[100],
+] as const;
 
 const getBoardStartDate = (detail?: ArchiveDetail) => {
   const startedAt = detail?.board.startedAt;
@@ -51,6 +63,9 @@ const getProgressCellState = (index: number, detail?: ArchiveDetail) => {
   if (index < detail.progressGrid.totalCount) return "remaining";
   return "empty";
 };
+
+const getProgressCellColor = (rowIndex: number) =>
+  PROGRESS_CELL_COLORS[Math.min(rowIndex, PROGRESS_CELL_COLORS.length - 1)];
 
 const getProgressGridRows = (detail?: ArchiveDetail) => {
   const cellCount = getProgressCellCount(detail);
@@ -93,10 +108,10 @@ const ArchiveDetailRow = ({
 }) => {
   return (
     <View className="flex-row items-center justify-between">
-      <AppText variant="caption1" weight="semibold" className="text-labelGray">
+      <AppText variant="label12" weight="regular" className="text-labelGray">
         {label}
       </AppText>
-      <AppText variant="body3" className="text-gray-900">
+      <AppText variant="body14" className="text-black">
         {value}
       </AppText>
     </View>
@@ -117,7 +132,7 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
 
   return (
     <DetailCard className="px-[20px] py-[16px]">
-      <View className="flex-row items-center gap-[12px] border-b border-line pb-[16px]">
+      <View className="flex-row items-center gap-[12px] border-b border-line-subtle pb-[16px]">
         <View className="h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[13px] bg-primary-10">
           <AppText className="text-[20px] leading-[24px]">
             {board?.emoji ?? "🌱"}
@@ -126,18 +141,17 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
 
         <View className="min-w-0 flex-1 gap-[3px]">
           <AppText
-            variant="body3"
+            variant="body14"
             weight="semibold"
-            className="text-gray-900"
+            className="text-black"
             numberOfLines={1}
           >
             {board?.title}
           </AppText>
           <View className="flex-row items-center gap-[3px]">
             <AppText variant="caption2" className="text-gray-500">
-              보상
+              보상:
             </AppText>
-            <View className="h-[1px] w-[1px] rounded-full bg-gray-300" />
             <AppText
               variant="caption2"
               className="text-gray-500"
@@ -253,7 +267,7 @@ const ArchiveDetailStreakSummary = ({ detail }: Props) => {
         label="최다 성취일"
         value={
           bestAchievement
-            ? `${formatArchiveDateKey(bestAchievement.date)} · ${
+            ? `${formatArchiveDateKey(bestAchievement.date)} / ${
                 bestAchievement.count
               }번`
             : "-"
@@ -301,17 +315,24 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
               const state = isPlaceholder
                 ? "empty"
                 : getProgressCellState(cellIndex, detail);
+              const progressColor = getProgressCellColor(rowIndex);
 
               return (
                 <View
                   key={`${rowIndex}-${columnIndex}`}
                   className={cn(
-                    "h-[28px] w-[28px] rounded-[6px] border",
-                    state === "completed" &&
-                      "border-primary-100 bg-primary-300",
-                    state !== "completed" && "border-primary-10 bg-primary-10",
+                    "h-[28px] w-[28px] rounded-[6px]",
                     isPlaceholder && "opacity-0",
                   )}
+                  style={
+                    state === "completed"
+                      ? { backgroundColor: progressColor }
+                      : {
+                          backgroundColor: COLOR.progress.empty,
+                          borderColor: COLOR.progress.border,
+                          borderWidth: 1,
+                        }
+                  }
                 />
               );
             })}
@@ -330,7 +351,9 @@ const ArchiveDetailItem = ({
     <View className="gap-[12px]">
       <ArchiveDetailOverview detail={detail} />
       <ArchiveDetailCalendar detail={detail} onMonthChange={onMonthChange} />
-      <ArchiveDetailDailyRecord detail={detail} />
+      {!detail?.board?.completed && (
+        <ArchiveDetailDailyRecord detail={detail} />
+      )}
       <ArchiveDetailStreakSummary detail={detail} />
       <ArchiveDetailProgressGrid detail={detail} />
     </View>

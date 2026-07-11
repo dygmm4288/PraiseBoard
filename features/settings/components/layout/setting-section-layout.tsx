@@ -14,9 +14,9 @@ const SettingSectionLayout = ({ title, children }: Props) => {
     <View className="w-full gap-[12px]">
       {title && (
         <AppText
-          variant="custom"
+          variant="label12"
           weight="semibold"
-          className="px-[8px] text-[12px] leading-[20px] text-labelGray"
+          className="px-[8px] text-labelGray"
         >
           {title}
         </AppText>

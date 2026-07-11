@@ -5,14 +5,11 @@ import {
   TITLE_MAX_LENGTH,
 } from "@/features/board/schema";
 import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
-import { BottomSheetHeader } from "@/shared/components";
+import { BottomSheetHeader, BottomSheetInput } from "@/shared/components";
 import { COLOR } from "@/shared/constants/colors.constant";
-import { AppInput, AppText, ConfirmModal } from "@/shared/ui";
+import { AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
-import {
-  BottomSheetScrollView,
-  BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { ReactNode, useState } from "react";
 import { Pressable, View } from "react-native";
 
@@ -76,11 +73,11 @@ const OptionRow = ({
             onPress={() => onSelect(value)}
           >
             <AppText
-              variant="custom"
+              variant="button15"
               weight="medium"
               numberOfLines={1}
               className={cn(
-                "text-center text-[15px] leading-[25px]",
+                "text-center",
                 selected ? "text-primary-50" : "text-bgDarkGray",
                 disabled && "text-textGray",
               )}
@@ -103,11 +100,7 @@ const BoardFormSection = ({
 }) => {
   return (
     <View className="gap-[6px]">
-      <AppText
-        variant="custom"
-        weight="semibold"
-        className="text-[12px] leading-[20px] text-labelGray"
-      >
+      <AppText variant="label12" weight="semibold" className="text-labelGray">
         {label}
       </AppText>
       {children}
@@ -162,9 +155,8 @@ const BoardForm = ({
       >
         <BoardFormSection label="습관 이름">
           <View className="flex-row items-center gap-[6px]">
-            <AppInput
+            <BottomSheetInput
               reset
-              inputComponent={BottomSheetTextInput}
               value={formData.title}
               onReset={() => onChangeFormData("title")("")}
               onChangeText={onChangeFormData("title")}
@@ -208,8 +200,7 @@ const BoardForm = ({
         </BoardFormSection>
 
         <BoardFormSection label="보상 (선택)">
-          <AppInput
-            inputComponent={BottomSheetTextInput}
+          <BottomSheetInput
             value={formData.rewardMemo ?? ""}
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
@@ -227,9 +218,9 @@ const BoardForm = ({
             onPress={() => setDeleteConfirmVisible(true)}
           >
             <AppText
-              variant="custom"
+              variant="label12"
               weight="semibold"
-              className="text-center text-[12px] leading-[20px] text-labelGray"
+              className="text-center text-labelGray"
             >
               삭제하기
             </AppText>

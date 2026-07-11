@@ -72,9 +72,9 @@ const ArchiveDetailScreen = () => {
           </Pressable>
 
           <AppText
-            variant="custom"
+            variant="title18"
             weight="bold"
-            className="text-[18px] leading-[32px] text-black"
+            className="text-black"
           >
             상세보기
           </AppText>

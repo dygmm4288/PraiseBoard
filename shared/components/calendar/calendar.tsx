@@ -8,10 +8,10 @@ import {
   getLastDate,
   getMonthDate,
 } from "@/shared/utils/date";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 import { useTopLevelSheet } from "../bottom-sheet/top-level-sheet-provider";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
 import CalendarMonthPicker from "./calendar-month-picker";
 
 export type CalendarStickerCount = {
@@ -166,9 +166,9 @@ const Calendar = ({
 
   const openMonthPicker = useCallback(() => {
     presentTopLevelSheet({
-      snapPoints: ["50%"],
+      snapPoints: [342],
       children: (
-        <BottomSheetView className="flex-1">
+        <BottomSheetView className="flex-1 overflow-hidden rounded-t-[38px] bg-white pb-[18px]">
           <CalendarMonthPickerSheet
             currentDate={date}
             minDate={minDate}
@@ -215,9 +215,9 @@ const Calendar = ({
             onPress={openMonthPicker}
           >
             <AppText
-              variant="caption1"
+              variant="button15"
               weight="semibold"
-              className="text-gray-900"
+              className="text-black"
             >
               {monthLabel}
             </AppText>
@@ -244,7 +244,7 @@ const Calendar = ({
             {WEEK_DAYS.map((day, index) => (
               <View key={day} className="w-[45px] items-center">
                 <AppText
-                  variant="button2"
+                  variant="label10"
                   weight="semibold"
                   className={cn(
                     "text-center",
@@ -290,11 +290,11 @@ const Calendar = ({
                     >
                       {cell.dayOfMonth !== null ? (
                         <AppText
-                          variant="button2"
-                          weight="medium"
+                          variant="label10"
+                          weight="semibold"
                           className={cn(
                             "text-center",
-                            hasSticker ? "text-gray-900" : "text-gray-400",
+                            hasSticker ? "text-black" : "text-gray-400",
                           )}
                         >
                           {cell.dayOfMonth}

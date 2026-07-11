@@ -1,8 +1,8 @@
 import { useUser } from "@/services/user";
-import { Stepper } from "@/shared/components";
+import { PaginationIndicator, Stepper } from "@/shared/components";
 import { AppText } from "@/shared/ui";
 import { useRouter } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, View } from "react-native";
 import IntroContent from "../components/intro-content";
 import IntroPageLayout from "../components/intro-page-layout";
 import IntroVisual from "../components/intro-visual";
@@ -30,9 +30,9 @@ const IntroActionButton = ({
       onPress={onPress}
     >
       <AppText
-        variant="custom"
+        variant="button15"
         weight="medium"
-        style={{ color: "#483970", fontSize: 15, lineHeight: 25 }}
+        style={{ color: "#483970" }}
       >
         {label}
       </AppText>
@@ -52,19 +52,27 @@ export const IntroScreenContent = ({
           direction={direction}
           visual={<IntroVisual currentIndex={currentIndex} />}
           footer={
-            <IntroActionButton
-              label={currentIndex === 0 ? "다음" : "시작하기"}
-              onPress={async () => {
-                const isLastStep = currentIndex === INTRO_STEPS.length - 1;
+            <View className="w-full items-center gap-[20px]">
+              <PaginationIndicator
+                totalCnt={INTRO_STEPS.length}
+                currentIndex={currentIndex}
+                activeColor="#FFFFFF"
+                inactiveColor="rgba(255,255,255,0.4)"
+              />
+              <IntroActionButton
+                label={currentIndex === 0 ? "다음" : "시작하기"}
+                onPress={async () => {
+                  const isLastStep = currentIndex === INTRO_STEPS.length - 1;
 
-                if (isLastStep) {
-                  await onComplete();
-                  return;
-                }
+                  if (isLastStep) {
+                    await onComplete();
+                    return;
+                  }
 
-                next();
-              }}
-            />
+                  next();
+                }}
+              />
+            </View>
           }
         >
           <IntroContent currentIndex={currentIndex} />

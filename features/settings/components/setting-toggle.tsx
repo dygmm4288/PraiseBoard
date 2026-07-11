@@ -26,16 +26,16 @@ const SettingToggle = ({
           onPress={() => onToggle(!value)}
         >
           <AppText
-            variant="custom"
-            className="text-[14px] leading-[20px] text-black"
+            variant="body14"
+            className="text-black"
             numberOfLines={1}
           >
             {label}
           </AppText>
           {description && (
             <AppText
-              variant="custom"
-              className="text-[12px] leading-[20px] text-labelGray"
+              variant="label12"
+              className="text-labelGray"
             >
               {description}
             </AppText>

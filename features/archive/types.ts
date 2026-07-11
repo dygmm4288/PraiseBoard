@@ -20,6 +20,7 @@ export type ArchiveDetail = {
     currentCount: number;
     progressPercent: number;
     startedAt: string | null;
+    completed: boolean;
   };
   calendar: {
     month: string;

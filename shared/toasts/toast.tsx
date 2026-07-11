@@ -1,10 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useEffect } from "react";
 import { View } from "react-native";
-import {
-  KeyboardController,
-  KeyboardEvents,
-} from "react-native-keyboard-controller";
+import { KeyboardController } from "react-native-keyboard-controller";
 import Toast, { BaseToast, BaseToastProps } from "react-native-toast-message";
 import { COLOR } from "../constants/colors.constant";
 import { AppText } from "../ui";
@@ -27,8 +23,8 @@ type ToastOverrides = Partial<
   >
 >;
 
-const CHAT_INPUT_TOAST_OFFSET = 77;
-let activeChatToastMessage: string | null = null;
+export const TOAST_BOTTOM_GAP = 12;
+let fnbToastOffset = 0;
 
 const toSafeOffset = (value: number | null | undefined) => {
   if (typeof value !== "number") return 0;
@@ -36,36 +32,28 @@ const toSafeOffset = (value: number | null | undefined) => {
   return Math.max(0, value);
 };
 
-const chatInputBottomToastOptions: ToastOverrides = {
-  position: "bottom",
-  bottomOffset: CHAT_INPUT_TOAST_OFFSET,
-  avoidKeyboard: false,
-};
-
-const clearActiveChatToastMessage = (message: string) => {
-  if (activeChatToastMessage === message) {
-    activeChatToastMessage = null;
-  }
-};
-
-const getChatToastOptions = (): ToastOverrides => {
+const getKeyboardHeight = () => {
   try {
-    const keyboardHeight = KeyboardController.isVisible()
+    return KeyboardController.isVisible()
       ? toSafeOffset(KeyboardController.state().height)
       : 0;
-
-    if (keyboardHeight > 0) {
-      return {
-        position: "bottom",
-        bottomOffset: keyboardHeight + CHAT_INPUT_TOAST_OFFSET,
-        avoidKeyboard: false,
-      };
-    }
   } catch {
-    return chatInputBottomToastOptions;
+    return 0;
   }
+};
 
-  return chatInputBottomToastOptions;
+const getBottomToastOptions = (): ToastOverrides => ({
+  position: "bottom",
+  bottomOffset: Math.max(
+    fnbToastOffset,
+    getKeyboardHeight() + TOAST_BOTTOM_GAP,
+    TOAST_BOTTOM_GAP,
+  ),
+  avoidKeyboard: false,
+});
+
+export const setFnbToastOffset = (offset: number) => {
+  fnbToastOffset = toSafeOffset(offset);
 };
 
 export const toast = {
@@ -74,6 +62,7 @@ export const toast = {
       type: "success",
       text1: title,
       text2: message,
+      ...getBottomToastOptions(),
       ...options,
     });
   },
@@ -82,6 +71,7 @@ export const toast = {
     Toast.show({
       type: "error",
       text1: message,
+      ...getBottomToastOptions(),
       ...options,
     });
   },
@@ -90,65 +80,28 @@ export const toast = {
     Toast.show({
       type: "info",
       text1: message,
+      ...getBottomToastOptions(),
       ...options,
     });
   },
 
   chatError(message: string, options?: ToastOverrides & { refresh?: boolean }) {
-    const {
-      refresh: _refresh,
-      onShow,
-      onHide,
-      ...toastOptions
-    } = options ?? {};
+    const { refresh: _refresh, ...toastOptions } = options ?? {};
 
     Toast.show({
       type: "chatError",
       text1: message,
-      ...getChatToastOptions(),
+      ...getBottomToastOptions(),
       ...toastOptions,
-      onShow: () => {
-        activeChatToastMessage = message;
-        onShow?.();
-      },
-      onHide: () => {
-        clearActiveChatToastMessage(message);
-        onHide?.();
-      },
     });
   },
 
   hideToast() {
-    activeChatToastMessage = null;
     Toast.hide();
   },
 };
 
 export const ToastKeyboardSync = () => {
-  useEffect(() => {
-    const subscription = KeyboardEvents.addListener("keyboardWillHide", () => {
-      const message = activeChatToastMessage;
-
-      if (!message) {
-        return;
-      }
-
-      Toast.show({
-        type: "chatError",
-        text1: message,
-        ...chatInputBottomToastOptions,
-        onShow: () => {
-          activeChatToastMessage = message;
-        },
-        onHide: () => {
-          clearActiveChatToastMessage(message);
-        },
-      });
-    });
-
-    return () => subscription.remove();
-  }, []);
-
   return null;
 };
 

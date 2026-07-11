@@ -83,9 +83,9 @@ const OnboardCompletionPreview = ({ nickname, board, onDone }: Props) => {
         style={[{ top: titleStartTop }, titleStyle]}
       >
         <AppText
-          variant="custom"
+          variant="title18"
           weight="bold"
-          className="text-center text-[18px] leading-[32px] tracking-[-0.18px] text-gray-900"
+          className="text-center text-black"
         >
           {`${displayName}의\n첫 습관이 준비됐어`}
         </AppText>

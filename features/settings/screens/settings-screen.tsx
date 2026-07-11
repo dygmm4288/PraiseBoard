@@ -14,7 +14,7 @@ const SettingsScreen = () => {
 
   return (
     <Screen padded={false}>
-      <ScreenHeader title="설정" className="px-[8px]" />
+      <ScreenHeader title="설정" className="px-screen" />
       <ScrollView
         className="mt-[12px] flex-1 px-screen"
         contentContainerClassName="gap-[30px] pb-[24px]"

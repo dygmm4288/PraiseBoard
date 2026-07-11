@@ -8,6 +8,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Pressable, StyleSheet } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
@@ -23,6 +24,7 @@ type Props = PropsWithChildren<{
   keyboardBlurBehavior?: BottomSheetProps["keyboardBlurBehavior"];
   enableBlurKeyboardOnGesture?: BottomSheetProps["enableBlurKeyboardOnGesture"];
   androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
+  onRequestClose: () => void;
 }>;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
@@ -41,6 +43,7 @@ const AppBottomSheet = ({
   keyboardBlurBehavior = "restore",
   enableBlurKeyboardOnGesture = true,
   androidKeyboardInputMode = "adjustResize",
+  onRequestClose,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
@@ -68,12 +71,19 @@ const AppBottomSheet = ({
           appearsOnIndex={0}
           disappearsOnIndex={-1}
           opacity={0.5}
-          pressBehavior="close"
+          pressBehavior="none"
           accessibilityRole="button"
           accessibilityLabel="바텀시트 닫기"
-        />
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="바텀시트 닫기"
+            style={StyleSheet.absoluteFill}
+            onPress={onRequestClose}
+          />
+        </BottomSheetBackdrop>
       ) : null,
-    [enableBackdrop],
+    [enableBackdrop, onRequestClose],
   );
 
   useEffect(() => {
@@ -102,7 +112,7 @@ const AppBottomSheet = ({
       enablePanDownToClose={enablePanDownToClose}
       enableContentPanningGesture={enableContentPanningGesture}
       keyboardBehavior={keyboardBehavior}
-      keyboardBlurBehavior={keyboardBlurBehavior}
+      keyboardBlurBehavior={index === -1 ? "none" : keyboardBlurBehavior}
       enableBlurKeyboardOnGesture={enableBlurKeyboardOnGesture}
       android_keyboardInputMode={androidKeyboardInputMode}
       onChange={handleChange}

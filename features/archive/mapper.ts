@@ -80,6 +80,7 @@ export const toArchiveDetail = ({
         boardRow.current_count,
       ).progressPercent,
       startedAt: boardRow.created_at,
+      completed: boardRow.target_count <= boardRow.current_count,
     },
     calendar: {
       month,

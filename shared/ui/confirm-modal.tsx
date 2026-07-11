@@ -54,11 +54,11 @@ const ConfirmModalButton = ({
         numberOfLines={1}
         ellipsizeMode="tail"
         className={cn(
-          "w-full text-center text-[15px] leading-[25px]",
+          "w-full text-center",
           isConfirm ? "text-white" : "text-labelGray",
         )}
         weight={isConfirm ? "medium" : "regular"}
-        variant="custom"
+        variant="button15"
       >
         {label}
       </AppText>
@@ -90,8 +90,8 @@ export const ConfirmModal = ({
         <View className="w-full max-w-[312px] items-center justify-center gap-[21px] rounded-[18px] bg-white p-[21px]">
           <View className="w-full items-center gap-[12px]">
             <AppText
-              className="w-full text-center text-[16px] leading-[24px] text-gray-900"
-              variant="custom"
+              className="w-full text-center text-black"
+              variant="title16"
               weight="bold"
             >
               {title}
@@ -99,8 +99,8 @@ export const ConfirmModal = ({
 
             {description ? (
               <AppText
-                className="w-full text-center text-[14px] leading-[20px] text-gray-900"
-                variant="custom"
+                className="w-full text-center text-black"
+                variant="body14"
                 weight="regular"
               >
                 {description}

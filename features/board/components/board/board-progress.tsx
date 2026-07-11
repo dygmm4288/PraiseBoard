@@ -16,11 +16,11 @@ const BoardProgress = ({
 }: BoardProgressProps) => {
   return (
     <View className={cn("items-center rounded-[20px] bg-gray-100 py-[6px] px-[12px] flex-row gap-[8px]", className)}>
-      <AppText variant="body3" className="text-center text-gray-700">
+      <AppText variant="body14" className="text-center text-gray-700">
         {`${remainingCount}개 남음`}
       </AppText>
       <View className="h-[12px] w-[1px] bg-gray-300" />
-      <AppText variant="body3" className="text-center text-gray-700">
+      <AppText variant="body14" className="text-center text-gray-700">
         {`${toPadZero(progressPercent)}%`}
       </AppText>
     </View>

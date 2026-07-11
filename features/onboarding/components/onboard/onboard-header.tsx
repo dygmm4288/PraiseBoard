@@ -7,7 +7,13 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { STEP_CNT_LABEL, STEP_INDEX, STEP_LABEL, STEPS, TOTAL_STEPS } from "../../onboarding.steps";
+import {
+  STEP_CNT_LABEL,
+  STEP_INDEX,
+  STEP_LABEL,
+  STEPS,
+  TOTAL_STEPS,
+} from "../../onboarding.steps";
 
 type Props = {
   stepName: STEPS;
@@ -38,16 +44,16 @@ const OnboardHeader = ({ stepName }: Props) => {
     <View className="h-[45px] justify-between px-[8px]">
       <View className="flex-1 flex-row items-center justify-between">
         <AppText
-          variant="custom"
+          variant="title18"
           weight="bold"
-          className="text-[18px] leading-[32px] tracking-[-0.18px] text-gray-900"
+          className="text-black"
         >
           {STEP_LABEL[stepName]}
         </AppText>
         <AppText
-          variant="custom"
+          variant="label12"
           weight="semibold"
-          className="text-[12px] leading-[20px] text-primary-500"
+          className="text-primary-500"
         >
           {STEP_CNT_LABEL[stepName]}
         </AppText>

@@ -17,14 +17,14 @@ const BoardToday = ({ className }: BoardTodayProps) => {
   return (
     <View
       className={cn(
-        "flex-row items-center justify-between rounded-[20px] bg-achievement-surface px-[20px] py-[16px] h-[75px]",
+        "h-[75px] flex-row items-center justify-between rounded-[20px] bg-achievement-surface px-[20px] py-[16px]",
         className,
       )}
     >
       <AppText
         variant="caption2"
         weight="semibold"
-        className="text-achievement-textStrong"
+        className="text-achievement-text"
       >
         오늘의 성취
       </AppText>

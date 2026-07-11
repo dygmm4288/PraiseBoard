@@ -13,7 +13,7 @@ const BoardEmptyItem = () => {
           텅
         </AppText>
         <AppText
-          variant="body3"
+          variant="body14"
           weight="regular"
           className="text-center text-gray-500"
         >

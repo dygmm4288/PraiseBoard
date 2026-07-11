@@ -37,7 +37,7 @@ const BoardList = ({ showPreviewBoard }: Props) => {
 const BoardListStatus = ({ message }: { message: string }) => {
   return (
     <View className="flex-1 items-center justify-center px-10">
-      <AppText variant="body3" className="text-center text-gray-500">
+      <AppText variant="body14" className="text-center text-gray-500">
         {message}
       </AppText>
     </View>

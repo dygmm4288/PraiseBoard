@@ -18,7 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Keyboard } from "react-native";
+import { KeyboardController } from "react-native-keyboard-controller";
 
 type TopLevelSheetContextValue = {
   presentTopLevelSheet: (config: TopLevelSheetConfig) => void;
@@ -39,8 +39,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
 
   const dismissTopLevelSheet = useCallback(
     (_options?: DismissTopLevelSheetOptions) => {
-      Keyboard.dismiss();
-
+      void KeyboardController.dismiss();
       setSheetState((current) => requestDismissTopLevelSheetState(current));
     },
     [],
@@ -53,7 +52,6 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const handleChangeIndex = useCallback(
     (index: number) => {
       if (index === -1) {
-        Keyboard.dismiss();
         clearTopLevelSheet(true);
         return;
       }
@@ -104,6 +102,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
           enableContentPanningGesture={
             sheetState.config.enableContentPanningGesture
           }
+          onRequestClose={dismissTopLevelSheet}
         >
           {sheetState.config.children}
         </AppBottomSheet>

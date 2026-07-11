@@ -70,11 +70,7 @@ const CalendarMonthPicker = ({
           <Icon name="ChevronLeft" size={18} />
         </Pressable>
 
-        <AppText
-          variant="custom"
-          weight="bold"
-          className="text-[18px] leading-[32px] text-black"
-        >
+        <AppText variant="title18" weight="bold" className="text-black">
           {year}년
         </AppText>
 
@@ -124,11 +120,11 @@ const CalendarMonthPicker = ({
                 onPress={() => onSelectMonth?.(new Date(year, month - 1, 1))}
               >
                 <AppText
-                  variant="custom"
+                  variant="button15"
                   weight="medium"
                   numberOfLines={1}
                   className={cn(
-                    "text-center text-[15px] leading-[25px] text-bgDarkGray",
+                    "text-center text-bgDarkGray",
                     selected && "text-primary-50",
                     disabled && "text-textGray",
                   )}

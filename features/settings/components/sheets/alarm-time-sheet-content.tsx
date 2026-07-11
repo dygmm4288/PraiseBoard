@@ -56,10 +56,10 @@ const PickerCell = ({
       onPress={onPress}
     >
       <AppText
-        variant="custom"
+        variant="button15"
         weight="medium"
         className={[
-          "text-center text-[15px] leading-[25px]",
+          "text-center",
           selected ? "text-primary-50" : "text-textGray",
         ].join(" ")}
       >

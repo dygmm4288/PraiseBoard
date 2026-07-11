@@ -42,9 +42,9 @@ export function SelectableOption<T = string>({
       )}
     >
       <AppText
-        variant="body3"
+        variant="body14"
         className={cn(
-          "text-center text-[14px] leading-[20px]",
+          "text-center",
           selected ? "text-primary-500" : "text-gray-400",
           textClassName,
         )}

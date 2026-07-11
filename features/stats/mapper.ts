@@ -23,13 +23,21 @@ export const toStatsBoardItems = (
     return acc;
   }, {});
 
-  return boards.map((board) => ({
-    id: board.id,
-    emoji: board.emoji ?? "🐋",
-    title: board.title,
-    currentCount: countByBoard[board.id] ?? 0,
-    targetCount: board.target_count,
-  }));
+  return boards.flatMap((board) => {
+    const currentCount = countByBoard[board.id] ?? 0;
+
+    if (currentCount < 1) return [];
+
+    return [
+      {
+        id: board.id,
+        emoji: board.emoji ?? "🐋",
+        title: board.title,
+        currentCount,
+        targetCount: board.target_count,
+      },
+    ];
+  });
 };
 
 export const toStatsStickerCounts = (dailyRows: StatsStickerDailyRow[]) => {

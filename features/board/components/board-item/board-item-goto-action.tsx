@@ -10,17 +10,24 @@ type Props = {
 
 const BoardItemGotoAction = ({ ui }: Props) => {
   const { isCompleted, progressPercent } = ui;
-  const progressColor = isCompleted ? "text-primary-700" : "text-primary-500";
+  const progressColor = isCompleted ? "text-secondary-50" : "text-primary-500";
 
   return (
     <View className="shrink-0 flex-row items-center gap-[6px]">
       <AppText
         weight="bold"
-        className={["text-[17px] leading-[25px]", progressColor].join(" ")}
+        className={[
+          "min-w-[38px] text-center text-[17px] leading-[25px]",
+          progressColor,
+        ].join(" ")}
       >
         {progressPercent}%
       </AppText>
-      <Icon name="ChevronRightSmall" size={18} color={COLOR["primary50"]} />
+      <Icon
+        name="ChevronRightSmall"
+        size={18}
+        color={isCompleted ? COLOR["secondary50"] : COLOR["primary50"]}
+      />
     </View>
   );
 };

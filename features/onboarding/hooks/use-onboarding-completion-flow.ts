@@ -68,7 +68,9 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       await notification.requestPermissionFromOnboarding();
     } catch (error) {
       console.error("알림 권한 설정 중 오류 발생", error);
-      toast.error("알림 권한 정보를 저장하는 중 오류가 발생했어요.");
+      toast.error("알림 권한 정보를 저장하는 중 오류가 발생했어요.", {
+        position: "top",
+      });
     }
   }, []);
 
@@ -110,7 +112,9 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       createdBoard = await persistOnboardingSetup();
     } catch (error) {
       console.error("온보딩 보드 저장 중 오류 발생", error);
-      toast.error("보드를 저장하는 중 오류가 발생했어요.");
+      toast.error("보드를 저장하는 중 오류가 발생했어요.", {
+        position: "top",
+      });
       return;
     }
 

@@ -63,7 +63,7 @@ const resolveCurrentRouteLabel = ({
 const StatusRow = ({ label, value }: { label: string; value: string }) => {
   return (
     <View className="flex-row items-center justify-between gap-3 rounded-[18px] bg-[#F5F5F7] px-4 py-3">
-      <AppText variant="body3" className="text-gray-500">
+      <AppText variant="body14" className="text-gray-500">
         {label}
       </AppText>
       <AppText variant="button1" className="text-gray-700">
@@ -164,7 +164,7 @@ const NotificationDebugCard = () => {
       <AppText variant="button1" className="text-gray-700">
         알림 디버그
       </AppText>
-      <AppText variant="body3" className="mt-2 text-gray-500">
+      <AppText variant="body14" className="mt-2 text-gray-500">
         현재 기기와 프로필 기준으로 저장된 푸시 상태입니다.
       </AppText>
       <View className="mt-4 gap-3">
@@ -207,7 +207,7 @@ const NotificationDebugCard = () => {
         />
       </View>
       {state.errorMessage ? (
-        <AppText variant="body3" className="mt-3 text-red">
+        <AppText variant="body14" className="mt-3 text-red">
           {state.errorMessage}
         </AppText>
       ) : null}
@@ -278,7 +278,7 @@ export const DebugSettingsScreenContent = ({
             <AppText variant="title3" className="text-gray-700">
               Debug User Flow
             </AppText>
-            <AppText variant="body3" className="mt-2 text-gray-500">
+            <AppText variant="body14" className="mt-2 text-gray-500">
               intro와 onboarding은 이 기기에서 한 번만 보이는 상태입니다. QA와
               개발 환경에서는 아래 override로 원하는 화면부터 바로 진입할 수
               있습니다.
@@ -309,7 +309,7 @@ export const DebugSettingsScreenContent = ({
             <AppText variant="button1" className="text-gray-700">
               Debug / QA
             </AppText>
-            <AppText variant="body3" className="mt-2 text-gray-500">
+            <AppText variant="body14" className="mt-2 text-gray-500">
               선택 즉시 홈으로 이동해서 해당 흐름으로 진입합니다.
             </AppText>
 
@@ -334,7 +334,7 @@ export const DebugSettingsScreenContent = ({
                       <AppText variant="button1" className="text-gray-700">
                         {option.title}
                       </AppText>
-                      <AppText variant="body3" className="mt-2 text-gray-500">
+                      <AppText variant="body14" className="mt-2 text-gray-500">
                         {option.description}
                       </AppText>
                     </Pressable>
@@ -343,7 +343,7 @@ export const DebugSettingsScreenContent = ({
               </View>
             ) : (
               <View className="mt-4 rounded-[22px] bg-[#F7F7F9] px-4 py-4">
-                <AppText variant="body3" className="text-gray-500">
+                <AppText variant="body14" className="text-gray-500">
                   디버그 override는 dev/qa 환경에서만 사용할 수 있습니다.
                 </AppText>
               </View>
@@ -355,7 +355,7 @@ export const DebugSettingsScreenContent = ({
               <AppText variant="button1" className="text-gray-700">
                 실제 상태 초기화
               </AppText>
-              <AppText variant="body3" className="mt-2 text-gray-500">
+              <AppText variant="body14" className="mt-2 text-gray-500">
                 이 기기의 실제 intro/onboarding 완료 상태를 지우고, override를
                 real로 되돌린 뒤 홈으로 이동합니다.
               </AppText>
@@ -375,7 +375,7 @@ export const DebugSettingsScreenContent = ({
               <AppText variant="button1" className="text-gray-700">
                 홈 진입 애니메이션
               </AppText>
-              <AppText variant="body3" className="mt-2 text-gray-500">
+              <AppText variant="body14" className="mt-2 text-gray-500">
                 현재 홈 보드로 온보딩 완료 preview를 강제로 재생합니다. 이
                 디버그 동작에서는 알림 권한 요청을 실행하지 않습니다.
               </AppText>
@@ -383,7 +383,7 @@ export const DebugSettingsScreenContent = ({
                 <StatusRow label="preview board" value={previewBoardTitle} />
               ) : (
                 <View className="mt-4 rounded-[22px] bg-[#F7F7F9] px-4 py-4">
-                  <AppText variant="body3" className="text-gray-500">
+                  <AppText variant="body14" className="text-gray-500">
                     홈에 표시할 보드가 있어야 preview를 재생할 수 있습니다.
                   </AppText>
                 </View>

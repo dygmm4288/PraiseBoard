@@ -66,8 +66,8 @@ const SettingInfo = () => {
         value="문의사항"
         right={
           <AppText
-            variant="custom"
-            className="text-[14px] leading-[20px] text-black"
+            variant="body14"
+            className="text-black"
           >
             whaledone26@gmail.com
           </AppText>
@@ -84,12 +84,11 @@ const SettingInfo = () => {
             ].join(" ")}
           >
             <AppText
-              variant="custom"
+              variant="label12"
               weight="semibold"
-              className={[
-                "text-[12px] leading-[20px]",
-                needsUpdate || error ? "text-jinoRed" : "text-labelGray",
-              ].join(" ")}
+              className={
+                needsUpdate || error ? "text-jinoRed" : "text-labelGray"
+              }
             >
               {versionStatusLabel}
             </AppText>

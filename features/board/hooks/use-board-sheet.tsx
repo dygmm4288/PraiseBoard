@@ -6,7 +6,10 @@ import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-she
 import { toast } from "@/shared/toasts/toast";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback } from "react";
-import { canCreateBoard } from "../domain/policies/board-policy";
+import {
+  ACTIVE_BOARD_LIMIT_MESSAGE,
+  canCreateBoard,
+} from "../domain/policies/board-policy";
 import { useActiveBoardQuery } from "../queries/use-board-query";
 
 export type BoardEditSheetInput = {
@@ -39,7 +42,7 @@ export const useBoardSheet = () => {
 
   const openCreateSheet = useCallback(() => {
     if (!canCreateBoard(activeBoardCount)) {
-      return toast.chatError("앗! 최대 3개를 다 만들었어요.");
+      return toast.chatError(ACTIVE_BOARD_LIMIT_MESSAGE);
     }
 
     presentTopLevelSheet({

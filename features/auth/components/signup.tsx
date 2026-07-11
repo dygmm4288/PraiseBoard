@@ -72,7 +72,7 @@ const Signup = () => {
                     칭찬 보드를 안전하게 이어가세요
                   </AppText>
                 </View>
-                <AppText variant="body3" className="text-gray-400">
+                <AppText variant="body14" className="text-gray-400">
                   지금까지 이 기기에 저장된 보드 데이터를 그대로 유지한 채
                   회원으로 전환할 수 있어요.
                 </AppText>

@@ -43,10 +43,10 @@ const ScreenHeader = ({
       <View className={cn("flex-1", isCentered && "items-center")}>
         {title && (
           <AppText
-            variant="custom"
+            variant="title18"
             weight="bold"
             className={cn(
-              "text-[18px] leading-[32px] tracking-[-0.18px] text-gray-900",
+              "text-black",
               isCentered ? "text-center" : "text-left",
               titleClassName,
             )}

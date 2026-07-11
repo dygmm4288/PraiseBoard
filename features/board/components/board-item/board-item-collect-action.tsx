@@ -37,7 +37,7 @@ const BoardItemCollectAction = ({ board, ui }: Props) => {
       <AppText
         weight="bold"
         className={[
-          "text-[17px] leading-[17px]",
+          "min-w-[38px] text-center text-[17px] leading-[25px]",
           isCompleted ? "text-secondary-50" : progressColor,
         ].join(" ")}
       >

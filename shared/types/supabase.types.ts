@@ -353,6 +353,17 @@ export type Database = {
       }
       collect_sticker_app: { Args: { board_id: string }; Returns: Json }
       collect_sticker_widget: { Args: { board_id: string }; Returns: Json }
+      create_board_with_active_limit: {
+        Args: {
+          p_emoji: string
+          p_limit_count: number
+          p_profile_id: string
+          p_reward_memo: string | null
+          p_target_count: number
+          p_title: string
+        }
+        Returns: Database["public"]["Tables"]["boards"]["Row"]
+      }
       get_board_streak: { Args: { p_board_id: string }; Returns: Json }
       get_boards_with_stats: {
         Args: never

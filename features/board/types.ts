@@ -8,6 +8,13 @@ import { Database } from "@/shared/types/supabase.types";
 export type BoardStatus = Database["public"]["Enums"]["board_status"];
 export type BoardStickerSource = Database["public"]["Enums"]["sticker_source"];
 
+export class ActiveBoardLimitError extends Error {
+  constructor() {
+    super("ACTIVE_BOARD_LIMIT_REACHED");
+    this.name = "ActiveBoardLimitError";
+  }
+}
+
 export type Board = {
   id: string;
   title: string;

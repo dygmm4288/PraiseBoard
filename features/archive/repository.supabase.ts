@@ -10,7 +10,11 @@ import {
   toArchiveDailyStickerCounts,
   toArchiveDetail,
 } from "./mapper";
-import { ArchiveDetail, ArchiveDetailRequest, IArchiveRepository } from "./types";
+import {
+  ArchiveDetail,
+  ArchiveDetailRequest,
+  IArchiveRepository,
+} from "./types";
 
 const BOARD_DETAIL_FIELDS =
   "id, title, emoji, reward_memo, target_count, limit_count, current_count, created_at";

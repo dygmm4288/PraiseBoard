@@ -73,10 +73,10 @@ const BottomSheetHeader = ({
         onPress={onClose}
       />
       <AppText
-        variant="custom"
+        variant="title18"
         weight="bold"
         numberOfLines={1}
-        className="mx-[8px] min-w-0 flex-1 text-center text-[18px] leading-[32px] text-black"
+        className="mx-[8px] min-w-0 flex-1 text-center text-black"
       >
         {title}
       </AppText>

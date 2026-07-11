@@ -17,6 +17,70 @@ module.exports = {
         pretendard: ["Pretendard", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       fontSize: {
+        // Figma typography tokens. Keep legacy tokens below during migration.
+        "title-33": [
+          "33px",
+          {
+            lineHeight: "33px",
+            letterSpacing: "0",
+          },
+        ],
+        "title-26": [
+          "26px",
+          {
+            lineHeight: "26px",
+            letterSpacing: "0",
+          },
+        ],
+        "title-18": [
+          "18px",
+          {
+            lineHeight: "32px",
+            letterSpacing: "-0.18px",
+          },
+        ],
+        "title-16": [
+          "16px",
+          {
+            lineHeight: "24px",
+            letterSpacing: "0",
+          },
+        ],
+        "body-14": [
+          "14px",
+          {
+            lineHeight: "20px",
+            letterSpacing: "0",
+          },
+        ],
+        "button-15": [
+          "15px",
+          {
+            lineHeight: "25px",
+            letterSpacing: "0",
+          },
+        ],
+        "label-12": [
+          "12px",
+          {
+            lineHeight: "20px",
+            letterSpacing: "0",
+          },
+        ],
+        "label-10": [
+          "10px",
+          {
+            lineHeight: "12px",
+            letterSpacing: "0",
+          },
+        ],
+        "label-9": [
+          "9px",
+          {
+            lineHeight: "9px",
+            letterSpacing: "0",
+          },
+        ],
         title1: [
           "32px",
           {

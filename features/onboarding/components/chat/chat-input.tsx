@@ -83,7 +83,7 @@ const ChatInput = ({
       <View className="h-[41px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white pl-[15px] pr-[4px]">
         {prefix ? (
           <View className="mr-[6px] h-full justify-center">
-            <Text className="font-pretendard text-[14px] leading-[20px] text-gray-900">
+            <Text className="font-pretendard text-[14px] leading-[20px] text-black">
               {prefix}
             </Text>
           </View>
@@ -101,7 +101,7 @@ const ChatInput = ({
           ) : null}
           <TextInput
             ref={inputRef}
-            className="h-full w-full py-0 font-pretendard text-[14px] leading-[20px] text-gray-900"
+            className="h-full w-full py-0 font-pretendard text-[14px] leading-[20px] text-black"
             style={{ includeFontPadding: false, textAlignVertical: "center" }}
             value={value}
             onChangeText={handleChangeText}

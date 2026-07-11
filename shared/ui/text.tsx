@@ -3,6 +3,15 @@ import React from "react";
 import { Text as RNText, TextProps as RNTextProps } from "react-native";
 
 type TextCoreVariant =
+  | "title33"
+  | "title26"
+  | "title18"
+  | "title16"
+  | "body14"
+  | "button15"
+  | "label12"
+  | "label10"
+  | "label9"
   | "title1"
   | "title2"
   | "title3"
@@ -27,6 +36,15 @@ export interface AppTextProps extends RNTextProps {
 }
 
 export const TEXT_VARIANT_STYLES: Record<TextCoreVariant, string> = {
+  title33: "text-title-33",
+  title26: "text-title-26",
+  title18: "text-title-18",
+  title16: "text-title-16",
+  body14: "text-body-14",
+  button15: "text-button-15",
+  label12: "text-label-12",
+  label10: "text-label-10",
+  label9: "text-label-9",
   title1: "text-title1",
   title2: "text-title2",
   title3: "text-title3",
@@ -55,6 +73,15 @@ export const TEXT_WEIGHT_STYLES: Record<TextWeight, string> = {
 };
 
 const TEXT_DEFAULT_WEIGHT_BY_VARIANT: Record<TextCoreVariant, TextWeight> = {
+  title33: "bold",
+  title26: "bold",
+  title18: "bold",
+  title16: "bold",
+  body14: "regular",
+  button15: "medium",
+  label12: "regular",
+  label10: "regular",
+  label9: "semibold",
   title1: "bold",
   title2: "bold",
   title3: "bold",

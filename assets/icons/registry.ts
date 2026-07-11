@@ -10,6 +10,7 @@ import Edit from "./edit.svg";
 import Chart from "./fnb/chart.svg";
 import Folder from "./fnb/folder.svg";
 import Home from "./fnb/home.svg";
+import Notification from "./notification.svg";
 import Setting from "./fnb/setting.svg";
 import Share from "./share.svg";
 
@@ -25,6 +26,7 @@ export const ICONS = {
   ChevronRightSmall,
   Edit,
   Home,
+  Notification,
   Folder,
   Chart,
   Delete,

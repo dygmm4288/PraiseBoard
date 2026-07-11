@@ -2,10 +2,9 @@ import {
   NICKNAME_MAX_LENGTH,
   NICKNAME_MAX_LENGTH_MESSAGE,
 } from "@/features/board/schema";
-import { BottomSheetHeader } from "@/shared/components";
+import { BottomSheetHeader, BottomSheetInput } from "@/shared/components";
 import { toast } from "@/shared/toasts/toast";
-import { AppInput, AppText } from "@/shared/ui";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { AppText } from "@/shared/ui";
 import { useState } from "react";
 import { View } from "react-native";
 
@@ -56,20 +55,19 @@ const NameEditSheetContent = ({
       />
       <View className="py-[21px]">
         <AppText
-          variant="custom"
+          variant="label12"
           weight="semibold"
-          className="mb-[6px] text-[12px] leading-[20px] text-labelGray"
+          className="mb-[6px] text-labelGray"
         >
           이름
         </AppText>
-        <AppInput
+        <BottomSheetInput
           value={draftName}
           maxLength={NICKNAME_MAX_LENGTH}
           editable={!isSaving}
           autoFocus
           reset
           onChangeText={handleChangeDraftName}
-          inputComponent={BottomSheetTextInput}
         />
       </View>
     </>

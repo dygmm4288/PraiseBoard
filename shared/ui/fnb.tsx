@@ -1,4 +1,5 @@
 import { COLOR } from "@/shared/constants/colors.constant";
+import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
 import React, {
   memo,
@@ -12,6 +13,7 @@ import {
   Pressable,
   StyleSheet,
   View,
+  useWindowDimensions,
   type LayoutChangeEvent,
 } from "react-native";
 import Animated, {
@@ -149,10 +151,8 @@ const FnbItemBase = <T extends string>({
   const contentStyle = useAnimatedStyle(() => {
     const translateY = interpolate(progress.value, [0, 1], [0, -2]);
     const scale = interpolate(progress.value, [0, 1], [1, 1.06]);
-    const opacity = interpolate(progress.value, [0, 1], [0.72, 1]);
 
     return {
-      opacity,
       transform: [{ translateY }, { scale }],
     };
   });
@@ -178,11 +178,11 @@ const FnbItemBase = <T extends string>({
         <Icon width={28} height={28} color={color} stroke={color} />
 
         <AppText
-          variant="caption2"
+          variant="label10"
           weight="semibold"
           className={cn(
-            "w-full text-center text-[10px] leading-[12px]",
-            isActive ? "text-primary-500" : "text-gray-900",
+            "w-full text-center",
+            isActive ? "text-primary-500" : "text-black",
           )}
         >
           {item.label}
@@ -201,6 +201,8 @@ const Fnb = <T extends string>({
   className,
 }: Props<T>) => {
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const containerRef = useRef<View>(null);
   const onPressRef = useRef(onPress);
   const [visualActiveKey, setVisualActiveKey] = useState(activeKey);
   const [itemLayouts, setItemLayouts] = useState<
@@ -232,6 +234,19 @@ const Fnb = <T extends string>({
     setVisualActiveKey(key);
     onPressRef.current(key);
   }, []);
+
+  const syncToastOffset = useCallback(() => {
+    requestAnimationFrame(() => {
+      containerRef.current?.measureInWindow((_, y) => {
+        setFnbToastOffset(Math.max(0, windowHeight - y) + TOAST_BOTTOM_GAP);
+      });
+    });
+  }, [windowHeight]);
+
+  useEffect(() => {
+    syncToastOffset();
+    return () => setFnbToastOffset(0);
+  }, [syncToastOffset]);
 
   const handleItemLayout = useCallback(
     (index: number, layout: FnbItemLayout) => {
@@ -266,44 +281,49 @@ const Fnb = <T extends string>({
 
   return (
     <View
+      ref={containerRef}
+      collapsable={false}
       className={cn(
         "absolute left-0 right-0 items-center px-[21px]",
         className,
       )}
       pointerEvents="box-none"
+      onLayout={syncToastOffset}
       style={{ bottom: insets.bottom + BOTTOM_OFFSET }}
     >
       <View
-        className="relative w-full max-w-[360px] flex-row items-start justify-center overflow-hidden rounded-[296px] bg-white px-[6px] py-[4px]"
-        style={styles.container}
+        className="w-full max-w-[360px] rounded-[296px]"
+        style={styles.shadow}
       >
-        <ActiveSurface
-          x={activeSurfaceX}
-          width={activeSurfaceWidth}
-          visible={!!activeLayout}
-        />
-        {items.map((item, index) => (
-          <FnbItem
-            key={item.key}
-            item={item}
-            isActive={item.key === visualActiveKey}
-            isLast={index === items.length - 1}
-            onLayout={itemLayoutHandlers[index]}
-            onPress={handlePress}
+        <View className="relative flex-row items-start justify-center overflow-hidden rounded-[296px] bg-white px-[6px] py-[4px]">
+          <ActiveSurface
+            x={activeSurfaceX}
+            width={activeSurfaceWidth}
+            visible={!!activeLayout}
           />
-        ))}
+          {items.map((item, index) => (
+            <FnbItem
+              key={item.key}
+              item={item}
+              isActive={item.key === visualActiveKey}
+              isLast={index === items.length - 1}
+              onLayout={itemLayoutHandlers[index]}
+              onPress={handlePress}
+            />
+          ))}
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 12,
-    shadowColor: COLOR.black,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 40,
+  shadow: {
+    elevation: 18,
+    shadowColor: COLOR.primary[900],
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
   },
 });
 

@@ -1,7 +1,11 @@
 import { useUser } from "@/services/user";
 import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
-import { formatMonthKey, getMonthDate, parseMonthKey } from "@/shared/utils/date";
+import {
+  formatMonthKey,
+  getMonthDate,
+  parseMonthKey,
+} from "@/shared/utils/date";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import MonthAchievementCard from "../components/month-achievement-card";
@@ -14,7 +18,7 @@ const getMonthTitle = (date: Date) =>
 
 const StatsStatusText = ({ message }: { message: string }) => {
   return (
-    <AppText variant="body3" className="text-center text-gray-500">
+    <AppText variant="body14" className="text-center text-gray-500">
       {message}
     </AppText>
   );

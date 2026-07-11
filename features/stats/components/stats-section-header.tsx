@@ -9,10 +9,10 @@ type Props = {
 const StatsSectionHeader = ({ label, value }: Props) => {
   return (
     <View className="flex-row items-center justify-between">
-      <AppText variant="caption1" weight="semibold" className="text-labelGray">
+      <AppText variant="label12" weight="bold" className="text-labelGray">
         {label}
       </AppText>
-      <AppText variant="title3" weight="bold" className="text-primary-500">
+      <AppText variant="title18" weight="bold" className="text-primary-500">
         {value}
       </AppText>
     </View>

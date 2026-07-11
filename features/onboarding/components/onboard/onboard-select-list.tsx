@@ -36,14 +36,17 @@ const OnboardSelectList = ({ items, onPress, disabled = false }: Props) => {
           >
             <View className="flex-row items-center gap-[12px]">
               <View className="h-[40px] w-[40px] items-center justify-center rounded-[13px] bg-primary-100">
-                <AppText variant="custom" className="text-[20px] leading-[24px]">
+                <AppText
+                  variant="custom"
+                  className="text-[20px] leading-[24px]"
+                >
                   {item.icon}
                 </AppText>
               </View>
               <AppText
-                variant="custom"
+                variant="body14"
                 weight="semibold"
-                className="flex-1 text-[14px] leading-[20px] text-gray-900"
+                className="flex-1 text-black"
                 numberOfLines={1}
               >
                 {item.text}

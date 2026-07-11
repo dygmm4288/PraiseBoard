@@ -26,9 +26,9 @@ const BoardItemMeta = ({
   const shouldShowTodayDoneState = shouldApplyTodayDoneState && isTodayDone;
   const shouldDisableText = shouldApplyTodayDoneState && boardDisabled;
   const displayStreak =
-    board.currentStreak > 0
+    !isCompleted && board.currentStreak > 0
       ? board.currentStreak
-      : board.todaySuccess || board.todayStickerCount > 0
+      : !isCompleted && (board.todaySuccess || board.todayStickerCount > 0)
         ? 1
         : 0;
 
@@ -51,23 +51,23 @@ const BoardItemMeta = ({
       </View>
 
       {/* board meta Wrapper */}
-      <View className="min-w-0 flex-1">
+      <View className="min-w-0 flex-1 gap-[4px]">
         {/* board badges */}
-        <View className="mt-[6px] flex-row gap-[5px]">
+        <View className="min-h-[16px] flex-row items-center gap-[5px]">
           {isCompleted && completedPeriodLabel ? (
-            <View className="px-[7px] py-[2px]">
+            <View className="justify-center">
               <AppText
-                variant="caption2"
-                className="text-[9.5px] text-textGray"
+                variant="custom"
+                className="text-[10px] leading-[14px] text-textGray"
               >
                 {completedPeriodLabel}
               </AppText>
             </View>
           ) : (
-            <View className="rounded-full bg-gray-100 px-[7px] py-[2px]">
+            <View className="rounded-full bg-gray-100 px-[7px] py-[1px]">
               <AppText
-                variant="caption2"
-                className="text-[9.5px] text-gray-400"
+                variant="custom"
+                className="text-[10px] leading-[14px] text-gray-400"
               >
                 D+{boardDDay}
               </AppText>
@@ -78,7 +78,7 @@ const BoardItemMeta = ({
               <AppText
                 variant="custom"
                 weight="semibold"
-                className="text-[9px] leading-[12px] text-secondary-50"
+                className="text-[10px] leading-[14px] text-secondary-50"
               >
                 🔥 연속 {displayStreak}일
               </AppText>
@@ -89,7 +89,7 @@ const BoardItemMeta = ({
         {/* 타이틀 Text */}
         <AppText
           numberOfLines={1}
-          variant="body3"
+          variant="body14"
           weight="semibold"
           className={cn(
             isCompleted
@@ -104,13 +104,13 @@ const BoardItemMeta = ({
 
         {/* 보상 Text */}
         {rewardText && (
-          <View className="mt-[2.5px] flex-row items-center gap-[4px]">
+          <View className="flex-row items-center gap-[4px]">
             <AppText
               variant="caption2"
               weight="semibold"
               className="text-[9.5px] uppercase tracking-[0.5px] text-gray-400"
             >
-              보상 • {rewardText}
+              보상: {rewardText}
             </AppText>
           </View>
         )}
