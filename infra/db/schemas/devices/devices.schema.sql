@@ -30,3 +30,9 @@ on devices(profile_id, device_id);
 create unique index idx_devices_push_token_unique
 on devices(push_token)
 where push_token is not null;
+
+create index idx_devices_push_reminder_candidates
+on devices(profile_id)
+where push_enabled = true
+  and push_permission_status = 'granted'
+  and push_token is not null;

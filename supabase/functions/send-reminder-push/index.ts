@@ -8,27 +8,24 @@ const MESSAGE_TITLE = "웨일던";
 const MESSAGE_BODY =
   "오늘 하루도 얼마 남지 않았어요. 1분만 투자해서 습관을 지켜볼까요?";
 
-type ProfileRow = {
-  id: string;
-  nickname: string | null;
-  reminder_hour: number;
-  reminder_minute: number;
-  reminder_times: unknown;
-  timezone: string;
-};
-
-type DeviceRow = {
-  device_id: string;
-  profile_id: string;
-  push_token: string | null;
-  profiles: ProfileRow | ProfileRow[] | null;
-};
-
 type ExpoTicket = {
   status: "ok" | "error";
   id?: string;
   message?: string;
   details?: { error?: string };
+};
+
+type ClaimedReminder = {
+  notification_log_id: string;
+  profile_id: string;
+  local_date: string;
+  local_time: string;
+  push_tokens: string[] | null;
+};
+
+type PushMessage = {
+  logId: string;
+  token: string;
 };
 
 const getEnv = (key: string) => {
@@ -61,64 +58,6 @@ const authorize = (request: Request) => {
   return request.headers.get("authorization") === `Bearer ${cronSecret}`;
 };
 
-const getProfile = (row: DeviceRow): ProfileRow | null => {
-  if (Array.isArray(row.profiles)) return row.profiles[0] ?? null;
-  return row.profiles;
-};
-
-const getLocalTimeParts = (timeZone: string, now = new Date()) => {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(now);
-
-  const value = (type: string) =>
-    parts.find((part) => part.type === type)?.value ?? "00";
-
-  return {
-    localDate: `${value("year")}-${value("month")}-${value("day")}`,
-    hour: Number(value("hour")),
-    minute: Number(value("minute")),
-  };
-};
-
-const isValidReminderTime = (
-  value: unknown,
-): value is { hour: number; minute: number } => {
-  if (typeof value !== "object" || value === null) return false;
-
-  const time = value as { hour?: unknown; minute?: unknown };
-  if (typeof time.hour !== "number" || typeof time.minute !== "number") {
-    return false;
-  }
-
-  return (
-    Number.isInteger(time.hour) &&
-    Number.isInteger(time.minute) &&
-    time.hour >= 0 &&
-    time.hour <= 23 &&
-    time.minute >= 0 &&
-    time.minute <= 59
-  );
-};
-
-const getReminderTimes = (profile: ProfileRow) => {
-  if (Array.isArray(profile.reminder_times)) {
-    const times = profile.reminder_times.filter(isValidReminderTime);
-    if (times.length > 0) return times;
-  }
-
-  return [{ hour: profile.reminder_hour, minute: profile.reminder_minute }];
-};
-
-const formatLocalTime = ({ hour, minute }: { hour: number; minute: number }) =>
-  `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-
 const chunk = <T>(items: T[], size: number) => {
   const chunks: T[][] = [];
   for (let index = 0; index < items.length; index += size) {
@@ -139,135 +78,125 @@ serve(async (request: Request) => {
       { auth: { persistSession: false } },
     );
 
-    const { data: devices, error: deviceError } = await supabase
-      .from("devices")
-      .select(
-        "device_id, profile_id, push_token, profiles!inner(id, nickname, reminder_hour, reminder_minute, reminder_times, timezone)",
-      )
-      .eq("push_enabled", true)
-      .eq("push_permission_status", "granted")
-      .not("push_token", "is", null)
-      .limit(1000);
+    const { data: claimedReminders, error: claimError } = await supabase.rpc(
+      "claim_due_push_reminders",
+      {
+        p_limit: 1000,
+        p_message_type: MESSAGE_TYPE,
+        p_message_trigger: MESSAGE_TRIGGER,
+        p_message_body: MESSAGE_BODY,
+      },
+    );
 
-    if (deviceError) throw deviceError;
+    if (claimError) throw claimError;
 
-    const grouped = new Map<
+    const reminders = (claimedReminders ?? []) as ClaimedReminder[];
+    const deliveryState = new Map<
       string,
       {
-        profile: ProfileRow;
-        localDate: string;
-        localTime: string;
-        tokens: string[];
+        ticketIds: string[];
+        ticketTokenMap: Record<string, string>;
+        errors: string[];
       }
     >();
+    const messages: PushMessage[] = [];
 
-    for (const device of (devices ?? []) as DeviceRow[]) {
-      const profile = getProfile(device);
-      if (!profile || !device.push_token) continue;
+    for (const reminder of reminders) {
+      deliveryState.set(reminder.notification_log_id, {
+        ticketIds: [],
+        ticketTokenMap: {},
+        errors: [],
+      });
 
-      const localTime = getLocalTimeParts(profile.timezone);
-      const matchedReminderTime = getReminderTimes(profile).find(
-        (reminderTime) =>
-          reminderTime.hour === localTime.hour &&
-          reminderTime.minute === localTime.minute,
-      );
-
-      if (!matchedReminderTime) {
-        continue;
-      }
-
-      const localTimeKey = formatLocalTime(matchedReminderTime);
-      const groupKey = `${profile.id}:${localTime.localDate}:${localTimeKey}`;
-      const existing = grouped.get(groupKey);
-      if (existing) {
-        existing.tokens.push(device.push_token);
-      } else {
-        grouped.set(groupKey, {
-          profile,
-          localDate: localTime.localDate,
-          localTime: localTimeKey,
-          tokens: [device.push_token],
+      for (const token of new Set(reminder.push_tokens ?? [])) {
+        messages.push({
+          logId: reminder.notification_log_id,
+          token,
         });
       }
     }
 
-    let sentProfileCount = 0;
     let sentTokenCount = 0;
     const invalidTokens = new Set<string>();
-    const errors: string[] = [];
+    const allErrors: string[] = [];
 
-    for (const { profile, localDate, localTime, tokens } of grouped.values()) {
-      const { data: log, error: logError } = await supabase
-        .from("notification_logs")
-        .insert({
-          profile_id: profile.id,
-          channel: "push",
-          type: MESSAGE_TYPE,
-          message_trigger: MESSAGE_TRIGGER,
-          message_body: MESSAGE_BODY,
-          sent_local_date: localDate,
-          sent_local_time: localTime,
-        })
-        .select("id")
-        .single();
+    for (const messageChunk of chunk(messages, 100)) {
+      const response = await fetch(EXPO_PUSH_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(
+          messageChunk.map(({ token }) => ({
+            to: token,
+            title: MESSAGE_TITLE,
+            body: MESSAGE_BODY,
+            sound: "default",
+            channelId: "remind.v1",
+            data: { trigger: MESSAGE_TRIGGER },
+          })),
+        ),
+      });
 
-      if (logError) {
-        if (logError.code === "23505") continue;
-        throw logError;
+      if (!response.ok) {
+        const errorMessage = `Expo push request failed: ${response.status}`;
+        allErrors.push(errorMessage);
+        for (const message of messageChunk) {
+          deliveryState.get(message.logId)?.errors.push(errorMessage);
+        }
+        continue;
       }
 
-      const ticketIds: string[] = [];
-      const ticketTokenMap: Record<string, string> = {};
+      const payload = (await response.json()) as { data?: ExpoTicket[] };
+      if (!payload.data) {
+        const errorMessage = "Expo push response missing data";
+        allErrors.push(errorMessage);
+        for (const message of messageChunk) {
+          deliveryState.get(message.logId)?.errors.push(errorMessage);
+        }
+        continue;
+      }
 
-      for (const tokenChunk of chunk([...new Set(tokens)], 100)) {
-        const response = await fetch(EXPO_PUSH_URL, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(
-            tokenChunk.map((token) => ({
-              to: token,
-              title: MESSAGE_TITLE,
-              body: MESSAGE_BODY,
-              sound: "default",
-              channelId: "remind.v1",
-              data: { trigger: MESSAGE_TRIGGER },
-            })),
-          ),
-        });
+      payload.data.forEach((ticket, index) => {
+        const message = messageChunk[index];
+        const state = deliveryState.get(message.logId);
+        if (!state) return;
 
-        if (!response.ok) {
-          errors.push(`Expo push request failed: ${response.status}`);
-          continue;
+        if (ticket.status === "ok" && ticket.id) {
+          state.ticketIds.push(ticket.id);
+          state.ticketTokenMap[ticket.id] = message.token;
+          sentTokenCount += 1;
+          return;
         }
 
-        const payload = (await response.json()) as { data?: ExpoTicket[] };
-        payload.data?.forEach((ticket, index) => {
-          const token = tokenChunk[index];
-          if (ticket.status === "ok" && ticket.id) {
-            ticketIds.push(ticket.id);
-            ticketTokenMap[ticket.id] = token;
-            sentTokenCount += 1;
-            return;
-          }
+        const errorMessage = ticket.message ?? "Expo push ticket failed";
+        state.errors.push(errorMessage);
+        allErrors.push(errorMessage);
+        if (ticket.details?.error === "DeviceNotRegistered") {
+          invalidTokens.add(message.token);
+        }
+      });
+    }
 
-          errors.push(ticket.message ?? "Expo push ticket failed");
-          if (ticket.details?.error === "DeviceNotRegistered") {
-            invalidTokens.add(token);
-          }
-        });
-      }
-
-      await supabase
+    for (const [logId, state] of deliveryState.entries()) {
+      const { error: updateError } = await supabase
         .from("notification_logs")
         .update({
-          expo_ticket_ids: ticketIds.length > 0 ? ticketIds : null,
+          expo_ticket_ids:
+            state.ticketIds.length > 0 ? state.ticketIds : null,
           expo_ticket_token_map:
-            Object.keys(ticketTokenMap).length > 0 ? ticketTokenMap : null,
-          expo_error: errors.length > 0 ? errors.slice(-5).join("\n") : null,
+            Object.keys(state.ticketTokenMap).length > 0
+              ? state.ticketTokenMap
+              : null,
+          expo_error:
+            state.errors.length > 0 ? state.errors.slice(-5).join("\n") : null,
         })
-        .eq("id", log.id);
+        .eq("id", logId);
 
-      sentProfileCount += 1;
+      if (updateError) {
+        console.error("Failed to update notification log", {
+          logId,
+          error: updateError,
+        });
+      }
     }
 
     if (invalidTokens.size > 0) {
@@ -277,16 +206,21 @@ serve(async (request: Request) => {
         .in("push_token", [...invalidTokens]);
     }
 
-    return Response.json({
+    const summary = {
       ok: true,
-      matchedProfiles: grouped.size,
-      sentProfiles: sentProfileCount,
+      claimedProfiles: reminders.length,
+      queuedTokens: messages.length,
       sentTokens: sentTokenCount,
       invalidTokens: invalidTokens.size,
-      errors,
-    });
+      errors: allErrors,
+    };
+
+    console.info("send-reminder-push summary", summary);
+
+    return Response.json(summary);
   } catch (error) {
-    console.error(error);
+    console.error("send-reminder-push failed", error);
+
     return Response.json(
       { ok: false, error: error instanceof Error ? error.message : error },
       { status: 500 },

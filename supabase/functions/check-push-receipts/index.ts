@@ -17,6 +17,11 @@ type ExpoReceipt = {
 
 type ReceiptStatus = ExpoReceipt["status"] | "pending";
 
+type TicketRef = {
+  logId: string;
+  ticketId: string;
+};
+
 const getEnv = (key: string) => {
   const value = Deno.env.get(key);
   if (!value) throw new Error(`${key} is required`);
@@ -47,6 +52,14 @@ const authorize = (request: Request) => {
   return request.headers.get("authorization") === `Bearer ${cronSecret}`;
 };
 
+const chunk = <T>(items: T[], size: number) => {
+  const chunks: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+  return chunks;
+};
+
 serve(async (request: Request) => {
   try {
     if (!authorize(request)) {
@@ -73,41 +86,54 @@ serve(async (request: Request) => {
     if (logError) throw logError;
 
     const invalidTokens = new Set<string>();
-    let checkedLogs = 0;
+    const receiptsById = new Map<string, ExpoReceipt>();
+    const ticketRefs: TicketRef[] = [];
 
     for (const log of (logs ?? []) as NotificationLog[]) {
-      const ids = log.expo_ticket_ids ?? [];
-      if (ids.length === 0) continue;
+      for (const ticketId of log.expo_ticket_ids ?? []) {
+        ticketRefs.push({ logId: log.id, ticketId });
+      }
+    }
 
+    for (const ticketChunk of chunk(ticketRefs, 100)) {
       const response = await fetch(EXPO_RECEIPT_URL, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ids }),
+        body: JSON.stringify({
+          ids: ticketChunk.map(({ ticketId }) => ticketId),
+        }),
       });
 
       if (!response.ok) {
-        await supabase
-          .from("notification_logs")
-          .update({
-            expo_receipt_status: "error",
-            expo_receipt_checked_at: new Date().toISOString(),
-            expo_error: `Expo receipt request failed: ${response.status}`,
-          })
-          .eq("id", log.id);
+        console.error("Expo receipt request failed", {
+          status: response.status,
+          ticketCount: ticketChunk.length,
+        });
         continue;
       }
 
       const payload = (await response.json()) as {
         data?: Record<string, ExpoReceipt>;
       };
-      const receipts = payload.data ?? {};
+      for (const [ticketId, receipt] of Object.entries(payload.data ?? {})) {
+        receiptsById.set(ticketId, receipt);
+      }
+    }
+
+    let checkedLogs = 0;
+    let stillPendingLogs = 0;
+
+    for (const log of (logs ?? []) as NotificationLog[]) {
+      const ids = log.expo_ticket_ids ?? [];
+      if (ids.length === 0) continue;
+
       const statuses: ReceiptStatus[] = ids.map(
-        (id) => receipts[id]?.status ?? "pending",
+        (id) => receiptsById.get(id)?.status ?? "pending",
       );
       const errors: string[] = [];
 
       for (const id of ids) {
-        const receipt = receipts[id];
+        const receipt = receiptsById.get(id);
         if (!receipt || receipt.status !== "error") continue;
 
         errors.push(receipt.message ?? receipt.details?.error ?? "error");
@@ -122,6 +148,11 @@ serve(async (request: Request) => {
         : statuses.includes("error")
           ? "error"
           : "ok";
+
+      if (finalStatus === "pending") {
+        stillPendingLogs += 1;
+        continue;
+      }
 
       await supabase
         .from("notification_logs")
@@ -142,13 +173,21 @@ serve(async (request: Request) => {
         .in("push_token", [...invalidTokens]);
     }
 
-    return Response.json({
+    const summary = {
       ok: true,
+      fetchedLogs: logs?.length ?? 0,
+      pendingLogs: stillPendingLogs,
+      checkedTickets: receiptsById.size,
       checkedLogs,
       invalidTokens: invalidTokens.size,
-    });
+    };
+
+    console.info("check-push-receipts summary", summary);
+
+    return Response.json(summary);
   } catch (error) {
-    console.error(error);
+    console.error("check-push-receipts failed", error);
+
     return Response.json(
       { ok: false, error: error instanceof Error ? error.message : error },
       { status: 500 },
