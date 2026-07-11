@@ -1,9 +1,11 @@
 import { notification } from "@/services/notification";
 import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
+import Constants from "expo-constants";
+import * as IntentLauncher from "expo-intent-launcher";
 import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
-import { AppState, Linking, Pressable, View } from "react-native";
+import { AppState, Linking, Platform, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingToggle from "../setting-toggle";
 
@@ -14,6 +16,27 @@ const TOP_TOAST_OPTIONS = {
 const NoSettingNotification = () => {
   const openNotificationSettings = async () => {
     try {
+      if (Platform.OS === "android") {
+        const packageName = Constants.expoConfig?.android?.package;
+
+        if (packageName) {
+          await IntentLauncher.startActivityAsync(
+            IntentLauncher.ActivityAction.APP_NOTIFICATION_SETTINGS,
+            {
+              extra: {
+                "android.provider.extra.APP_PACKAGE": packageName,
+              },
+            },
+          );
+          return;
+        }
+      }
+
+      if (Platform.OS === "ios") {
+        await Linking.openURL("app-settings:notifications");
+        return;
+      }
+
       await Linking.openSettings();
     } catch (error) {
       console.error("기기 알림 설정 화면을 여는 중 오류 발생", error);
