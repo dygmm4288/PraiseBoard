@@ -1,7 +1,7 @@
-import { COLOR } from "@/shared/constants/colors.constant";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   NativeSyntheticEvent,
+  Text,
   TextInput,
   TextInputKeyPressEventData,
   View,
@@ -13,6 +13,7 @@ type Props = {
   onChangeText?: (value: string) => void;
   onSend?: () => void;
   placeholder?: string;
+  prefix?: string;
   disabled?: boolean;
   maxLength?: number;
   onMaxLengthExceeded?: () => void;
@@ -25,6 +26,7 @@ const ChatInput = ({
   onChangeText = () => {},
   onSend = () => {},
   placeholder = "",
+  prefix,
   disabled = false,
   maxLength,
   onMaxLengthExceeded,
@@ -79,19 +81,37 @@ const ChatInput = ({
   return (
     <View className="items-center bg-white px-[24px] py-[18px]">
       <View className="h-[41px] w-full flex-row items-center justify-between rounded-[20px] border border-[#EFF1F5] bg-white pl-[15px] pr-[4px]">
-        <TextInput
-          ref={inputRef}
-          className="h-full flex-1 pr-[8px] font-pretendard text-[14px] leading-[20px] text-gray-900"
-          value={value}
-          onChangeText={handleChangeText}
-          onKeyPress={handleKeyPress}
-          onSubmitEditing={handleSubmitEditing}
-          blurOnSubmit={false}
-          returnKeyType="send"
-          placeholder={placeholder}
-          placeholderTextColor={COLOR.labelGray}
-          editable={!disabled}
-        />
+        {prefix ? (
+          <View className="mr-[6px] h-full justify-center">
+            <Text className="font-pretendard text-[14px] leading-[20px] text-gray-900">
+              {prefix}
+            </Text>
+          </View>
+        ) : null}
+        <View className="relative h-full flex-1 justify-center pr-[8px]">
+          {value.length === 0 && placeholder ? (
+            <View
+              pointerEvents="none"
+              className="absolute inset-y-0 left-0 justify-center"
+            >
+              <Text className="font-pretendard text-[14px] leading-[20px] text-gray-300">
+                {placeholder}
+              </Text>
+            </View>
+          ) : null}
+          <TextInput
+            ref={inputRef}
+            className="h-full w-full py-0 font-pretendard text-[14px] leading-[20px] text-gray-900"
+            style={{ includeFontPadding: false, textAlignVertical: "center" }}
+            value={value}
+            onChangeText={handleChangeText}
+            onKeyPress={handleKeyPress}
+            onSubmitEditing={handleSubmitEditing}
+            returnKeyType="send"
+            placeholder=""
+            editable={!disabled}
+          />
+        </View>
         <ChatSend onPress={onSend} disabled={disabled || sendDisabled} />
       </View>
     </View>

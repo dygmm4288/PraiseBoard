@@ -24,7 +24,8 @@ const meta = {
     value: "",
     onChangeText: fn(),
     onSend: fn(),
-    placeholder: "나는___야",
+    prefix: "나는",
+    placeholder: "hintText",
   },
   argTypes: {},
 } satisfies Meta<typeof ChatInput>;

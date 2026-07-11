@@ -68,7 +68,8 @@ const OnboardStepName = ({ form, onNext }: OnboardStepProps) => {
           control={form.control}
           render={({ field }) => (
             <ChatInput
-              placeholder="나는___야"
+              prefix="나는"
+              placeholder="이름을 알려주세요"
               value={field.value}
               onChangeText={field.onChange}
               onSend={() => onSendForm(field)}

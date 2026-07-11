@@ -62,7 +62,6 @@ export const useCreateBoard = () => {
       return board.createBoard(payload);
     },
     onSuccess: (createdBoard) => {
-      toast.success("등록 중 입니다");
       if (profileId) {
         queryClient.setQueryData<BoardListResult | null>(
           boardKeys.activeLists(profileId, todayKey),
