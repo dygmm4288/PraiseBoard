@@ -4,26 +4,26 @@ import type {
 } from "@gorhom/bottom-sheet";
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetView,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Easing } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
-type Props = {
+type Props = PropsWithChildren<{
   index: number;
   onChangeIndex: (index: number) => void;
-  snapPoints?: (string | number)[];
+  snapPoints?: readonly (string | number)[];
   enablePanDownToClose?: boolean;
   enableContentPanningGesture?: boolean;
   enableBackdrop?: boolean;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
+  keyboardBlurBehavior?: BottomSheetProps["keyboardBlurBehavior"];
+  enableBlurKeyboardOnGesture?: BottomSheetProps["enableBlurKeyboardOnGesture"];
   androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
-  onRequestClose?: () => void;
-} & PropsWithChildren;
+}>;
 
 const DEFAULT_SNAP_POINTS = ["25%", "50%", "90%"] as const;
 const TOP_INSET_OFFSET = 8;
@@ -33,19 +33,20 @@ const AppBottomSheet = ({
   index,
   onChangeIndex,
   children,
-  keyboardBehavior,
   snapPoints = [...DEFAULT_SNAP_POINTS],
   enablePanDownToClose = true,
   enableContentPanningGesture = true,
   enableBackdrop = true,
+  keyboardBehavior = "interactive",
+  keyboardBlurBehavior = "restore",
+  enableBlurKeyboardOnGesture = true,
   androidKeyboardInputMode = "adjustResize",
-  onRequestClose,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const bottomSheetRef = useRef<ElementRef<typeof BottomSheet>>(null);
   const lastEmittedIndexRef = useRef<number | null>(null);
-  const [initialIndex] = useState(index);
-  const resolvedSnapPoints = useMemo(() => snapPoints, [snapPoints]);
+  const initialIndexRef = useRef(index);
+  const resolvedSnapPoints = useMemo(() => [...snapPoints], [snapPoints]);
   const animationConfigs = useBottomSheetTimingConfigs({
     duration: ANIMATION_DURATION,
     easing: Easing.bezier(0.32, 0.72, 0, 1),
@@ -68,11 +69,11 @@ const AppBottomSheet = ({
           disappearsOnIndex={-1}
           opacity={0.5}
           pressBehavior="close"
-          accessibilityLabel="닫기"
-          onPress={onRequestClose}
+          accessibilityRole="button"
+          accessibilityLabel="바텀시트 닫기"
         />
       ) : null,
-    [enableBackdrop, onRequestClose],
+    [enableBackdrop],
   );
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const AppBottomSheet = ({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={initialIndex}
+      index={initialIndexRef.current}
       snapPoints={resolvedSnapPoints}
       topInset={insets.top + TOP_INSET_OFFSET}
       animateOnMount
@@ -101,7 +102,8 @@ const AppBottomSheet = ({
       enablePanDownToClose={enablePanDownToClose}
       enableContentPanningGesture={enableContentPanningGesture}
       keyboardBehavior={keyboardBehavior}
-      keyboardBlurBehavior="none"
+      keyboardBlurBehavior={keyboardBlurBehavior}
+      enableBlurKeyboardOnGesture={enableBlurKeyboardOnGesture}
       android_keyboardInputMode={androidKeyboardInputMode}
       onChange={handleChange}
       handleComponent={BottomSheetHandle}
@@ -111,7 +113,7 @@ const AppBottomSheet = ({
         borderTopRightRadius: 38,
       }}
     >
-      <BottomSheetView className="flex-1">{children}</BottomSheetView>
+      {children}
     </BottomSheet>
   );
 };

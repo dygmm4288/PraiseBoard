@@ -1,10 +1,17 @@
 import AppBottomSheet from "@/shared/components/bottom-sheet/bottom-sheet";
-import { clamp } from "@/shared/utils/number";
-import { BottomSheetProps } from "@gorhom/bottom-sheet";
+import {
+  clearTopLevelSheetState,
+  DismissTopLevelSheetOptions,
+  getClosedSheetState,
+  presentTopLevelSheetState,
+  requestDismissTopLevelSheetState,
+  TopLevelSheetConfig,
+  TopLevelSheetState,
+  updateTopLevelSheetIndexState,
+} from "@/shared/components/bottom-sheet/top-level-sheet-state";
 import {
   createContext,
   PropsWithChildren,
-  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -13,128 +20,34 @@ import {
 } from "react";
 import { Keyboard } from "react-native";
 
-type DismissTopLevelSheetOptions = {
-  runOnClose?: boolean;
-};
-
-type TopLevelSheetConfig = {
-  children: ReactNode;
-  snapPoints: (string | number)[];
-  initialIndex?: number;
-  keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
-  androidKeyboardInputMode?: BottomSheetProps["android_keyboardInputMode"];
-  enableContentPanningGesture?: BottomSheetProps["enableContentPanningGesture"];
-  onClose?: () => void;
-};
-
 type TopLevelSheetContextValue = {
   presentTopLevelSheet: (config: TopLevelSheetConfig) => void;
   dismissTopLevelSheet: (options?: DismissTopLevelSheetOptions) => void;
-};
-
-type TopLevelSheetState = {
-  config: TopLevelSheetConfig | null;
-  index: number;
-  closeEffect: (() => void) | null;
-  runOnCloseAfterDismiss: boolean | null;
 };
 
 const TopLevelSheetContext = createContext<TopLevelSheetContextValue | null>(
   null,
 );
 
-const getSafeInitialIndex = (config: TopLevelSheetConfig) => {
-  const maxIndex = config.snapPoints.length - 1;
-
-  if (maxIndex < 0) {
-    return -1;
-  }
-
-  const initialIndex = config.initialIndex ?? 0;
-
-  if (!Number.isInteger(initialIndex)) {
-    return 0;
-  }
-
-  return clamp(initialIndex, 0, maxIndex);
-};
-
-const getSafeCurrentIndex = (
-  config: TopLevelSheetConfig,
-  currentIndex: number,
-) => {
-  const maxIndex = config.snapPoints.length - 1;
-
-  if (maxIndex < 0) {
-    return -1;
-  }
-
-  if (!Number.isInteger(currentIndex) || currentIndex < 0) {
-    return getSafeInitialIndex(config);
-  }
-
-  return Math.min(currentIndex, maxIndex);
-};
-
-const getClosedSheetState = (): TopLevelSheetState => ({
-  config: null,
-  index: -1,
-  closeEffect: null,
-  runOnCloseAfterDismiss: null,
-});
-
 export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
   const [sheetState, setSheetState] =
     useState<TopLevelSheetState>(getClosedSheetState);
 
   const presentTopLevelSheet = useCallback((config: TopLevelSheetConfig) => {
-    setSheetState((current) => {
-      if (config.snapPoints.length === 0) {
-        return getClosedSheetState();
-      }
-
-      return {
-        config,
-        index: current.config
-          ? getSafeCurrentIndex(config, current.index)
-          : getSafeInitialIndex(config),
-        closeEffect: null,
-        runOnCloseAfterDismiss: null,
-      };
-    });
+    setSheetState((current) => presentTopLevelSheetState(current, config));
   }, []);
 
   const dismissTopLevelSheet = useCallback(
-    (options?: DismissTopLevelSheetOptions) => {
+    (_options?: DismissTopLevelSheetOptions) => {
       Keyboard.dismiss();
 
-      setSheetState((current) => {
-        if (!current.config) {
-          return current;
-        }
-
-        return {
-          ...current,
-          index: -1,
-          closeEffect: null,
-          runOnCloseAfterDismiss: options?.runOnClose ?? false,
-        };
-      });
+      setSheetState((current) => requestDismissTopLevelSheetState(current));
     },
     [],
   );
 
   const clearTopLevelSheet = useCallback((runOnClose: boolean) => {
-    setSheetState((current) => {
-      const shouldRunOnClose = current.runOnCloseAfterDismiss ?? runOnClose;
-
-      return {
-        ...getClosedSheetState(),
-        closeEffect: shouldRunOnClose
-          ? (current.config?.onClose ?? null)
-          : null,
-      };
-    });
+    setSheetState((current) => clearTopLevelSheetState(current, runOnClose));
   }, []);
 
   const handleChangeIndex = useCallback(
@@ -145,30 +58,10 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
         return;
       }
 
-      setSheetState((current) => {
-        if (
-          !current.config ||
-          !Number.isInteger(index) ||
-          index < 0 ||
-          index >= current.config.snapPoints.length
-        ) {
-          return current;
-        }
-
-        return { ...current, index };
-      });
+      setSheetState((current) => updateTopLevelSheetIndexState(current, index));
     },
     [clearTopLevelSheet],
   );
-
-  const handleRequestClose = useCallback(() => {
-    if (sheetState.config?.onClose) {
-      dismissTopLevelSheet({ runOnClose: true });
-      return;
-    }
-
-    dismissTopLevelSheet();
-  }, [dismissTopLevelSheet, sheetState.config]);
 
   useEffect(() => {
     if (!sheetState.closeEffect) {
@@ -198,15 +91,19 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
       {children}
       {sheetState.config ? (
         <AppBottomSheet
+          key={sheetState.presentationId}
           index={sheetState.index}
           onChangeIndex={handleChangeIndex}
           snapPoints={sheetState.config.snapPoints}
           keyboardBehavior={sheetState.config.keyboardBehavior}
+          keyboardBlurBehavior={sheetState.config.keyboardBlurBehavior}
+          enableBlurKeyboardOnGesture={
+            sheetState.config.enableBlurKeyboardOnGesture
+          }
           androidKeyboardInputMode={sheetState.config.androidKeyboardInputMode}
           enableContentPanningGesture={
             sheetState.config.enableContentPanningGesture
           }
-          onRequestClose={handleRequestClose}
         >
           {sheetState.config.children}
         </AppBottomSheet>

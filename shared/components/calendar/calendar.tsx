@@ -11,6 +11,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
 import { useTopLevelSheet } from "../bottom-sheet/top-level-sheet-provider";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import CalendarMonthPicker from "./calendar-month-picker";
 
 export type CalendarStickerCount = {
@@ -167,13 +168,15 @@ const Calendar = ({
     presentTopLevelSheet({
       snapPoints: ["50%"],
       children: (
-        <CalendarMonthPickerSheet
-          currentDate={date}
-          minDate={minDate}
-          maxDate={maxDate}
-          onClose={dismissTopLevelSheet}
-          onSelectMonth={changeMonth}
-        />
+        <BottomSheetView className="flex-1">
+          <CalendarMonthPickerSheet
+            currentDate={date}
+            minDate={minDate}
+            maxDate={maxDate}
+            onClose={dismissTopLevelSheet}
+            onSelectMonth={changeMonth}
+          />
+        </BottomSheetView>
       ),
     });
   }, [changeMonth, date, dismissTopLevelSheet, presentTopLevelSheet]);

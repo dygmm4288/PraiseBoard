@@ -17,22 +17,27 @@ export const useSettingsProfile = () => {
   const displayName =
     nickname || (authState === "anonymous" ? "김고래" : "이름 없음");
 
-  const saveName = useCallback(async (name: string) => {
-    const parsedName = nicknameSchema.safeParse(name);
+  const saveName = useCallback(
+    async (name: string) => {
+      const parsedName = nicknameSchema.safeParse(name);
 
-    if (!parsedName.success) {
-      toast.error(parsedName.error.issues[0]?.message);
-      return false;
-    }
+      if (!parsedName.success) {
+        toast.error(parsedName.error.issues[0]?.message);
+        return false;
+      }
 
-    try {
-      await updateProfile({ nickname: parsedName.data });
-      return true;
-    } catch {
-      toast.error("이름을 저장하는 중 오류가 발생했어요.");
-      return false;
-    }
-  }, [updateProfile]);
+      if (parsedName.data === nickname) return true;
+
+      try {
+        await updateProfile({ nickname: parsedName.data });
+        return true;
+      } catch {
+        toast.error("이름을 저장하는 중 오류가 발생했어요.");
+        return false;
+      }
+    },
+    [updateProfile],
+  );
 
   const saveReminderTime = useCallback(
     async ({

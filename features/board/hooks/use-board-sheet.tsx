@@ -4,8 +4,8 @@ import { BoardCreateFormValues } from "@/features/board/schema";
 import { useUser } from "@/services/user";
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { toast } from "@/shared/toasts/toast";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback } from "react";
-import { View } from "react-native";
 import { canCreateBoard } from "../domain/policies/board-policy";
 import { useActiveBoardQuery } from "../queries/use-board-query";
 
@@ -45,13 +45,15 @@ export const useBoardSheet = () => {
     presentTopLevelSheet({
       snapPoints: BOARD_SHEET_SNAP_POINTS,
       keyboardBehavior: "fillParent",
+      keyboardBlurBehavior: "restore",
+      enableBlurKeyboardOnGesture: true,
       children: (
-        <View className="flex-1 px-[16px] pb-[16px]">
+        <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
           <BoardCreate
             onClose={dismissTopLevelSheet}
             onCreated={dismissTopLevelSheet}
           />
-        </View>
+        </BottomSheetView>
       ),
     });
   }, [activeBoardCount, dismissTopLevelSheet, presentTopLevelSheet]);
@@ -61,8 +63,10 @@ export const useBoardSheet = () => {
       presentTopLevelSheet({
         snapPoints: BOARD_SHEET_SNAP_POINTS,
         keyboardBehavior: "fillParent",
+        keyboardBlurBehavior: "restore",
+        enableBlurKeyboardOnGesture: true,
         children: (
-          <View className="flex-1 px-[16px] pb-[16px]">
+          <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
             <BoardEditSheetContent
               boardId={board.id}
               initialValues={toInitialValues(board)}
@@ -70,7 +74,7 @@ export const useBoardSheet = () => {
               onUpdated={dismissTopLevelSheet}
               onDeleted={board.onDeleted}
             />
-          </View>
+          </BottomSheetView>
         ),
       });
     },
