@@ -69,6 +69,12 @@
         "projectId": "c13a8f3b-ac66-4238-b6aa-1aa85d1e3624"
       }
     },
-    "owner": "easyno"
+    "owner": "easyno",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/c13a8f3b-ac66-4238-b6aa-1aa85d1e3624"
+    }
   }
 }
