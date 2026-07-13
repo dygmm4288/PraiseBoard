@@ -1,4 +1,5 @@
 import { Screen } from "@/shared/ui";
+import { isDebugEnabled } from "@/shared/constants/environment";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { Link } from "expo-router";
 import { ScrollView } from "react-native";
@@ -34,8 +35,9 @@ const SettingsScreen = () => {
         {/* 앱 정보 */}
         <SettingInfo />
 
-        {/* Debug 설정 이동 */}
-        <Link href="/debug-settings">debug settings 이동</Link>
+        {isDebugEnabled ? (
+          <Link href="/debug-settings">debug settings 이동</Link>
+        ) : null}
       </ScrollView>
     </Screen>
   );

@@ -44,7 +44,7 @@ strip_wrapping_quotes() {
 visibility_for_key() {
   local key="$1"
   case "$key" in
-    EXPO_PUBLIC_APP_ENV)
+    EXPO_PUBLIC_APP_ENV|EXPO_PUBLIC_DEBUG_ENABLED)
       printf 'plaintext'
       ;;
     *)

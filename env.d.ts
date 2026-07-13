@@ -8,6 +8,7 @@ declare global {
       EXPO_PUBLIC_SUPABASE_ANON_KEY: string;
       EXPO_PUBLIC_STORYBOOK_ENABLED: string;
       EXPO_PUBLIC_APP_ENV: string;
+      EXPO_PUBLIC_DEBUG_ENABLED: string;
     }
   }
 }

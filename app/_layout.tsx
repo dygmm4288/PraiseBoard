@@ -1,6 +1,10 @@
 import { FnbContainer, useRootBackExit } from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
+import {
+  isDebugEnabled,
+  isStorybookEnabled,
+} from "@/shared/constants/environment";
 import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
@@ -26,12 +30,13 @@ import Toast from "react-native-toast-message";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
 
-const isStorybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === "true";
 const FNB_RESERVED_BOTTOM_SPACE = 80;
 
-LogBox.ignoreLogs([
-  "SafeAreaView has been deprecated and will be removed in a future release.",
-]);
+if (isDebugEnabled) {
+  LogBox.ignoreLogs([
+    "SafeAreaView has been deprecated and will be removed in a future release.",
+  ]);
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,10 +116,12 @@ const RootLayoutNav = () => {
             <Stack.Screen name="settings" options={{ headerShown: false }} />
             <Stack.Screen name="stats" options={{ headerShown: false }} />
             <Stack.Screen name="archives" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="debug-settings"
-              options={{ headerShown: false }}
-            />
+            {isDebugEnabled ? (
+              <Stack.Screen
+                name="debug-settings"
+                options={{ headerShown: false }}
+              />
+            ) : null}
           </Stack>
         </View>
         {shouldShowFnb && <FnbContainer />}

@@ -1,4 +1,5 @@
 import { localStorage } from "@/infra/storage";
+import { isDebugEnabled } from "@/shared/constants/environment";
 import { useEffect, useState } from "react";
 
 const DEBUG_USER_FLOW_OVERRIDE_KEY = "debug_user_flow_override";
@@ -15,7 +16,7 @@ const isUserFlowOverrideMode = (
 ): value is UserFlowOverrideMode =>
   !!value && USER_FLOW_OVERRIDE_MODES.includes(value as UserFlowOverrideMode);
 
-const isDebugUserFlowEnabled = process.env.EXPO_PUBLIC_APP_ENV !== "prod";
+const isDebugUserFlowEnabled = isDebugEnabled;
 
 export const useUserFlow = () => {
   const [isInitialized, setIsInitialized] = useState(false);

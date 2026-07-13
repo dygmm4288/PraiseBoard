@@ -7,6 +7,7 @@ import { boardKeys, useBoardSheet } from "@/features/board";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { AppButton, AppText, Screen } from "@/shared/ui";
+import { isDebugEnabled } from "@/shared/constants/environment";
 import { cn } from "@/shared/utils/cn";
 import { formatMonthKey } from "@/shared/utils/date";
 import { useQueryClient } from "@tanstack/react-query";
@@ -45,7 +46,7 @@ const ArchiveDetailScreen = () => {
   };
 
   const handleForceComplete = async () => {
-    if (!boardId) return;
+    if (!isDebugEnabled || !boardId) return;
 
     try {
       await archive.forceSetComplete(boardId);
@@ -112,14 +113,16 @@ const ArchiveDetailScreen = () => {
               detail={detail}
               onMonthChange={(date) => setMonth(formatMonthKey(date))}
             />
-            <AppButton
-              variant="tertiary"
-              className="mt-6"
-              disabled={!boardId}
-              onPress={handleForceComplete}
-            >
-              디버그: 강제 완료
-            </AppButton>
+            {isDebugEnabled ? (
+              <AppButton
+                variant="tertiary"
+                className="mt-6"
+                disabled={!boardId}
+                onPress={handleForceComplete}
+              >
+                디버그: 강제 완료
+              </AppButton>
+            ) : null}
           </>
         )}
       </ScrollView>
