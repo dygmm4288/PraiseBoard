@@ -1,9 +1,10 @@
-import { Text, View } from "react-native";
+import { AppText } from "@/shared/ui";
+import { View } from "react-native";
 
 export default function ModalScreen() {
   return (
     <View>
-      <Text>Modal</Text>
+      <AppText>Modal</AppText>
     </View>
   );
 }

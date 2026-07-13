@@ -1,6 +1,11 @@
 import { cn } from "@/shared/utils/cn";
+import { FONT_FAMILY_BY_WEIGHT } from "@/shared/constants/fonts";
 import React from "react";
-import { Text as RNText, TextProps as RNTextProps } from "react-native";
+import {
+  StyleSheet,
+  Text as RNText,
+  TextProps as RNTextProps,
+} from "react-native";
 
 type TextCoreVariant =
   | "title33"
@@ -104,6 +109,7 @@ export const AppText = ({
   className,
   variant = "body",
   weight,
+  style,
   ...props
 }: AppTextProps) => {
   const resolvedVariant = resolveTextVariant(variant);
@@ -117,6 +123,10 @@ export const AppText = ({
         TEXT_VARIANT_STYLES[resolvedVariant],
         TEXT_WEIGHT_STYLES[resolvedWeight],
         className,
+      )}
+      style={StyleSheet.compose(
+        { fontFamily: FONT_FAMILY_BY_WEIGHT[resolvedWeight] },
+        style,
       )}
       {...props}
     />

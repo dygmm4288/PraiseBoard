@@ -79,7 +79,10 @@ export const AppInput = ({
       )}
     >
       <InputComponent
-        className={cn("min-h-[40px] flex-1 self-stretch p-0", inputClassName)}
+        className={cn(
+          "min-h-[40px] flex-1 self-stretch p-0 font-pretendard",
+          inputClassName,
+        )}
         textAlignVertical="center"
         underlineColorAndroid="transparent"
         placeholder={placeholder}

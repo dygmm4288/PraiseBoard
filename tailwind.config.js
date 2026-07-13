@@ -14,7 +14,7 @@ module.exports = {
         ...COLOR,
       },
       fontFamily: {
-        pretendard: ["Pretendard", "ui-sans-serif", "system-ui", "sans-serif"],
+        pretendard: ["Pretendard"],
       },
       fontSize: {
         // Figma typography tokens. Keep legacy tokens below during migration.
@@ -77,7 +77,7 @@ module.exports = {
         "label-9": [
           "9px",
           {
-            lineHeight: "9px",
+            lineHeight: "normal",
             letterSpacing: "0",
           },
         ],

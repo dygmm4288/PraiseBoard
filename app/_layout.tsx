@@ -14,6 +14,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
 import {
   Stack,
   useGlobalSearchParams,
@@ -131,8 +132,18 @@ const RootLayoutNav = () => {
 };
 
 export default function RootLayout() {
+  const [fontsLoaded, fontLoadError] = useFonts({
+    Pretendard: require("../assets/fonts/Pretendard-Regular.otf"),
+    "Pretendard-Medium": require("../assets/fonts/Pretendard-Medium.otf"),
+    "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.otf"),
+    "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.otf"),
+  });
+
   // 앱 활성화/네트워크 상태를 React Query에 동기화
   useReactQueryAppLifecycle();
+
+  // 폰트가 로드되기 전에는 시스템 폰트로 한 프레임 렌더링하지 않는다.
+  if (!fontsLoaded && !fontLoadError) return null;
 
   if (isStorybookEnabled) {
     return <StorybookUIRoot />;
