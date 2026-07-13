@@ -67,16 +67,16 @@ const BoardWhaleMessage = ({
           <WhaleAvatar />
           <View className="flex-col gap-[3px]">
             <AppText
-              variant="caption1"
-              weight="bold"
-              className="text-whale-label"
+              variant="label12"
+              weight="semibold"
+              className="text-primary-50"
             >
               두잉
             </AppText>
             <AppText
-              variant="caption2"
+              variant="label10"
               weight="regular"
-              className="text-whale-labelMuted"
+              className="text-primary-30"
             >
               {formatLatestMessageLabel(latestMessageCreatedAt)}
             </AppText>
@@ -84,9 +84,9 @@ const BoardWhaleMessage = ({
         </View>
         <View>
           <AppText
-            variant="caption1"
+            variant="button15"
             weight="medium"
-            className="leading-[25px] text-whale-text"
+            className="text-textDarkPurple"
           >
             {whaleMessage.body}
           </AppText>

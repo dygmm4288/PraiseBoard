@@ -57,17 +57,19 @@ const BoardItemMeta = ({
           {isCompleted && completedPeriodLabel ? (
             <View className="justify-center">
               <AppText
-                variant="custom"
-                className="text-[10px] leading-[14px] text-textGray"
+                variant="label10"
+                weight="regular"
+                className="text-textGray"
               >
                 {completedPeriodLabel}
               </AppText>
             </View>
           ) : (
-            <View className="rounded-full bg-gray-100 px-[7px] py-[1px]">
+            <View className="rounded-[10px] bg-gray-100 px-[6px] py-[2px]">
               <AppText
-                variant="custom"
-                className="text-[10px] leading-[14px] text-gray-400"
+                variant="label9"
+                weight="semibold"
+                className="text-labelGray"
               >
                 D+{boardDDay}
               </AppText>
@@ -76,9 +78,9 @@ const BoardItemMeta = ({
           {displayStreak > 0 ? (
             <View className="rounded-[10px] bg-secondary-20 px-[6px] py-[2px]">
               <AppText
-                variant="custom"
+                variant="label9"
                 weight="semibold"
-                className="text-[10px] leading-[14px] text-secondary-50"
+                className="text-secondary-50"
               >
                 🔥 연속 {displayStreak}일
               </AppText>
@@ -106,9 +108,9 @@ const BoardItemMeta = ({
         {rewardText && (
           <View className="flex-row items-center gap-[4px]">
             <AppText
-              variant="caption2"
-              weight="semibold"
-              className="text-[9.5px] uppercase tracking-[0.5px] text-gray-400"
+              variant="label10"
+              weight="regular"
+              className="text-labelGray"
             >
               보상: {rewardText}
             </AppText>

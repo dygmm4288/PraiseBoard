@@ -24,7 +24,7 @@ const BoardList = ({ showPreviewBoard }: Props) => {
   }
 
   return (
-    <View className="flex-grow">
+    <View className="flex-grow gap-[12px]">
       {!showPreviewBoard &&
         data?.map((board) => (
           <BoardItem key={board.id} board={board} actionType="collect" />

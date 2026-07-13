@@ -34,7 +34,7 @@ const BoardItemContainer = ({
 
   return (
     <View
-      className="mb-[9px] rounded-[20px]"
+      className="rounded-[20px]"
       style={{
         shadowColor: COLOR.primary[500],
         shadowOffset: { width: 0, height: 4 },

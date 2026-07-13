@@ -103,7 +103,7 @@ const RootLayoutNav = () => {
             paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
           }}
         >
-          <Stack screenOptions={{ animation: "fade" }}>
+          <Stack screenOptions={{ animation: "fade", animationDuration: 175 }}>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen
               name="(onboarding)"

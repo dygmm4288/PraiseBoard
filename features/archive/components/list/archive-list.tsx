@@ -1,6 +1,6 @@
 import { AppText } from "@/shared/ui";
-import { Children } from "react";
 import type { ReactNode } from "react";
+import { Children } from "react";
 import { View } from "react-native";
 
 type Props = {
