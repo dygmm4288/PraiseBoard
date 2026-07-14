@@ -9,6 +9,9 @@ declare global {
       EXPO_PUBLIC_STORYBOOK_ENABLED: string;
       EXPO_PUBLIC_APP_ENV: string;
       EXPO_PUBLIC_DEBUG_ENABLED: string;
+      EXPO_PUBLIC_POST_HOG_API_KEY: string;
+      EXPO_PUBLIC_POST_HOG_URL: string;
+      EXPO_PUBLIC_POST_HOG_PROJECT_ID: string;
     }
   }
 }

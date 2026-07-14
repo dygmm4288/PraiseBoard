@@ -57,7 +57,8 @@
       ],
       "expo-notifications",
       "expo-web-browser",
-      "expo-video"
+      "expo-video",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,

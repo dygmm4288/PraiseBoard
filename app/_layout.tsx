@@ -22,6 +22,7 @@ import {
   useSegments,
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
 import { AppState, LogBox, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -95,42 +96,48 @@ const RootLayoutNav = () => {
 
   return (
     <View className="flex-1" style={{ backgroundColor: rootBackgroundColor }}>
-      <TopLevelSheetProvider>
-        <View
-          className="flex-1"
-          style={{
-            backgroundColor: rootBackgroundColor,
-            paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
-          }}
-        >
-          <Stack screenOptions={{ animation: "fade", animationDuration: 175 }}>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(onboarding)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(modals)"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="settings" options={{ headerShown: false }} />
-            <Stack.Screen name="stats" options={{ headerShown: false }} />
-            <Stack.Screen name="archives" options={{ headerShown: false }} />
-            {isDebugEnabled ? (
+      <PostHogProvider
+        apiKey={process.env.EXPO_PUBLIC_POST_HOG_API_KEY}
+        options={{ host: process.env.EXPO_PUBLIC_POST_HOG_URL }}
+      >
+        <TopLevelSheetProvider>
+          <View
+            className="flex-1"
+            style={{
+              backgroundColor: rootBackgroundColor,
+              paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
+            }}
+          >
+            <Stack
+              screenOptions={{ animation: "fade", animationDuration: 175 }}
+            >
+              <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen
-                name="debug-settings"
+                name="(onboarding)"
                 options={{ headerShown: false }}
               />
-            ) : null}
-          </Stack>
-        </View>
-        {shouldShowFnb && <FnbContainer />}
-      </TopLevelSheetProvider>
+              <Stack.Screen
+                name="(modals)"
+                options={{ presentation: "modal", headerShown: false }}
+              />
+              <Stack.Screen name="signup" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ headerShown: false }} />
+              <Stack.Screen name="stats" options={{ headerShown: false }} />
+              <Stack.Screen name="archives" options={{ headerShown: false }} />
+              {isDebugEnabled ? (
+                <Stack.Screen
+                  name="debug-settings"
+                  options={{ headerShown: false }}
+                />
+              ) : null}
+            </Stack>
+          </View>
+          {shouldShowFnb && <FnbContainer />}
+        </TopLevelSheetProvider>
+      </PostHogProvider>
     </View>
   );
 };
-
 export default function RootLayout() {
   const [fontsLoaded, fontLoadError] = useFonts({
     Pretendard: require("../assets/fonts/Pretendard-Regular.otf"),
