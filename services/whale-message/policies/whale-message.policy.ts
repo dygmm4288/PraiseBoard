@@ -4,7 +4,7 @@ import {
   WhaleMessageBoardInput,
 } from "../model/whale-message.interface";
 
-const FALLBACK_NICKNAME = "고래친구";
+const FALLBACK_NICKNAME = "";
 const DAILY_LIMIT_REACHED_MESSAGE: WhaleMessage = {
   trigger: "daily_limit_reached",
   body: "우와 대단해 ! 오늘의 목표를 다 채웠어. 내일 다시 도전해보자 ~",
@@ -25,10 +25,7 @@ export const resolveWhaleMessage = ({
   lastLoginAt,
 }: ResolveWhaleMessageInput): WhaleMessage => {
   const displayName = nickname?.trim() || FALLBACK_NICKNAME;
-  const dailyLimitMessage = resolveDailyLimitMessage(
-    boards,
-    todayStickerCount,
-  );
+  const dailyLimitMessage = resolveDailyLimitMessage(boards, todayStickerCount);
 
   if (dailyLimitMessage) return dailyLimitMessage;
 
@@ -110,7 +107,10 @@ const resolveBoardMilestoneMessage = (
   const milestoneBoard = boards
     .map((board) => ({
       board,
-      progressPercent: getProgressPercent(board.targetCount, board.currentCount),
+      progressPercent: getProgressPercent(
+        board.targetCount,
+        board.currentCount,
+      ),
     }))
     .sort((a, b) => b.progressPercent - a.progressPercent)[0];
 

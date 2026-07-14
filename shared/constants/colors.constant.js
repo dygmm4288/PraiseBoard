@@ -9,7 +9,7 @@ const palette = {
 
   primary70: "#5A19BF",
   primary50: "#7F5ADD",
-  primary30: "#7F5ADD",
+  primary30: "#8f7ed0",
   primary25: "#A990EA",
   primary20: "#BBA6EE",
   primary15: "#C9BDF4",

@@ -67,8 +67,8 @@ const FnbFloatingAction = ({ onPress }: Props) => {
     <AnimatedPressable
       accessibilityLabel="보드 추가"
       accessibilityRole="button"
-      className="absolute right-[34px] h-[54px] w-[54px] items-center justify-center rounded-[50px]"
-      style={[styles.container, { bottom: insets.bottom + 97 }, animatedStyle]}
+      className="absolute right-[25px] h-[54px] w-[54px] items-center justify-center rounded-[50px]"
+      style={[styles.container, { bottom: insets.bottom + 88 }, animatedStyle]}
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}

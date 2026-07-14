@@ -82,7 +82,7 @@ const BoardItemMeta = ({
                 weight="semibold"
                 className="text-secondary-50"
               >
-                🔥 연속 {displayStreak}일
+                연속 {displayStreak}일
               </AppText>
             </View>
           ) : null}

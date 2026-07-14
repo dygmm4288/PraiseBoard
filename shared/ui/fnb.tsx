@@ -12,8 +12,8 @@ import React, {
 import {
   Pressable,
   StyleSheet,
-  View,
   useWindowDimensions,
+  View,
   type LayoutChangeEvent,
 } from "react-native";
 import Animated, {
@@ -62,7 +62,6 @@ type FnbItemProps<T extends string> = {
   onLayout: (event: LayoutChangeEvent) => void;
 };
 
-const BOTTOM_OFFSET = 23;
 const ACTIVE_SURFACE_WIDTH = 97;
 
 const ActiveSurface = ({ x, width, visible }: ActiveSurfaceProps) => {
@@ -289,7 +288,7 @@ const Fnb = <T extends string>({
       )}
       pointerEvents="box-none"
       onLayout={syncToastOffset}
-      style={{ bottom: insets.bottom + BOTTOM_OFFSET }}
+      style={{ bottom: insets.bottom }}
     >
       <View
         className="w-full max-w-[360px] rounded-[296px]"

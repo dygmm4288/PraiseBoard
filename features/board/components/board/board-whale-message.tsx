@@ -24,7 +24,7 @@ const formatLatestMessageLabel = (value: string | null) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "마지막 메시지";
 
-  return `마지막 메시지 - ${date.toLocaleTimeString("ko-KR", {
+  return `마지막 메시지 · ${date.toLocaleTimeString("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
