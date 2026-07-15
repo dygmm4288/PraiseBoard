@@ -1,7 +1,7 @@
 import { Icon } from "@/assets/icons";
 import { useState } from "react";
 import { Pressable } from "react-native";
-import { COLOR } from "../constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 
 type Props = {
   onPress: () => void;
@@ -10,19 +10,21 @@ type Props = {
 };
 
 const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
+  // TODO(theme): Move todayDone/completed color ownership with the feature-state
+  // mapping when this board-specific component boundary is addressed.
   const [isHovered, setIsHovered] = useState(false);
   const isInteractiveHover = !disabled && isHovered;
   const isCompleted = variant === "completed";
   const isTodayDone = variant === "todayDone";
   const checkColor = isCompleted
-    ? COLOR.secondary50
+    ? COLORS.secondary[50]
     : isTodayDone
-      ? COLOR.primary50
+      ? COLORS.primary[50]
       : disabled
-        ? COLOR.textGray
+        ? COLORS.content.disabled
         : isInteractiveHover
-          ? COLOR.primary70
-          : COLOR.primary50;
+          ? COLORS.primary[70]
+          : COLORS.primary[50];
 
   return (
     <Pressable
@@ -37,7 +39,7 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
           : isTodayDone
             ? "border-primary-20 bg-primary-10"
             : disabled
-              ? "border-gray-300 bg-gray-100"
+              ? "border-neutral-300 bg-neutral-100"
               : [
                   "border-primary-500",
                   isInteractiveHover ? "bg-primary-100" : "bg-white",

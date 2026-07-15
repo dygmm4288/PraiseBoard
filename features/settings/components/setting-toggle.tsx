@@ -35,7 +35,7 @@ const SettingToggle = ({
           {description && (
             <AppText
               variant="label12"
-              className="text-labelGray"
+              className="text-content-tertiary"
             >
               {description}
             </AppText>

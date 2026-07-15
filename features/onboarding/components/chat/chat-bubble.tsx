@@ -34,7 +34,7 @@ export const ChatBubble = ({
   const bubbleBgClassName = {
     left: "bg-primary-100",
     right: "bg-primary-500",
-    center: "bg-gray-100",
+    center: "bg-neutral-100",
   };
 
   if (side === "left") {

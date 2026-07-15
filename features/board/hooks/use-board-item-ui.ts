@@ -48,7 +48,7 @@ export const useBoardItemUi = ({ board }: Props) => {
     progressColor: isCompleted
       ? "text-primary-700"
       : isTodayDone
-        ? "text-gray-300"
+        ? "text-neutral-300"
         : "text-primary-500",
     rewardText: board.rewardMemo || null,
     opacity: isCompleted ? 0.6 : isTodayDone ? 0.5 : 1,

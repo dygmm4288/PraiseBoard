@@ -1,8 +1,8 @@
 import { ArchiveDetail } from "@/features/archive/types";
 import { useCollectSticker } from "@/features/board/hooks/use-collect-sticker";
 import { Calendar } from "@/shared/components";
-import { COLOR } from "@/shared/constants/colors.constant";
 import useTodayKey from "@/shared/hooks/use-today-key";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import AppCheckbox from "@/shared/ui/checkbox";
 import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
@@ -14,6 +14,7 @@ import {
 } from "@/shared/utils/date";
 import { PropsWithChildren, useState } from "react";
 import { View } from "react-native";
+import { ARCHIVE_COLORS } from "../../theme/colors";
 
 type Props = {
   detail?: ArchiveDetail;
@@ -27,20 +28,20 @@ type DetailCardProps = PropsWithChildren<{
   className?: string;
 }>;
 
-const CARD_SHADOW_COLOR = COLOR.textDarkPurple;
+const CARD_SHADOW_COLOR = COLORS.shadow.card;
 const DEFAULT_PROGRESS_CELL_COUNT = 30;
 const PROGRESS_GRID_COLUMNS = 10;
 const PROGRESS_CELL_COLORS = [
-  COLOR.progress[10],
-  COLOR.progress[20],
-  COLOR.progress[30],
-  COLOR.progress[40],
-  COLOR.progress[50],
-  COLOR.progress[60],
-  COLOR.progress[70],
-  COLOR.progress[80],
-  COLOR.progress[90],
-  COLOR.progress[100],
+  ARCHIVE_COLORS.progress[10],
+  ARCHIVE_COLORS.progress[20],
+  ARCHIVE_COLORS.progress[30],
+  ARCHIVE_COLORS.progress[40],
+  ARCHIVE_COLORS.progress[50],
+  ARCHIVE_COLORS.progress[60],
+  ARCHIVE_COLORS.progress[70],
+  ARCHIVE_COLORS.progress[80],
+  ARCHIVE_COLORS.progress[90],
+  ARCHIVE_COLORS.progress[100],
 ] as const;
 
 const getBoardStartDate = (detail?: ArchiveDetail) => {
@@ -108,7 +109,7 @@ const ArchiveDetailRow = ({
 }) => {
   return (
     <View className="flex-row items-center justify-between">
-      <AppText variant="label12" weight="regular" className="text-labelGray">
+      <AppText variant="label12" weight="regular" className="text-content-tertiary">
         {label}
       </AppText>
       <AppText variant="body14" className="text-black">
@@ -149,12 +150,12 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
             {board?.title}
           </AppText>
           <View className="flex-row items-center gap-[3px]">
-            <AppText variant="caption2" className="text-gray-500">
+            <AppText variant="caption2" className="text-neutral-500">
               보상:
             </AppText>
             <AppText
               variant="caption2"
-              className="text-gray-500"
+              className="text-neutral-500"
               numberOfLines={1}
             >
               {board?.rewardMemo ?? "-"}
@@ -229,7 +230,7 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
 
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
-      <AppText variant="caption1" weight="semibold" className="text-labelGray">
+      <AppText variant="caption1" weight="semibold" className="text-content-tertiary">
         {formatKoreanMonthDay(detail?.selectedDay.date, "-")}
       </AppText>
 
@@ -294,7 +295,7 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
         <AppText
           variant="caption1"
           weight="semibold"
-          className="text-labelGray"
+          className="text-content-tertiary"
         >
           전체 진행률
         </AppText>
@@ -328,8 +329,8 @@ const ArchiveDetailProgressGrid = ({ detail }: Props) => {
                     state === "completed"
                       ? { backgroundColor: progressColor }
                       : {
-                          backgroundColor: COLOR.progress.empty,
-                          borderColor: COLOR.progress.border,
+                          backgroundColor: ARCHIVE_COLORS.progress.empty,
+                          borderColor: ARCHIVE_COLORS.progress.border,
                           borderWidth: 1,
                         }
                   }

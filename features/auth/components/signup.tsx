@@ -25,7 +25,7 @@ const SignupProviderButton = ({ label, icon }: SignupProviderButtonProps) => {
       leftSlot={<View className="w-[24px] items-center">{icon}</View>}
       rightSlot={<View className="w-[24px]" />}
     >
-      <AppText variant="button1" className="text-gray-700">
+      <AppText variant="button1" className="text-neutral-700">
         {label}
       </AppText>
     </AppButton>
@@ -65,23 +65,23 @@ const Signup = () => {
                   </AppText>
                 </View>
                 <View className="gap-[6px]">
-                  <AppText variant="title2" className="text-gray-700">
+                  <AppText variant="title2" className="text-neutral-700">
                     계정을 만들고
                   </AppText>
-                  <AppText variant="title2" className="text-gray-700">
+                  <AppText variant="title2" className="text-neutral-700">
                     칭찬 보드를 안전하게 이어가세요
                   </AppText>
                 </View>
-                <AppText variant="body14" className="text-gray-400">
+                <AppText variant="body14" className="text-neutral-400">
                   지금까지 이 기기에 저장된 보드 데이터를 그대로 유지한 채
                   회원으로 전환할 수 있어요.
                 </AppText>
               </View>
 
-              <View className="rounded-[24px] bg-gray-100 p-[18px]">
+              <View className="rounded-[24px] bg-neutral-100 p-[18px]">
                 <View className="gap-[14px]">
                   <View className="gap-[6px]">
-                    <AppText variant="caption1" className="text-gray-400">
+                    <AppText variant="caption1" className="text-neutral-400">
                       이메일
                     </AppText>
                     <AppInput
@@ -99,11 +99,11 @@ const Signup = () => {
               </View>
 
               <View className="flex-row items-center gap-[12px]">
-                <View className="h-[1px] flex-1 bg-gray-200" />
-                <AppText variant="caption2" className="text-gray-400">
+                <View className="h-[1px] flex-1 bg-neutral-200" />
+                <AppText variant="caption2" className="text-neutral-400">
                   또는
                 </AppText>
-                <View className="h-[1px] flex-1 bg-gray-200" />
+                <View className="h-[1px] flex-1 bg-neutral-200" />
               </View>
 
               <View className="gap-[12px]">
@@ -118,7 +118,7 @@ const Signup = () => {
               </View>
             </View>
 
-            <AppText variant="caption2" className="px-[4px] text-center text-gray-400">
+            <AppText variant="caption2" className="px-[4px] text-center text-neutral-400">
               계속 진행하면 서비스 이용약관과 개인정보 처리방침에 동의하는 것으로
               간주됩니다.
             </AppText>

@@ -1,4 +1,4 @@
-const { COLOR } = require("./shared/constants/colors.constant.js");
+const { COLORS } = require("./shared/theme/tailwind-colors.js");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ...COLOR,
+        ...COLORS,
       },
       fontFamily: {
         pretendard: ["Pretendard"],

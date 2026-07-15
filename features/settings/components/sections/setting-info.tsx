@@ -80,14 +80,14 @@ const SettingInfo = () => {
           <View
             className={[
               "rounded-[30px] px-[9px] py-[3px]",
-              needsUpdate ? "bg-danger-surface" : "bg-bgLightGray",
+              needsUpdate ? "bg-danger-surface" : "bg-surface-subtle",
             ].join(" ")}
           >
             <AppText
               variant="label12"
               weight="semibold"
               className={
-                needsUpdate || error ? "text-jinoRed" : "text-labelGray"
+                needsUpdate || error ? "text-danger" : "text-content-tertiary"
               }
             >
               {versionStatusLabel}

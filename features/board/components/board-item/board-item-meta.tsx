@@ -41,7 +41,7 @@ const BoardItemMeta = ({
           isCompleted
             ? "bg-secondary-20"
             : shouldShowTodayDoneState
-              ? "bg-gray-100"
+              ? "bg-neutral-100"
               : "bg-primary-100",
         )}
       >
@@ -59,17 +59,17 @@ const BoardItemMeta = ({
               <AppText
                 variant="label10"
                 weight="regular"
-                className="text-textGray"
+                className="text-content-disabled"
               >
                 {completedPeriodLabel}
               </AppText>
             </View>
           ) : (
-            <View className="rounded-[10px] bg-gray-100 px-[6px] py-[2px]">
+            <View className="rounded-[10px] bg-neutral-100 px-[6px] py-[2px]">
               <AppText
                 variant="label9"
                 weight="semibold"
-                className="text-labelGray"
+                className="text-content-tertiary"
               >
                 D+{boardDDay}
               </AppText>
@@ -97,7 +97,7 @@ const BoardItemMeta = ({
             isCompleted
               ? "text-black"
               : shouldDisableText
-                ? "text-gray-400"
+                ? "text-neutral-400"
                 : "text-black",
           )}
         >
@@ -110,7 +110,7 @@ const BoardItemMeta = ({
             <AppText
               variant="label10"
               weight="regular"
-              className="text-labelGray"
+              className="text-content-tertiary"
             >
               보상: {rewardText}
             </AppText>

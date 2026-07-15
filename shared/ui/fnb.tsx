@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
 import React, {
@@ -138,7 +138,7 @@ const FnbItemBase = <T extends string>({
 }: FnbItemProps<T>) => {
   const Icon = item.icon;
   const progress = useSharedValue(isActive ? 1 : 0);
-  const color = isActive ? COLOR.primary[500] : COLOR.gray[900];
+  const color = isActive ? COLORS.primary[500] : COLORS.neutral[900];
 
   useEffect(() => {
     progress.value = withSpring(isActive ? 1 : 0, {
@@ -319,7 +319,7 @@ const Fnb = <T extends string>({
 const styles = StyleSheet.create({
   shadow: {
     elevation: 18,
-    shadowColor: COLOR.primary[900],
+    shadowColor: COLORS.shadow.brand,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.18,
     shadowRadius: 24,

@@ -48,7 +48,7 @@ const DeviceNotificationSettingsLink = () => {
         <AppText variant="body14" className="text-black">
           정기 알림
         </AppText>
-        <AppText variant="label12" className="text-labelGray">
+        <AppText variant="label12" className="text-content-tertiary">
           기기 설정에서 알림 권한을 허용해 주세요
         </AppText>
       </View>

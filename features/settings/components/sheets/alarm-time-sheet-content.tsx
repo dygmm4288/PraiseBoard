@@ -60,7 +60,7 @@ const PickerCell = ({
         weight="medium"
         className={[
           "text-center",
-          selected ? "text-primary-50" : "text-textGray",
+          selected ? "text-primary-50" : "text-content-disabled",
         ].join(" ")}
       >
         {label}

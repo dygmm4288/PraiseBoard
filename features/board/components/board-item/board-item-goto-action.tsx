@@ -1,5 +1,5 @@
 import { Icon } from "@/assets/icons";
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { View } from "react-native";
 import { BoardItemUi } from "../../hooks/use-board-item-ui";
@@ -26,7 +26,7 @@ const BoardItemGotoAction = ({ ui }: Props) => {
       <Icon
         name="ChevronRightSmall"
         size={18}
-        color={isCompleted ? COLOR["secondary50"] : COLOR["primary50"]}
+        color={isCompleted ? COLORS.secondary[50] : COLORS.primary[50]}
       />
     </View>
   );

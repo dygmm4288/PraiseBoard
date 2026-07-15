@@ -57,7 +57,7 @@ const NameEditSheetContent = ({
         <AppText
           variant="label12"
           weight="semibold"
-          className="mb-[6px] text-labelGray"
+          className="mb-[6px] text-content-tertiary"
         >
           이름
         </AppText>

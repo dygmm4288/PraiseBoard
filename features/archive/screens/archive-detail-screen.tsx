@@ -66,7 +66,7 @@ const ArchiveDetailScreen = () => {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="뒤로가기"
-            className="h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray"
+            className="h-[39px] w-[39px] items-center justify-center rounded-full bg-surface-subtle"
             onPress={() => router.back()}
           >
             <Icon name="ChevronLeft" size={18} />
@@ -85,7 +85,7 @@ const ArchiveDetailScreen = () => {
             accessibilityLabel="보드 수정"
             disabled={!detail?.board}
             className={cn(
-              "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
+              "h-[39px] w-[39px] items-center justify-center rounded-full bg-surface-subtle",
               !detail?.board && "opacity-40",
             )}
             onPress={handleOpenEditSheet}

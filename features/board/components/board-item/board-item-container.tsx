@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { Pressable, View } from "react-native";
@@ -36,7 +36,7 @@ const BoardItemContainer = ({
     <View
       className="rounded-[20px]"
       style={{
-        shadowColor: COLOR.primary[500],
+        shadowColor: COLORS.primary[500],
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 24,

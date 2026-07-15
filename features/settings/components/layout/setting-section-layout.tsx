@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
@@ -16,7 +16,7 @@ const SettingSectionLayout = ({ title, children }: Props) => {
         <AppText
           variant="label12"
           weight="semibold"
-          className="px-[8px] text-labelGray"
+          className="px-[8px] text-content-tertiary"
         >
           {title}
         </AppText>
@@ -36,7 +36,7 @@ const SettingSectionLayout = ({ title, children }: Props) => {
 
 const styles = StyleSheet.create({
   card: {
-    shadowColor: COLOR.textDarkPurple,
+    shadowColor: COLORS.shadow.card,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,

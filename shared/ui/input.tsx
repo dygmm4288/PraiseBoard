@@ -74,7 +74,7 @@ export const AppInput = ({
   return (
     <View
       className={cn(
-        "w-full min-h-[40px] flex-row items-center rounded-[20px] border border-gray-200 px-[14px]",
+        "w-full min-h-[40px] flex-row items-center rounded-[20px] border border-neutral-200 px-[14px]",
         className,
       )}
     >

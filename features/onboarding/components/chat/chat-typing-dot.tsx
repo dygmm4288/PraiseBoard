@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { useEffect } from "react";
 import { ViewStyle } from "react-native";
 import Animated, {
@@ -17,7 +17,7 @@ const DOT_BASE_STYLE: ViewStyle = {
   width: 6,
   height: 6,
   borderRadius: 999,
-  backgroundColor: COLOR.gray[500],
+  backgroundColor: COLORS.neutral[500],
 };
 
 const ChatTypingDot = ({ index }: { index: number }) => {
@@ -45,7 +45,7 @@ const ChatTypingDot = ({ index }: { index: number }) => {
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      [COLOR["gray"]["300"], COLOR["gray"]["500"]],
+      [COLORS.neutral[300], COLORS.neutral[500]],
     ),
   }));
 

@@ -1,5 +1,5 @@
 import { Icon } from "@/assets/icons";
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { PropsWithChildren, ReactNode } from "react";
 import { Pressable, View } from "react-native";
@@ -34,7 +34,7 @@ const SettingLink = ({
           <AppText
             variant="label12"
             weight="semibold"
-            className="text-labelGray"
+            className="text-content-tertiary"
           >
             {label}
           </AppText>
@@ -50,7 +50,11 @@ const SettingLink = ({
       <View className="flex-row items-center gap-[8px]">
         {right}
         {showChevron && (
-          <Icon name="ChevronRightSmall" size={18} color={COLOR["black"]} />
+          <Icon
+            name="ChevronRightSmall"
+            size={18}
+            color={COLORS.content.primary}
+          />
         )}
       </View>
     </Row>

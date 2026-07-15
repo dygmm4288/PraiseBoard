@@ -28,7 +28,7 @@ const BoardEditView = ({
         title={title}
         right={
           <Pressable onPress={onDelete}>
-            <AppText variant="button1" className="text-gray-700">
+            <AppText variant="button1" className="text-neutral-700">
               {deleteLabel}
             </AppText>
           </Pressable>

@@ -35,7 +35,7 @@ const Header = () => {
         options={HEADER_TOGGLE_OPTIONS}
       />
       {titleMode === "header" && (
-        <AppText variant="button1" className="text-gray-700">
+        <AppText variant="button1" className="text-neutral-700">
           {boardData?.title}
         </AppText>
       )}

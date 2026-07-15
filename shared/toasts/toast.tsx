@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
 import { KeyboardController } from "react-native-keyboard-controller";
 import Toast, { BaseToast, BaseToastProps } from "react-native-toast-message";
-import { COLOR } from "../constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "../ui";
 
 type ToastOverrides = Partial<
@@ -123,8 +123,12 @@ export const toastConfig = {
     const message = text1 ?? "";
 
     return (
-      <View className="self-center flex-row items-center gap-[5px] rounded-[10px] bg-gray-700 px-[14px] py-[8px]">
-        <MaterialIcons name="error-outline" size={24} color={COLOR.white} />
+      <View className="self-center flex-row items-center gap-[5px] rounded-[10px] bg-neutral-700 px-[14px] py-[8px]">
+        <MaterialIcons
+          name="error-outline"
+          size={24}
+          color={COLORS.content.inverse}
+        />
         <AppText variant="caption1" weight="regular" className="text-white">
           {message}
         </AppText>

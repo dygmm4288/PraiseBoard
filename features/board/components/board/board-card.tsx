@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
@@ -46,7 +46,11 @@ const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
         </View>
         <LinearGradient
           pointerEvents="none"
-          colors={["rgba(255,255,255,0)", "rgba(255,255,255,0.88)", COLOR.white]}
+          colors={[
+            "rgba(255,255,255,0)",
+            "rgba(255,255,255,0.88)",
+            COLORS.surface.card,
+          ]}
           locations={[0, 0.6, 1]}
           style={{
             position: "absolute",
@@ -59,7 +63,7 @@ const BoardCard = ({ className, columns = 10 }: BoardCardProps) => {
       </View>
       <AppText
         variant="caption1"
-        className="text-gray-400 w-full text-center shrink-0"
+        className="text-neutral-400 w-full text-center shrink-0"
         onPress={handleGotoBoardEdit}
       >
         편집

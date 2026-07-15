@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
@@ -82,7 +82,7 @@ const FnbFloatingAction = ({ onPress }: Props) => {
 const styles = StyleSheet.create({
   container: {
     elevation: 14,
-    shadowColor: COLOR.primary[70],
+    shadowColor: COLORS.primary[70],
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.38,
     shadowRadius: 11,

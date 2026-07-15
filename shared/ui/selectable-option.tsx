@@ -36,7 +36,7 @@ export function SelectableOption<T = string>({
         "h-[38px] min-w-0 flex-1 items-center justify-center rounded-[10px] border px-[12px] py-[6px]",
         selected
           ? "border-primary-500 bg-primary-50"
-          : "border-gray-200 bg-white",
+          : "border-neutral-200 bg-white",
         isDisabled && "opacity-50",
         className,
       )}
@@ -45,7 +45,7 @@ export function SelectableOption<T = string>({
         variant="body14"
         className={cn(
           "text-center",
-          selected ? "text-primary-500" : "text-gray-400",
+          selected ? "text-primary-500" : "text-neutral-400",
           textClassName,
         )}
       >

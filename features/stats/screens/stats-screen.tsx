@@ -18,7 +18,7 @@ const getMonthTitle = (date: Date) =>
 
 const StatsStatusText = ({ message }: { message: string }) => {
   return (
-    <AppText variant="body14" className="text-center text-gray-500">
+    <AppText variant="body14" className="text-center text-neutral-500">
       {message}
     </AppText>
   );
@@ -44,7 +44,7 @@ const StatsScreen = () => {
   return (
     <Screen padded={false}>
       <View className="h-[45px] justify-center px-screen">
-        <AppText variant="button1" className="text-gray-850">
+        <AppText variant="button1" className="text-neutral-850">
           {getMonthTitle(monthDate)}
         </AppText>
       </View>

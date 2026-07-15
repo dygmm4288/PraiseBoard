@@ -1,4 +1,4 @@
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { useEffect } from "react";
 import { View, ViewStyle } from "react-native";
 import Animated, {
@@ -18,12 +18,12 @@ type Props = {
 
 const INACTIVE = {
   width: 6,
-  backgroundColor: COLOR.lineGray,
+  backgroundColor: COLORS.line.DEFAULT,
 };
 
 const ACTIVE = {
   width: 18,
-  backgroundColor: COLOR.black,
+  backgroundColor: COLORS.content.primary,
 };
 
 const DOT_BASE_STYLE: ViewStyle = {

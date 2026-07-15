@@ -1,5 +1,5 @@
 import { Icon } from "@/assets/icons";
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { Pressable, View } from "react-native";
@@ -37,7 +37,7 @@ const HeaderButton = ({
       disabled={disabled}
       className={cn(
         "h-[39px] w-[39px] items-center justify-center rounded-full",
-        activeConfirm ? "bg-primary-10" : "bg-bgLightGray",
+        activeConfirm ? "bg-primary-10" : "bg-surface-subtle",
         disabled && "opacity-60",
       )}
       onPress={onPress}
@@ -45,7 +45,9 @@ const HeaderButton = ({
       <Icon
         name={isConfirm ? "Check" : "Close"}
         size={18}
-        color={activeConfirm ? COLOR.primary50 : COLOR.black}
+        color={
+          activeConfirm ? COLORS.primary[50] : COLORS.content.primary
+        }
       />
     </Pressable>
   );

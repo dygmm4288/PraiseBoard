@@ -8,14 +8,14 @@ const BoardEmptyItem = () => {
         <AppText
           variant="custom"
           weight="bold"
-          className="text-[36px] text-gray-500"
+          className="text-[36px] text-neutral-500"
         >
           텅
         </AppText>
         <AppText
           variant="body14"
           weight="regular"
-          className="text-center text-gray-500"
+          className="text-center text-neutral-500"
         >
           새로운 습관을 다시 시작해봐요!
         </AppText>

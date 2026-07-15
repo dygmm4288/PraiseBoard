@@ -6,7 +6,7 @@ import {
 } from "@/features/board/schema";
 import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import { BottomSheetHeader, BottomSheetInput } from "@/shared/components";
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -67,7 +67,7 @@ const OptionRow = ({
             accessibilityState={{ selected, disabled }}
             disabled={locked}
             className={cn(
-              "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[12px] border border-bgLightGray bg-white px-[12px]",
+              "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[12px] border border-line-subtle bg-white px-[12px]",
               selected && "rounded-[9px] border-primary-50 bg-primary-10",
             )}
             onPress={() => onSelect(value)}
@@ -78,8 +78,8 @@ const OptionRow = ({
               numberOfLines={1}
               className={cn(
                 "text-center",
-                selected ? "text-primary-50" : "text-bgDarkGray",
-                disabled && "text-textGray",
+                selected ? "text-primary-50" : "text-neutral-700",
+                disabled && "text-content-disabled",
               )}
             >
               {label}
@@ -100,7 +100,7 @@ const BoardFormSection = ({
 }) => {
   return (
     <View className="gap-[6px]">
-      <AppText variant="label12" weight="semibold" className="text-labelGray">
+      <AppText variant="label12" weight="semibold" className="text-content-tertiary">
         {label}
       </AppText>
       {children}
@@ -162,13 +162,13 @@ const BoardForm = ({
               onChangeText={onChangeFormData("title")}
               maxLength={TITLE_MAX_LENGTH}
               placeholder="어떤 습관을 시작해볼까요?"
-              placeholderTextColor={COLOR.textGray}
+              placeholderTextColor={COLORS.content.disabled}
               className="flex-1"
             />
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="대표 이모지 선택"
-              className="h-[42px] min-h-[42px] w-[42px] items-center justify-center rounded-[12px] border border-bgLightGray bg-white"
+              className="h-[42px] min-h-[42px] w-[42px] items-center justify-center rounded-[12px] border border-line-subtle bg-white"
               onPress={() => setEmojiPickerVisible(true)}
             >
               <AppText
@@ -205,7 +205,7 @@ const BoardForm = ({
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
             maxLength={REWARD_MEMO_LENGTH}
-            placeholderTextColor={COLOR.textGray}
+            placeholderTextColor={COLORS.content.disabled}
           />
         </BoardFormSection>
 
@@ -220,7 +220,7 @@ const BoardForm = ({
             <AppText
               variant="label12"
               weight="semibold"
-              className="text-center text-labelGray"
+              className="text-center text-content-tertiary"
             >
               삭제하기
             </AppText>

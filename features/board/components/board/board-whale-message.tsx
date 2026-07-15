@@ -1,11 +1,11 @@
 import type { WhaleMessage } from "@/services/whale-message";
 import { resolveWhaleMessage } from "@/services/whale-message";
 import WhaleAvatar from "@/shared/components/whale-avatar";
-import { COLOR } from "@/shared/constants/colors.constant";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
 import { View } from "react-native";
+import { BOARD_COLORS } from "../../theme/colors";
 import { BoardRecord } from "../../types";
 
 type BoardWhaleMessageProps = {
@@ -52,7 +52,10 @@ const BoardWhaleMessage = ({
   return (
     <View className={cn("overflow-hidden rounded-[20px]", className)}>
       <LinearGradient
-        colors={[COLOR.whale.gradientStart, COLOR.whale.gradientEnd]}
+        colors={[
+          BOARD_COLORS.whale.gradientStart,
+          BOARD_COLORS.whale.gradientEnd,
+        ]}
         start={{ x: 0.5, y: 0 }}
         locations={[0, 0.9038]}
         end={{ x: 0.5, y: 1 }}
@@ -63,20 +66,23 @@ const BoardWhaleMessage = ({
           gap: 12,
         }}
       >
-        <View className="flex flex-row gap-[8px] border-b border-b-primary-15 pb-[12px]">
+        <View
+          className="flex flex-row gap-[8px] border-b pb-[12px]"
+          style={{ borderBottomColor: BOARD_COLORS.whale.border }}
+        >
           <WhaleAvatar />
           <View className="flex-col gap-[3px]">
             <AppText
               variant="label12"
               weight="semibold"
-              className="text-primary-50"
+              style={{ color: BOARD_COLORS.whale.label }}
             >
               두잉
             </AppText>
             <AppText
               variant="label10"
               weight="regular"
-              className="text-primary-30"
+              style={{ color: BOARD_COLORS.whale.timestamp }}
             >
               {formatLatestMessageLabel(latestMessageCreatedAt)}
             </AppText>
@@ -86,7 +92,7 @@ const BoardWhaleMessage = ({
           <AppText
             variant="button15"
             weight="medium"
-            className="text-textDarkPurple"
+            style={{ color: BOARD_COLORS.whale.text }}
           >
             {whaleMessage.body}
           </AppText>

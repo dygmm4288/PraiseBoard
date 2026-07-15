@@ -54,7 +54,7 @@ const MonthAchievementRow = ({
 const MonthAchievementState = ({ message }: { message: string }) => {
   return (
     <View className="min-h-[80px] items-center justify-center px-[20px] py-[18px]">
-      <AppText variant="body14" className="text-center text-gray-500">
+      <AppText variant="body14" className="text-center text-neutral-500">
         {message}
       </AppText>
     </View>

@@ -62,7 +62,7 @@ const CalendarMonthPicker = ({
           accessibilityLabel="이전 연도"
           disabled={!canGoPreviousYear}
           className={cn(
-            "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
+            "h-[39px] w-[39px] items-center justify-center rounded-full bg-surface-subtle",
             !canGoPreviousYear && "opacity-20",
           )}
           onPress={() => onChangeYear?.(year - 1)}
@@ -79,7 +79,7 @@ const CalendarMonthPicker = ({
           accessibilityLabel="다음 연도"
           disabled={!canGoNextYear}
           className={cn(
-            "h-[39px] w-[39px] items-center justify-center rounded-full bg-bgLightGray",
+            "h-[39px] w-[39px] items-center justify-center rounded-full bg-surface-subtle",
             !canGoNextYear && "opacity-20",
           )}
           onPress={() => onChangeYear?.(year + 1)}
@@ -112,10 +112,10 @@ const CalendarMonthPicker = ({
                 accessibilityState={{ selected, disabled }}
                 disabled={disabled}
                 className={cn(
-                  "h-[42px] flex-1 basis-[31%] items-center justify-center rounded-[12px] border border-bgLightGray bg-white px-[12px]",
+                  "h-[42px] flex-1 basis-[31%] items-center justify-center rounded-[12px] border border-line-subtle bg-white px-[12px]",
                   selected &&
                     "rounded-[9px] border-primary-50 bg-primary-10 px-[13px]",
-                  disabled && "border-bgLightGray bg-white",
+                  disabled && "border-line-subtle bg-white",
                 )}
                 onPress={() => onSelectMonth?.(new Date(year, month - 1, 1))}
               >
@@ -124,9 +124,9 @@ const CalendarMonthPicker = ({
                   weight="medium"
                   numberOfLines={1}
                   className={cn(
-                    "text-center text-bgDarkGray",
+                    "text-center text-neutral-700",
                     selected && "text-primary-50",
-                    disabled && "text-textGray",
+                    disabled && "text-content-disabled",
                   )}
                 >
                   {month}월

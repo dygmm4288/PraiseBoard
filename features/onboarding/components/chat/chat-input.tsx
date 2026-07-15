@@ -94,7 +94,7 @@ const ChatInput = ({
               pointerEvents="none"
               className="absolute inset-y-0 left-0 justify-center"
             >
-              <Text className="font-pretendard text-[14px] leading-[20px] text-gray-300">
+              <Text className="font-pretendard text-[14px] leading-[20px] text-neutral-300">
                 {placeholder}
               </Text>
             </View>

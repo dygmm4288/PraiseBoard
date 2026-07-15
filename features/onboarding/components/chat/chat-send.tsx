@@ -13,7 +13,7 @@ const ChatSend = ({ onPress, disabled = false }: Props) => {
       className={cn(
         "h-[33px] w-[33px] items-center justify-center rounded-full",
         disabled
-          ? "bg-gray-200 border border-gray-200"
+          ? "bg-neutral-200 border border-neutral-200"
           : "bg-primary-500 border border-primary-500",
       )}
       disabled={disabled}

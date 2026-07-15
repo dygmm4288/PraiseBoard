@@ -8,7 +8,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { COLOR } from "../constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 
 const TRACK_WIDTH = 39;
 const TRACK_PADDING = 2;
@@ -28,8 +28,8 @@ const Toggle = ({
   onValueChange,
   className,
   disabled = false,
-  activeColor = COLOR.primary[500],
-  inactiveColor = COLOR.gray[300],
+  activeColor = COLORS.primary[500],
+  inactiveColor = COLORS.neutral[300],
   ...props
 }: ToggleProps) => {
   const isDisabled = !!disabled;
@@ -83,8 +83,8 @@ const Toggle = ({
             width: KNOB_SIZE,
             height: KNOB_SIZE,
             borderRadius: KNOB_SIZE / 2,
-            backgroundColor: COLOR.white,
-            shadowColor: COLOR.black,
+            backgroundColor: COLORS.surface.card,
+            shadowColor: COLORS.shadow.neutral,
             shadowOpacity: 0.12,
             shadowRadius: 4,
             shadowOffset: {

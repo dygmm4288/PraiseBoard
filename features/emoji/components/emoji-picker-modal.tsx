@@ -47,7 +47,7 @@ const EmojiPickerModal = ({
               <AppText
                 variant="custom"
                 weight="medium"
-                className="text-[14px] leading-[22px] text-labelGray"
+                className="text-[14px] leading-[22px] text-content-tertiary"
               >
                 닫기
               </AppText>
@@ -65,7 +65,7 @@ const EmojiPickerModal = ({
                   accessibilityLabel={`${option.label} 이모지 선택`}
                   accessibilityState={{ selected }}
                   className={cn(
-                    "h-[48px] w-[48px] items-center justify-center rounded-[12px] border border-bgLightGray bg-white",
+                    "h-[48px] w-[48px] items-center justify-center rounded-[12px] border border-line-subtle bg-white",
                     selected && "border-primary-50 bg-primary-10",
                   )}
                   onPress={() => onSelect(option.emoji)}

@@ -23,7 +23,7 @@ const ArchiveSection = ({ title, action, emptyMessage, children }: Props) => {
       </View>
       {isEmpty && emptyMessage ? (
         <View className="h-[85px] items-center justify-center rounded-[20px] border border-dashed border-line bg-white px-[16px]">
-          <AppText variant="body14" className="text-center text-gray-300">
+          <AppText variant="body14" className="text-center text-neutral-300">
             {emptyMessage}
           </AppText>
         </View>

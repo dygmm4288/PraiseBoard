@@ -1,5 +1,5 @@
 import { Icon } from "@/assets/icons";
-import { COLOR } from "@/shared/constants/colors.constant";
+import { COLORS } from "@/shared/theme";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import {
@@ -35,7 +35,7 @@ type CalendarProps = {
 };
 
 const WEEK_DAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
-const CALENDAR_SHADOW_COLOR = COLOR.primary[900];
+const CALENDAR_SHADOW_COLOR = COLORS.primary[900];
 
 const getCalendarCells = (date: Date): CalendarCell[] => {
   const monthDate = getMonthDate(date);
@@ -248,8 +248,8 @@ const Calendar = ({
                   weight="semibold"
                   className={cn(
                     "text-center",
-                    index === 0 && "text-red",
-                    index > 0 && index < 6 && "text-gray-400",
+                    index === 0 && "text-danger",
+                    index > 0 && index < 6 && "text-neutral-400",
                     index === 6 && "text-tertiary-500",
                   )}
                 >
@@ -294,7 +294,7 @@ const Calendar = ({
                           weight="semibold"
                           className={cn(
                             "text-center",
-                            hasSticker ? "text-black" : "text-gray-400",
+                            hasSticker ? "text-black" : "text-neutral-400",
                           )}
                         >
                           {cell.dayOfMonth}

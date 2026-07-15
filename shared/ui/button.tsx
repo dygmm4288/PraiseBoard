@@ -25,18 +25,18 @@ export const BUTTON_CONTAINER_STYLES: Record<
 > = {
   primary: {
     enabled: "bg-primary-500 border border-primary-500",
-    disabled: "bg-gray-100 border border-gray-100",
+    disabled: "bg-neutral-100 border border-neutral-100",
   },
   secondary: {
     enabled: "bg-primary-100 border border-primary-100",
     disabled: "", // TODO
   },
   tertiary: {
-    enabled: "bg-white border border-gray-200",
+    enabled: "bg-white border border-neutral-200",
     disabled: "", // TODO
   },
   danger: {
-    enabled: "bg-red border border-red",
+    enabled: "bg-danger border border-danger",
     disabled: "",
   },
 };
@@ -47,14 +47,14 @@ export const BUTTON_TEXT_STYLES: Record<
 > = {
   primary: {
     enabled: "text-white",
-    disabled: "text-gray-300",
+    disabled: "text-neutral-300",
   },
   secondary: {
     enabled: "text-primary-700",
     disabled: "", // TODO
   },
   tertiary: {
-    enabled: "text-gray-700",
+    enabled: "text-neutral-700",
     disabled: "", // TODO
   },
   danger: {
