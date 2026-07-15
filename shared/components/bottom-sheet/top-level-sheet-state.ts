@@ -17,30 +17,13 @@ export type TopLevelSheetConfig = {
   onClose?: () => void;
 };
 
-export type TopLevelSheetState = {
-  presentationId: number;
-  config: TopLevelSheetConfig | null;
-  index: number;
-  closeEffect: (() => void) | null;
-  runOnCloseAfterDismiss: boolean | null;
+export type TopLevelSheetPresentation = {
+  id: number;
+  config: TopLevelSheetConfig;
 };
-
-export const getClosedSheetState = (
-  presentationId = 0,
-): TopLevelSheetState => ({
-  presentationId,
-  config: null,
-  index: -1,
-  closeEffect: null,
-  runOnCloseAfterDismiss: null,
-});
 
 export const getSafeInitialIndex = (config: TopLevelSheetConfig) => {
   const maxIndex = config.snapPoints.length - 1;
-
-  if (maxIndex < 0) {
-    return -1;
-  }
 
   const initialIndex = config.initialIndex ?? 0;
 
@@ -51,66 +34,20 @@ export const getSafeInitialIndex = (config: TopLevelSheetConfig) => {
   return Math.min(Math.max(initialIndex, 0), maxIndex);
 };
 
-export const presentTopLevelSheetState = (
-  current: TopLevelSheetState,
-  config: TopLevelSheetConfig,
+export const hasSnapPoints = (config: TopLevelSheetConfig) =>
+  config.snapPoints.length > 0;
+
+export const getDismissalResult = (
+  activePresentation: TopLevelSheetPresentation | null,
+  pendingPresentation: TopLevelSheetPresentation | null,
+  dismissedPresentationId: number,
 ) => {
-  if (config.snapPoints.length === 0) {
-    return getClosedSheetState(current.presentationId);
+  if (activePresentation?.id !== dismissedPresentationId) {
+    return null;
   }
 
   return {
-    presentationId: current.presentationId + 1,
-    config,
-    index: getSafeInitialIndex(config),
-    closeEffect: null,
-    runOnCloseAfterDismiss: null,
-  };
-};
-
-export const requestDismissTopLevelSheetState = (
-  current: TopLevelSheetState,
-) => {
-  if (!current.config) {
-    return current;
-  }
-
-  return {
-    ...current,
-    index: -1,
-    closeEffect: null,
-    runOnCloseAfterDismiss: true,
-  };
-};
-
-export const updateTopLevelSheetIndexState = (
-  current: TopLevelSheetState,
-  index: number,
-) => {
-  if (
-    !current.config ||
-    !Number.isInteger(index) ||
-    index < 0 ||
-    index >= current.config.snapPoints.length
-  ) {
-    return current;
-  }
-
-  return { ...current, index };
-};
-
-export const clearTopLevelSheetState = (
-  current: TopLevelSheetState,
-  runOnClose = true,
-) => {
-  if (!current.config) {
-    return current;
-  }
-
-  const shouldRunOnClose = current.runOnCloseAfterDismiss ?? runOnClose;
-
-  return {
-    ...getClosedSheetState(current.presentationId),
-    closeEffect: shouldRunOnClose ? (current.config.onClose ?? null) : null,
+    dismissedPresentation: activePresentation,
+    nextPresentation: pendingPresentation,
   };
 };

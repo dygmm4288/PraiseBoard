@@ -11,6 +11,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test:utils": "node --no-warnings --experimental-strip-types --test shared/utils/*.node.test.ts",
+    "test:bottom-sheet": "node --no-warnings --experimental-strip-types --test shared/components/bottom-sheet/*.node.test.ts",
     "test:date": "node --no-warnings --experimental-strip-types --test shared/utils/date.node.test.ts",
     "test:regex": "node --no-warnings --experimental-strip-types --test shared/utils/regex.node.test.ts",
     "storybook-generate": "sb-rn-get-stories",
