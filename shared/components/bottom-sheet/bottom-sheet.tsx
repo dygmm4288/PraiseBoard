@@ -8,10 +8,11 @@ import {
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet";
 import type { ElementRef, PropsWithChildren } from "react";
-import { forwardRef, useCallback, useMemo } from "react";
-import { Pressable, StyleSheet } from "react-native";
-import { Easing } from "react-native-reanimated";
+import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import { Keyboard, Pressable, StyleSheet } from "react-native";
+import { Easing, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { isDebugEnabled } from "@/shared/constants/environment";
 import BottomSheetHandle from "./bottom-sheet-handle";
 
 type Props = PropsWithChildren<{
@@ -55,10 +56,40 @@ const AppBottomSheet = forwardRef<AppBottomSheetRef, Props>(
   ) {
     const insets = useSafeAreaInsets();
     const resolvedSnapPoints = useMemo(() => [...snapPoints], [snapPoints]);
+    const animatedIndex = useSharedValue(initialIndex);
+    const animatedPosition = useSharedValue(0);
+    const lastChangeRef = useRef({ index: initialIndex, position: 0 });
+    const restoreCandidateIndexRef = useRef(initialIndex);
     const animationConfigs = useBottomSheetTimingConfigs({
       duration: ANIMATION_DURATION,
       easing: Easing.bezier(0.32, 0.72, 0, 1),
     });
+
+    const logKeyboardTrace = useCallback(
+      (event: string, details: Record<string, unknown> = {}) => {
+        if (!isDebugEnabled) {
+          return;
+        }
+
+        console.info("[BottomSheetKeyboardTrace]", event, {
+          snapPoints: resolvedSnapPoints,
+          keyboardBehavior,
+          keyboardBlurBehavior,
+          lastChange: lastChangeRef.current,
+          appRestoreCandidateIndex: restoreCandidateIndexRef.current,
+          animatedIndex: animatedIndex.value,
+          animatedPosition: animatedPosition.value,
+          ...details,
+        });
+      },
+      [
+        animatedIndex,
+        animatedPosition,
+        keyboardBehavior,
+        keyboardBlurBehavior,
+        resolvedSnapPoints,
+      ],
+    );
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) =>
@@ -83,6 +114,65 @@ const AppBottomSheet = forwardRef<AppBottomSheetRef, Props>(
       [enableBackdrop, onRequestClose],
     );
 
+    const handleChange = useCallback(
+      (index: number, position: number) => {
+        lastChangeRef.current = { index, position };
+        logKeyboardTrace("onChange", { index, position });
+        onChange?.(index);
+      },
+      [logKeyboardTrace, onChange],
+    );
+
+    const handleAnimate = useCallback(
+      (
+        fromIndex: number,
+        toIndex: number,
+        fromPosition: number,
+        toPosition: number,
+      ) => {
+        logKeyboardTrace("onAnimate", {
+          fromIndex,
+          toIndex,
+          fromPosition,
+          toPosition,
+        });
+      },
+      [logKeyboardTrace],
+    );
+
+    useEffect(() => {
+      if (!isDebugEnabled) {
+        return;
+      }
+
+      const handleKeyboardWillShow = () => {
+        restoreCandidateIndexRef.current = lastChangeRef.current.index;
+        logKeyboardTrace("keyboardWillShow");
+      };
+      const handleKeyboardDidShow = () => {
+        logKeyboardTrace("keyboardDidShow");
+      };
+      const handleKeyboardWillHide = () => {
+        logKeyboardTrace("keyboardWillHide");
+      };
+      const handleKeyboardDidHide = () => {
+        logKeyboardTrace("keyboardDidHide");
+      };
+
+      const subscriptions = [
+        Keyboard.addListener("keyboardWillShow", handleKeyboardWillShow),
+        Keyboard.addListener("keyboardDidShow", handleKeyboardDidShow),
+        Keyboard.addListener("keyboardWillHide", handleKeyboardWillHide),
+        Keyboard.addListener("keyboardDidHide", handleKeyboardDidHide),
+      ];
+
+      logKeyboardTrace("mounted", { initialIndex });
+
+      return () => {
+        subscriptions.forEach((subscription) => subscription.remove());
+      };
+    }, [initialIndex, logKeyboardTrace]);
+
     return (
       <BottomSheetModal
         ref={ref}
@@ -98,7 +188,10 @@ const AppBottomSheet = forwardRef<AppBottomSheetRef, Props>(
         keyboardBlurBehavior={keyboardBlurBehavior}
         enableBlurKeyboardOnGesture={enableBlurKeyboardOnGesture}
         android_keyboardInputMode={androidKeyboardInputMode}
-        onChange={onChange}
+        animatedIndex={animatedIndex}
+        animatedPosition={animatedPosition}
+        onChange={handleChange}
+        onAnimate={handleAnimate}
         onDismiss={onDismiss}
         handleComponent={BottomSheetHandle}
         backdropComponent={renderBackdrop}
