@@ -57,8 +57,9 @@ const BoardItemMeta = ({
           {isCompleted && completedPeriodLabel ? (
             <View className="justify-center">
               <AppText
-                variant="label10"
+                variant="label9"
                 weight="regular"
+                maxFontSizeMultiplier={1.3}
                 className="text-content-disabled"
               >
                 {completedPeriodLabel}
@@ -69,6 +70,7 @@ const BoardItemMeta = ({
               <AppText
                 variant="label9"
                 weight="semibold"
+                maxFontSizeMultiplier={1.3}
                 className="text-content-tertiary"
               >
                 D+{boardDDay}
@@ -80,6 +82,7 @@ const BoardItemMeta = ({
               <AppText
                 variant="label9"
                 weight="semibold"
+                maxFontSizeMultiplier={1.3}
                 className="text-secondary-50"
               >
                 연속 {displayStreak}일
@@ -93,6 +96,7 @@ const BoardItemMeta = ({
           numberOfLines={1}
           variant="body14"
           weight="semibold"
+          maxFontSizeMultiplier={1.3}
           className={cn(
             isCompleted
               ? "text-black"
@@ -110,6 +114,7 @@ const BoardItemMeta = ({
             <AppText
               variant="label10"
               weight="regular"
+              maxFontSizeMultiplier={1.3}
               className="text-content-tertiary"
             >
               보상: {rewardText}

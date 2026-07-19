@@ -18,7 +18,7 @@ const BoardItemContainer = ({
   const { isTodayDone, isCompleted } = ui;
   const shouldDim = shouldDimTodayDone && isTodayDone;
   const contentClassName = cn(
-    "rounded-[20px] px-[16px] py-[14px]",
+    "min-h-[68px] rounded-[20px] px-[16px] py-[14px]",
     isCompleted ? "border border-secondary-30 bg-secondary-10" : "bg-white",
   );
   const content = (
