@@ -5,6 +5,7 @@ import {
   isDebugEnabled,
   isStorybookEnabled,
 } from "@/shared/constants/environment";
+import { FNB_CONTENT_CLEARANCE } from "@/shared/constants/layout";
 import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
@@ -27,12 +28,14 @@ import { useEffect } from "react";
 import { AppState, LogBox, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
-
-const FNB_RESERVED_BOTTOM_SPACE = 80;
 
 if (isDebugEnabled) {
   LogBox.ignoreLogs([
@@ -80,6 +83,7 @@ const RootLayoutNav = () => {
   const pathname = usePathname();
   const segments = useSegments();
   const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
+  const insets = useSafeAreaInsets();
   useRootBackExit(pathname);
 
   if (!isInitialized) return null;
@@ -105,7 +109,9 @@ const RootLayoutNav = () => {
             className="flex-1"
             style={{
               backgroundColor: rootBackgroundColor,
-              paddingBottom: shouldShowFnb ? FNB_RESERVED_BOTTOM_SPACE : 0,
+              paddingBottom: shouldShowFnb
+                ? insets.bottom + FNB_CONTENT_CLEARANCE
+                : 0,
             }}
           >
             <Stack
@@ -158,16 +164,18 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <KeyboardProvider>
-          <UserProvider>
-            <RootLayoutNav />
-            <ToastKeyboardSync />
-            <Toast config={toastConfig} />
-            <StatusBar style="auto" />
-          </UserProvider>
-        </KeyboardProvider>
-      </QueryClientProvider>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <KeyboardProvider>
+            <UserProvider>
+              <RootLayoutNav />
+              <ToastKeyboardSync />
+              <Toast config={toastConfig} />
+              <StatusBar style="auto" />
+            </UserProvider>
+          </KeyboardProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

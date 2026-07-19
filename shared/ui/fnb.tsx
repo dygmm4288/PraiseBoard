@@ -1,4 +1,8 @@
 import { COLORS } from "@/shared/theme";
+import {
+  BOTTOM_CONTROL_INSET_GAP,
+  FNB_HEIGHT,
+} from "@/shared/constants/layout";
 import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
 import React, {
@@ -288,11 +292,11 @@ const Fnb = <T extends string>({
       )}
       pointerEvents="box-none"
       onLayout={syncToastOffset}
-      style={{ bottom: insets.bottom }}
+      style={{ bottom: insets.bottom + BOTTOM_CONTROL_INSET_GAP }}
     >
       <View
         className="w-full max-w-[360px] rounded-[296px]"
-        style={styles.shadow}
+        style={[styles.shadow, { minHeight: FNB_HEIGHT }]}
       >
         <View className="relative flex-row items-start justify-center overflow-hidden rounded-[296px] bg-white px-[6px] py-[4px]">
           <ActiveSurface

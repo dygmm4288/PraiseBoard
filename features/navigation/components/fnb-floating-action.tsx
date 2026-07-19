@@ -1,4 +1,8 @@
 import { COLORS } from "@/shared/theme";
+import {
+  BOTTOM_CONTROL_INSET_GAP,
+  FNB_HEIGHT,
+} from "@/shared/constants/layout";
 import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
@@ -68,7 +72,14 @@ const FnbFloatingAction = ({ onPress }: Props) => {
       accessibilityLabel="보드 추가"
       accessibilityRole="button"
       className="absolute right-[25px] h-[54px] w-[54px] items-center justify-center rounded-[50px]"
-      style={[styles.container, { bottom: insets.bottom + 88 }, animatedStyle]}
+      style={[
+        styles.container,
+        {
+          bottom:
+            insets.bottom + BOTTOM_CONTROL_INSET_GAP + FNB_HEIGHT + 12,
+        },
+        animatedStyle,
+      ]}
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
