@@ -1,6 +1,7 @@
 import { nicknameSchema } from "@/features/board/schema";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
+import * as Notifications from "expo-notifications";
 import { useCallback } from "react";
 
 const getDeviceTimezone = () => {
@@ -48,6 +49,13 @@ export const useSettingsProfile = () => {
       reminderMinute: number;
     }) => {
       try {
+        const permissions = await Notifications.getPermissionsAsync();
+
+        if (permissions.status !== "granted") {
+          toast.error("기기 설정에서 알림 권한을 허용해 주세요.");
+          return false;
+        }
+
         await updateProfile({
           reminderHour,
           reminderMinute,

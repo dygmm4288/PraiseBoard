@@ -7,36 +7,21 @@ import {
 import { AppText } from "@/shared/ui";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import type { ReactNode } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  View,
+} from "react-native";
 import SettingsSheetHeader from "./settings-sheet-header";
 
 const PICKER_COLUMN_HEIGHT = 181;
 const PICKER_COLUMN_WIDTH = 90;
 const PICKER_CELL_HEIGHT = 42;
-const PICKER_CELL_GAP = 9;
-const PICKER_ITEM_HEIGHT = PICKER_CELL_HEIGHT + PICKER_CELL_GAP;
-
-const clamp = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
-
-const getSelectedScrollOffset = ({
-  itemCount,
-  selectedIndex,
-}: {
-  itemCount: number;
-  selectedIndex: number;
-}) => {
-  const contentHeight =
-    itemCount * PICKER_CELL_HEIGHT + (itemCount - 1) * PICKER_CELL_GAP;
-  const maxOffset = Math.max(contentHeight - PICKER_COLUMN_HEIGHT, 0);
-  const centeredOffset =
-    selectedIndex * PICKER_ITEM_HEIGHT -
-    (PICKER_COLUMN_HEIGHT - PICKER_CELL_HEIGHT) / 2;
-
-  return clamp(centeredOffset, 0, maxOffset);
-};
+const PICKER_ITEM_HEIGHT = PICKER_CELL_HEIGHT;
+const PICKER_VERTICAL_PADDING =
+  (PICKER_COLUMN_HEIGHT - PICKER_CELL_HEIGHT) / 2;
 
 const PickerCell = ({
   label,
@@ -49,10 +34,7 @@ const PickerCell = ({
 }) => {
   return (
     <Pressable
-      className={[
-        "h-[42px] w-full items-center justify-center rounded-[9px] px-[12px]",
-        selected ? "bg-primary-10" : "bg-white",
-      ].join(" ")}
+      className="h-[42px] w-full items-center justify-center px-[12px]"
       onPress={onPress}
     >
       <AppText
@@ -69,34 +51,21 @@ const PickerCell = ({
   );
 };
 
-const PickerStaticColumn = ({ children }: { children: ReactNode }) => {
-  return (
-    <View
-      className="justify-center"
-      style={{
-        height: PICKER_COLUMN_HEIGHT,
-        width: PICKER_COLUMN_WIDTH,
-        gap: PICKER_CELL_GAP,
-      }}
-    >
-      {children}
-    </View>
-  );
-};
-
-const PickerScrollColumn = ({
-  children,
-  itemCount,
+const PickerWheelColumn = <T extends string | number>({
+  values,
   selectedIndex,
+  getLabel,
+  onValueChange,
 }: {
-  children: ReactNode;
-  itemCount: number;
+  values: readonly T[];
   selectedIndex: number;
+  getLabel: (value: T) => string;
+  onValueChange: (value: T) => void;
 }) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const selectedScrollOffset = useMemo(
-    () => getSelectedScrollOffset({ itemCount, selectedIndex }),
-    [itemCount, selectedIndex],
+    () => Math.max(selectedIndex, 0) * PICKER_ITEM_HEIGHT,
+    [selectedIndex],
   );
 
   const scrollToSelectedValue = useCallback(
@@ -114,24 +83,60 @@ const PickerScrollColumn = ({
       scrollToSelectedValue();
     });
 
-    return () => {
-      cancelAnimationFrame(frame);
-    };
+    return () => cancelAnimationFrame(frame);
   }, [scrollToSelectedValue]);
 
+  const selectValueAtOffset = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const index = Math.max(
+        0,
+        Math.min(
+          values.length - 1,
+          Math.round(event.nativeEvent.contentOffset.y / PICKER_ITEM_HEIGHT),
+        ),
+      );
+      const value = values[index];
+
+      if (value !== undefined) {
+        onValueChange(value);
+      }
+    },
+    [onValueChange, values],
+  );
+
   return (
-    <BottomSheetScrollView
-      ref={scrollViewRef}
+    <View
+      className="relative overflow-hidden"
       style={{ height: PICKER_COLUMN_HEIGHT, width: PICKER_COLUMN_WIDTH }}
-      contentOffset={{ x: 0, y: selectedScrollOffset }}
-      contentContainerStyle={{ gap: PICKER_CELL_GAP }}
-      keyboardShouldPersistTaps="handled"
-      nestedScrollEnabled
-      onContentSizeChange={() => scrollToSelectedValue()}
-      showsVerticalScrollIndicator={false}
     >
-      {children}
-    </BottomSheetScrollView>
+      <View
+        pointerEvents="none"
+        className="absolute left-0 right-0 rounded-[9px] bg-primary-10"
+        style={{ height: PICKER_CELL_HEIGHT, top: PICKER_VERTICAL_PADDING }}
+      />
+      <BottomSheetScrollView
+        ref={scrollViewRef}
+        style={{ height: PICKER_COLUMN_HEIGHT, width: PICKER_COLUMN_WIDTH }}
+        contentOffset={{ x: 0, y: selectedScrollOffset }}
+        contentContainerStyle={{ paddingVertical: PICKER_VERTICAL_PADDING }}
+        disableIntervalMomentum
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled
+        onContentSizeChange={() => scrollToSelectedValue()}
+        onMomentumScrollEnd={selectValueAtOffset}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={PICKER_ITEM_HEIGHT}
+      >
+        {values.map((value, index) => (
+          <PickerCell
+            key={String(value)}
+            label={getLabel(value)}
+            selected={index === selectedIndex}
+            onPress={() => onValueChange(value)}
+          />
+        ))}
+      </BottomSheetScrollView>
+    </View>
   );
 };
 
@@ -144,6 +149,7 @@ type AlarmTimeSheetContentProps = {
   onChangeMinute: (minute: number) => void;
   onClose: () => void;
   onConfirm: () => void;
+  confirmDisabled?: boolean;
 };
 
 const AlarmTimeSheetContent = ({
@@ -155,52 +161,37 @@ const AlarmTimeSheetContent = ({
   onChangeMinute,
   onClose,
   onConfirm,
+  confirmDisabled = false,
 }: AlarmTimeSheetContentProps) => {
   return (
     <View className="flex-1 px-[16px]">
       <SettingsSheetHeader
         title="시간 변경하기"
+        confirmDisabled={confirmDisabled}
+        closeAccessibilityLabel="취소"
         onClose={onClose}
         onConfirm={onConfirm}
       />
       <View className="h-[223px] py-[21px]">
         <View className="h-[181px] w-full flex-row items-center justify-center gap-[9px]">
-          <PickerStaticColumn>
-            {ALARM_PERIODS.map((period) => (
-              <PickerCell
-                key={period}
-                label={period}
-                selected={period === alarmPeriod}
-                onPress={() => onChangePeriod(period)}
-              />
-            ))}
-          </PickerStaticColumn>
-          <PickerScrollColumn
-            itemCount={ALARM_HOURS.length}
+          <PickerWheelColumn
+            values={ALARM_PERIODS}
+            selectedIndex={ALARM_PERIODS.indexOf(alarmPeriod)}
+            getLabel={(period) => period}
+            onValueChange={onChangePeriod}
+          />
+          <PickerWheelColumn
+            values={ALARM_HOURS}
             selectedIndex={ALARM_HOURS.indexOf(alarmHour)}
-          >
-            {ALARM_HOURS.map((hour) => (
-              <PickerCell
-                key={hour}
-                label={String(hour)}
-                selected={hour === alarmHour}
-                onPress={() => onChangeHour(hour)}
-              />
-            ))}
-          </PickerScrollColumn>
-          <PickerScrollColumn
-            itemCount={ALARM_MINUTES.length}
+            getLabel={String}
+            onValueChange={onChangeHour}
+          />
+          <PickerWheelColumn
+            values={ALARM_MINUTES}
             selectedIndex={ALARM_MINUTES.indexOf(alarmMinute)}
-          >
-            {ALARM_MINUTES.map((minute) => (
-              <PickerCell
-                key={minute}
-                label={String(minute).padStart(2, "0")}
-                selected={minute === alarmMinute}
-                onPress={() => onChangeMinute(minute)}
-              />
-            ))}
-          </PickerScrollColumn>
+            getLabel={(minute) => String(minute).padStart(2, "0")}
+            onValueChange={onChangeMinute}
+          />
         </View>
       </View>
     </View>

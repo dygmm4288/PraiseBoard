@@ -36,16 +36,24 @@ const AlarmTimeSheetController = ({
     initialHour,
     initialMinute,
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const confirmAlarmTime = useCallback(async () => {
-    const saved = await onConfirm(
-      toReminderTime({ alarmPeriod, alarmHour, alarmMinute }),
-    );
+    if (isSaving) return;
 
-    if (saved) {
-      onClose();
+    setIsSaving(true);
+    try {
+      const saved = await onConfirm(
+        toReminderTime({ alarmPeriod, alarmHour, alarmMinute }),
+      );
+
+      if (saved) {
+        onClose();
+      }
+    } finally {
+      setIsSaving(false);
     }
-  }, [alarmHour, alarmMinute, alarmPeriod, onClose, onConfirm]);
+  }, [alarmHour, alarmMinute, alarmPeriod, isSaving, onClose, onConfirm]);
 
   return (
     <AlarmTimeSheetContent
@@ -57,6 +65,7 @@ const AlarmTimeSheetController = ({
       onChangePeriod={setAlarmPeriod}
       onClose={onClose}
       onConfirm={confirmAlarmTime}
+      confirmDisabled={isSaving}
     />
   );
 };
