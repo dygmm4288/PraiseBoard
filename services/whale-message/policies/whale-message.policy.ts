@@ -1,4 +1,4 @@
-import {
+import type {
   ResolveWhaleMessageInput,
   WhaleMessage,
   WhaleMessageBoardInput,
@@ -25,7 +25,7 @@ export const resolveWhaleMessage = ({
   lastLoginAt,
 }: ResolveWhaleMessageInput): WhaleMessage => {
   const displayName = nickname?.trim() || FALLBACK_NICKNAME;
-  const dailyLimitMessage = resolveDailyLimitMessage(boards, todayStickerCount);
+  const dailyLimitMessage = resolveDailyLimitMessage(boards);
 
   if (dailyLimitMessage) return dailyLimitMessage;
 
@@ -148,32 +148,28 @@ const resolveBoardMilestoneMessage = (
 
 const resolveDailyLimitMessage = (
   boards: WhaleMessageBoardInput[],
-  todayStickerCount: number,
 ): WhaleMessage | null => {
-  if (boards.length === 0) return null;
-
-  const hasCompletedBoard = boards.some(
-    (board) => board.status === "completed",
-  );
-  const hasBoardReachedDailyLimit = boards.some((board) => {
+  const activeBoardsWithDailyLimit = boards.filter((board) => {
     const limitCount = Math.max(0, Math.trunc(board.limitCount));
-    const boardTodayStickerCount = Math.max(
-      0,
-      Math.trunc(board.todayStickerCount ?? 0),
-    );
 
-    return limitCount > 0 && boardTodayStickerCount >= limitCount;
+    return board.status === "active" && limitCount > 0;
   });
 
-  if (
-    hasCompletedBoard ||
-    hasBoardReachedDailyLimit ||
-    todayStickerCount >= getDailyLimit(boards)
-  ) {
-    return DAILY_LIMIT_REACHED_MESSAGE;
-  }
+  if (activeBoardsWithDailyLimit.length === 0) return null;
 
-  return null;
+  const hasReachedEveryDailyLimit = activeBoardsWithDailyLimit.every(
+    (board) => {
+      const limitCount = Math.max(0, Math.trunc(board.limitCount));
+      const boardTodayStickerCount = Math.max(
+        0,
+        Math.trunc(board.todayStickerCount ?? 0),
+      );
+
+      return boardTodayStickerCount >= limitCount;
+    },
+  );
+
+  return hasReachedEveryDailyLimit ? DAILY_LIMIT_REACHED_MESSAGE : null;
 };
 
 export const resolveRandomTransitionWhaleMessage = (): WhaleMessage => {
@@ -184,14 +180,6 @@ export const resolveRandomTransitionWhaleMessage = (): WhaleMessage => {
     body: RANDOM_TRANSITION_MESSAGES[index],
     pushEnabled: false,
   };
-};
-
-const getDailyLimit = (boards: WhaleMessageBoardInput[]) => {
-  const limits = boards
-    .map((board) => board.limitCount)
-    .filter((limit) => limit > 0);
-
-  return Math.max(1, ...limits);
 };
 
 const isEveningReminderTime = (now: Date) => now.getHours() === 21;

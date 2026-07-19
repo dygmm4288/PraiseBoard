@@ -15,6 +15,7 @@
     "test:date": "node --no-warnings --experimental-strip-types --test shared/utils/date.node.test.ts",
     "test:regex": "node --no-warnings --experimental-strip-types --test shared/utils/regex.node.test.ts",
     "test:settings": "node --no-warnings --experimental-strip-types --test features/settings/hooks/*.node.test.ts",
+    "test:whale-message": "node --no-warnings --experimental-strip-types --test services/whale-message/policies/*.node.test.ts",
     "storybook-generate": "sb-rn-get-stories",
     "storybook-expo:build": "EXPO_PUBLIC_STORYBOOK_ENABLED=true npx expo export --platform web"
   },
