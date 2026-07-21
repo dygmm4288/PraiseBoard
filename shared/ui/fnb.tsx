@@ -1,8 +1,8 @@
-import { COLORS } from "@/shared/theme";
 import {
   BOTTOM_CONTROL_INSET_GAP,
   FNB_HEIGHT,
 } from "@/shared/constants/layout";
+import { COLORS } from "@/shared/theme";
 import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
 import React, {
