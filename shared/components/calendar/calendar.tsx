@@ -41,7 +41,7 @@ const getCalendarCells = (date: Date): CalendarCell[] => {
   const monthDate = getMonthDate(date);
   const firstDay = monthDate.getDay();
   const lastDate = getLastDate(monthDate);
-  const cellCount = 42;
+  const cellCount = Math.ceil((firstDay + lastDate) / 7) * 7;
 
   return Array.from({ length: cellCount }, (_, index) => {
     const dayOfMonth = index - firstDay + 1;
