@@ -42,6 +42,8 @@ const USER_FLOW_OPTIONS: {
 
 const formatBooleanState = (value: boolean) => (value ? "true" : "false");
 
+const DEBUG_CURRENT_VERSION = "1.0.0(4)";
+
 const resolveCurrentRouteLabel = ({
   effectiveHasSeenIntro,
   effectiveHasCompletedOnboarding,
@@ -290,6 +292,7 @@ export const DebugSettingsScreenContent = ({
               현재 상태
             </AppText>
             <View className="mt-4 gap-3">
+              <StatusRow label="현재 버전" value={DEBUG_CURRENT_VERSION} />
               <StatusRow
                 label="실제 hasSeenIntro"
                 value={formatBooleanState(hasSeenIntro)}
