@@ -1,6 +1,6 @@
 import { Icon } from "@/assets/icons";
 import { cn } from "@/shared/utils/cn";
-import { ElementType, useCallback } from "react";
+import { ElementType, useCallback, useState } from "react";
 import {
   NativeSyntheticEvent,
   Pressable,
@@ -35,6 +35,7 @@ export const AppInput = ({
   ...props
 }: AppInputProps) => {
   const hasValue = typeof value === "string" && value.length > 0;
+  const [isFocus, setFocus] = useState(false);
 
   const handleChangeText = useCallback(
     (nextValue: string) => {
@@ -74,7 +75,8 @@ export const AppInput = ({
   return (
     <View
       className={cn(
-        "w-full min-h-[40px] flex-row items-center rounded-[20px] border border-neutral-200 px-[14px]",
+        "w-full min-h-[40px] flex-row items-center rounded-[12px] border border-line-gray px-[12px]",
+        isFocus ? "border-primary-50" : "",
         className,
       )}
     >
@@ -90,6 +92,8 @@ export const AppInput = ({
         maxLength={maxLength}
         onChangeText={handleChangeText}
         onKeyPress={handleKeyPress}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
         {...props}
       />
       {reset && hasValue ? (

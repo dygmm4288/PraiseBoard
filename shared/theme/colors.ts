@@ -88,6 +88,7 @@ export const COLORS = {
   line: {
     DEFAULT: PALETTE.neutral[300],
     subtle: PALETTE.neutral[100],
+    gray: PALETTE.lineGray[0],
   },
   shadow: {
     neutral: PALETTE.neutral[1000],

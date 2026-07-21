@@ -63,4 +63,7 @@ export const PALETTE = {
     100: "#FFE7E8",
     500: "#FA7074",
   },
+  lineGray: {
+    0: "#EFF1F5",
+  },
 } as const;

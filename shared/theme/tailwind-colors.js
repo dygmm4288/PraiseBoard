@@ -62,6 +62,9 @@ const PALETTE = {
     100: "#FFE7E8",
     500: "#FA7074",
   },
+  lineGray: {
+    0: "#eff1f5",
+  },
 };
 
 const COLORS = {
@@ -149,6 +152,7 @@ const COLORS = {
   line: {
     DEFAULT: PALETTE.neutral[300],
     subtle: PALETTE.neutral[100],
+    gray: PALETTE.lineGray[0],
   },
   shadow: {
     neutral: PALETTE.neutral[1000],
