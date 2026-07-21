@@ -57,7 +57,7 @@ const BoardItemMeta = ({
           {isCompleted && completedPeriodLabel ? (
             <View className="justify-center">
               <AppText
-                variant="label9"
+                variant="label12"
                 weight="regular"
                 maxFontSizeMultiplier={1.3}
                 className="text-content-disabled"
@@ -68,7 +68,7 @@ const BoardItemMeta = ({
           ) : (
             <View className="rounded-[10px] bg-neutral-100 px-[6px] py-[2px]">
               <AppText
-                variant="label9"
+                variant="label12"
                 weight="semibold"
                 maxFontSizeMultiplier={1.3}
                 className="text-content-tertiary"
@@ -80,7 +80,7 @@ const BoardItemMeta = ({
           {displayStreak > 0 ? (
             <View className="rounded-[10px] bg-secondary-20 px-[6px] py-[2px]">
               <AppText
-                variant="label9"
+                variant="label12"
                 weight="semibold"
                 maxFontSizeMultiplier={1.3}
                 className="text-secondary-50"
@@ -112,7 +112,7 @@ const BoardItemMeta = ({
         {rewardText && (
           <View className="flex-row items-center gap-[4px]">
             <AppText
-              variant="label10"
+              variant="label12"
               weight="regular"
               maxFontSizeMultiplier={1.3}
               className="text-content-tertiary"
