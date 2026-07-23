@@ -1,11 +1,12 @@
 import { supabase } from "@/shared/lib/supabase";
 import { Database } from "@/shared/types/supabase.types";
 import {
-  IWhaleMessageRepository,
   WhaleMessageLog,
   WhaleMessageLogChannel,
   WhaleMessageTrigger,
-} from "../model/whale-message.interface";
+  FindRecentWhaleMessageLogInput,
+  SaveWhaleMessageLogInput,
+} from "./model/whale-message.interface";
 
 type NotificationLogRow = Database["public"]["Tables"]["notification_logs"]["Row"];
 
@@ -23,8 +24,8 @@ const toWhaleMessageLog = (row: NotificationLogRow): WhaleMessageLog => ({
   openAt: row.open_at,
 });
 
-export const whaleMessageRepository: IWhaleMessageRepository = {
-  async saveMessageLog(input) {
+export const whaleMessageApi = {
+  async saveMessageLog(input: SaveWhaleMessageLogInput) {
     const { data, error } = await supabase
       .from("notification_logs")
       .insert({
@@ -43,7 +44,7 @@ export const whaleMessageRepository: IWhaleMessageRepository = {
     return toWhaleMessageLog(data);
   },
 
-  async getLatestMessage(profileId) {
+  async getLatestMessage(profileId: string) {
     const { data, error } = await supabase
       .from("notification_logs")
       .select("*")
@@ -59,7 +60,7 @@ export const whaleMessageRepository: IWhaleMessageRepository = {
     return toWhaleMessageLog(data);
   },
 
-  async findRecentMessage(input) {
+  async findRecentMessage(input: FindRecentWhaleMessageLogInput) {
     const { data, error } = await supabase
       .from("notification_logs")
       .select("*")

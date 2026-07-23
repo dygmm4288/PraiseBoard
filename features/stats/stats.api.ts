@@ -7,7 +7,7 @@ import {
   toStatsBoardItems,
   toStatsStickerCounts,
 } from "./mapper";
-import { IStatsRepository, StatsMonth, StatsMonthRequest } from "./types";
+import { StatsMonth, StatsMonthRequest } from "./types";
 
 const BOARD_FIELDS = "id, title, emoji, target_count, created_at";
 
@@ -40,7 +40,7 @@ const getMaxStreak = (dates: string[]) => {
   return maxStreak;
 };
 
-export const statsRepository: IStatsRepository = {
+export const statsApi = {
   async getMonth({ profileId, month }: StatsMonthRequest): Promise<StatsMonth> {
     const { startDate, endDate } = getMonthRange(month);
 

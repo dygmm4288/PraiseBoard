@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { stats } from "../service";
+import { statsApi } from "../stats.api";
 import { statsKeys } from "./stats.query.key";
 
 export const useStatsMonthQuery = (profileId: string | null, month: string) => {
@@ -9,7 +9,7 @@ export const useStatsMonthQuery = (profileId: string | null, month: string) => {
       : ["stats", "month", "idle", month],
     queryFn: () => {
       if (!profileId) throw new Error("profileId required");
-      return stats.getMonth({ profileId, month });
+      return statsApi.getMonth({ profileId, month });
     },
     enabled: !!profileId,
     staleTime: 1000 * 60 * 5,

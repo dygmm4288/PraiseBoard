@@ -1,7 +1,5 @@
 import { supabase } from "@/shared/lib/supabase";
-import { IAppSettingsRepository } from "../model/app-settings.interface";
-
-export const appSettingsRepository: IAppSettingsRepository = {
+export const appSettingsApi = {
   async getAppSettings() {
     const { data, error } = await supabase
       .from("app_settings")

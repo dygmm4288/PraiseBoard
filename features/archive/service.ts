@@ -1,12 +1,12 @@
-import { archiveRepository } from "./repository";
-import { IArchiveService } from "./types";
+import { archiveApi } from "./archive.api";
+import { ArchiveDetailRequest } from "./types";
 
-export const archive: IArchiveService = {
-  getDetail(payload) {
-    return archiveRepository.getDetail(payload);
+export const archive = {
+  getDetail(payload: ArchiveDetailRequest) {
+    return archiveApi.getDetail(payload);
   },
 
-  async forceSetComplete(boardId) {
-    await archiveRepository.forceSetComplete(boardId);
+  async forceSetComplete(boardId: string) {
+    await archiveApi.forceSetComplete(boardId);
   },
 };

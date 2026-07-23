@@ -1,22 +1,26 @@
-import { BoardSetupPayload } from "@/features/board/schema";
-import { boardRepository } from "./repository";
-import { IBoardService } from "./types";
+import {
+  BoardCreatePayload,
+  BoardSetupPayload,
+  BoardUpdatePayload,
+} from "@/features/board/schema";
+import { boardApi } from "./board.api";
+import { BoardListParams, BoardStickerSource } from "./types";
 
-export const board: IBoardService = {
-  async createBoard(payload) {
-    return boardRepository.createBoard(payload);
+export const board = {
+  async createBoard(payload: BoardCreatePayload) {
+    return boardApi.createBoard(payload);
   },
 
-  async updateBoard(payload) {
-    return boardRepository.updateBoard(payload);
+  async updateBoard(payload: BoardUpdatePayload) {
+    return boardApi.updateBoard(payload);
   },
 
-  async deleteBoard(boardId) {
-    return boardRepository.deleteBoard(boardId);
+  async deleteBoard(boardId: string) {
+    return boardApi.deleteBoard(boardId);
   },
 
-  async createBoardFromSetup(profileId, payload: BoardSetupPayload) {
-    return boardRepository.createBoard({
+  async createBoardFromSetup(profileId: string, payload: BoardSetupPayload) {
+    return boardApi.createBoard({
       profileId,
       title: payload.boards.title,
       emoji: payload.boards.emoji,
@@ -26,28 +30,28 @@ export const board: IBoardService = {
     });
   },
 
-  async getBoards(params) {
-    return boardRepository.getBoards(params);
+  async getBoards(params: BoardListParams) {
+    return boardApi.getBoards(params);
   },
 
   async getHomeBoards() {
-    return boardRepository.getHomeBoards();
+    return boardApi.getHomeBoards();
   },
 
-  async getTodayAchievement(profileId) {
-    return boardRepository.getTodayAchievement(profileId);
+  async getTodayAchievement(profileId: string) {
+    return boardApi.getTodayAchievement(profileId);
   },
 
-  async collectSticker(boardId, source) {
-    return boardRepository.collectSticker(boardId, source);
+  async collectSticker(boardId: string, source: BoardStickerSource) {
+    return boardApi.collectSticker(boardId, source);
   },
 
-  async forceSetComplete(boardId) {
-    return boardRepository.forceSetComplete(boardId);
+  async forceSetComplete(boardId: string) {
+    return boardApi.forceSetComplete(boardId);
   },
 
   async getActiveBoards() {
-    return boardRepository.getBoards({
+    return boardApi.getBoards({
       status: "active",
       orderBy: "created_at",
       order: "desc",
@@ -55,7 +59,7 @@ export const board: IBoardService = {
   },
 
   async getCompletedBoards() {
-    return boardRepository.getBoards({
+    return boardApi.getBoards({
       status: "completed",
       orderBy: "completed_at",
       order: "desc",

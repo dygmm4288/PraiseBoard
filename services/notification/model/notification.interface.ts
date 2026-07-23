@@ -10,6 +10,13 @@ export type PushState = {
   pushPermissionUpdatedAt: string | null;
 };
 
+export type NotificationSettingsState = PushState & {
+  permissionStatus: PushPermissionStatus;
+  hasPermission: boolean;
+  hasPushToken: boolean;
+  isOperational: boolean;
+};
+
 export type SavePushTokenInput = {
   profileId: string;
   deviceId: string;
@@ -29,20 +36,4 @@ export type PushTokenDebugInfo = {
   permissionStatus: PushPermissionStatus;
   token: string | null;
   errorMessage: string | null;
-};
-
-export type INotificationService = {
-  bootstrap: () => Promise<void>;
-  requestPermissionFromOnboarding: () => Promise<boolean>;
-  getPushEnabledFromSettings: () => Promise<boolean>;
-  getPushStateFromSettings: () => Promise<PushState>;
-  getPushTokenDebugInfo: () => Promise<PushTokenDebugInfo>;
-  setPushEnabledFromSettings: (enabled: boolean) => Promise<void>;
-  syncPushToken: () => Promise<void>;
-};
-
-export type INotificationRepository = {
-  getPushEnabled: (profileId: string, deviceId: string) => Promise<boolean>;
-  getPushState: (profileId: string, deviceId: string) => Promise<PushState>;
-  savePushToken: (input: SavePushTokenInput) => Promise<void>;
 };

@@ -1,8 +1,6 @@
-import { localStorage } from "@/infra/storage";
-import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
+import { bootstrapUser } from "../actions/bootstrap-user";
 import { AuthState } from "../model/user.interface";
-import { userRepository } from "../repository/user.repository";
 
 type UserBootstrapState = {
   isInitialized: boolean;
@@ -24,35 +22,15 @@ export const useUserBootstrap = (): UserBootstrapState => {
   useEffect(() => {
     let isMounted = true;
 
-    const bootstrap = async () => {
+    const initialize = async () => {
       try {
-        const authUserId = await userRepository.ensureAnonymousSession();
-        const { authState } = await userRepository.getCurrentAuthUser();
-
-        let profile = await userRepository.getMyProfile();
-        if (!profile) {
-          profile = await userRepository.createProfile(authUserId);
-        }
-
-        const storedDeviceId = await localStorage.getItem("device_id");
-        const deviceId = storedDeviceId ?? Crypto.randomUUID();
-
-        await userRepository.ensureDeviceLink(deviceId, profile.id);
-        await userRepository.syncLoginMetadata(profile.id, deviceId);
-
-        await Promise.all([
-          localStorage.setItem("device_id", deviceId),
-          localStorage.setItem("profile_id", profile.id),
-        ]);
+        const result = await bootstrapUser();
 
         if (!isMounted) return;
 
         setState({
           isInitialized: true,
-          authUserId,
-          profileId: profile.id,
-          deviceId,
-          authState: authState,
+          ...result,
         });
       } catch (error) {
         console.error("유저 bootstrap 중 오류 발생", error);
@@ -69,7 +47,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
       }
     };
 
-    void bootstrap();
+    void initialize();
 
     return () => {
       isMounted = false;

@@ -1,4 +1,4 @@
-import { boardRepository } from "@/features/board/repository";
+import { boardApi } from "@/features/board/board.api";
 import { supabase } from "@/shared/lib/supabase";
 import { getMonthRange } from "@/shared/utils/month";
 import {
@@ -13,7 +13,6 @@ import {
 import {
   ArchiveDetail,
   ArchiveDetailRequest,
-  IArchiveRepository,
 } from "./types";
 
 const BOARD_DETAIL_FIELDS =
@@ -29,9 +28,9 @@ const getSelectedDate = (month: string, todayKey: string) => {
   return `${month}-01`;
 };
 
-export const archiveRepository: IArchiveRepository = {
-  async forceSetComplete(boardId) {
-    await boardRepository.forceSetComplete(boardId);
+export const archiveApi = {
+  async forceSetComplete(boardId: string) {
+    await boardApi.forceSetComplete(boardId);
   },
 
   async getDetail({

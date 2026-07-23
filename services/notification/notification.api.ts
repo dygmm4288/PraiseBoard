@@ -1,10 +1,9 @@
 import { supabase } from "@/shared/lib/supabase";
 import {
-  INotificationRepository,
   PushPermissionStatus,
   PushState,
   SavePushTokenInput,
-} from "../model/notification.interface";
+} from "./model/notification.interface";
 
 const releaseDuplicatePushToken = async ({
   profileId,
@@ -36,7 +35,7 @@ const releaseDuplicatePushToken = async ({
   if (releaseError) throw releaseError;
 };
 
-export const notificationRepository: INotificationRepository = {
+export const notificationApi = {
   async getPushEnabled(profileId: string, deviceId: string) {
     const state = await this.getPushState(profileId, deviceId);
     return state.pushEnabled;

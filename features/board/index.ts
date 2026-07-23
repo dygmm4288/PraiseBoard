@@ -11,5 +11,6 @@ export {
 } from "./queries/use-board-query";
 export { default as BoardScreen } from "./screens/board-screen";
 export { board } from "./service";
+export { boardApi } from "./board.api";
 export * from "./schema";
 export type * from "./types";

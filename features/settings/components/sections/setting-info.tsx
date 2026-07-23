@@ -1,4 +1,4 @@
-import { appSettings } from "@/services/app-settings";
+import { appSettingsApi } from "@/services/app-settings";
 import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import { compareVersions } from "@/shared/utils/version";
@@ -34,7 +34,7 @@ const SettingInfo = () => {
   const appVersion = Constants.expoConfig?.version ?? "1.0.0";
   const { data, error, isLoading } = useQuery({
     queryKey: ["app-settings"],
-    queryFn: appSettings.getAppSettings,
+    queryFn: appSettingsApi.getAppSettings,
     staleTime: 1000 * 60 * 10,
   });
   const latestVersion = data?.latest_version;

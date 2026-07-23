@@ -3,7 +3,6 @@ import { toast } from "@/shared/toasts/toast";
 import { AppText } from "@/shared/ui";
 import Constants from "expo-constants";
 import * as IntentLauncher from "expo-intent-launcher";
-import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
 import { AppState, Linking, Platform, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
@@ -75,15 +74,12 @@ const SettingNotification = ({
 
     const syncNotificationState = async () => {
       try {
-        const [pushState, permissions] = await Promise.all([
-          notification.getPushStateFromSettings(),
-          Notifications.getPermissionsAsync(),
-        ]);
+        const settingsState = await notification.getSettingsState();
 
         if (!isMounted) return;
 
-        setIsNotifications(pushState.pushEnabled);
-        setHasPermission(permissions.status === "granted");
+        setIsNotifications(settingsState.pushEnabled);
+        setHasPermission(settingsState.hasPermission);
       } catch (error) {
         console.error("알림 설정 상태 조회 중 오류 발생", error);
 
@@ -123,29 +119,26 @@ const SettingNotification = ({
     try {
       await notification.setPushEnabledFromSettings(nextValue);
 
-      const [pushState, permissions] = await Promise.all([
-        notification.getPushStateFromSettings(),
-        Notifications.getPermissionsAsync(),
-      ]);
+      const settingsState = await notification.getSettingsState();
 
-      setIsNotifications(pushState.pushEnabled);
-      setHasPermission(permissions.status === "granted");
+      setIsNotifications(settingsState.pushEnabled);
+      setHasPermission(settingsState.hasPermission);
 
       if (!nextValue) {
         return;
       }
 
-      if (permissions.status !== "granted") {
+      if (!settingsState.hasPermission) {
         toast.error("기기 설정에서 알림 권한을 허용해 주세요.");
         return;
       }
 
-      if (!pushState.pushEnabled) {
+      if (!settingsState.pushEnabled) {
         toast.error("알림을 켜지 못했어요. 잠시 후 다시 시도해 주세요.");
         return;
       }
 
-      if (!pushState.pushToken) {
+      if (!settingsState.hasPushToken) {
         toast.error(
           "알림 권한은 켰지만 푸시 토큰을 발급받지 못했어요. 앱을 다시 실행한 뒤 확인해 주세요.",
         );

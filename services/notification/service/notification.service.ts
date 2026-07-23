@@ -4,11 +4,11 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import {
-  INotificationService,
   PushTokenDebugInfo,
   PushPermissionStatus,
 } from "../model/notification.interface";
-import { notificationRepository } from "../repository/notification.repository";
+import { notificationApi } from "../notification.api";
+import { resolveNotificationSettingsState } from "../notification.policy";
 
 const getDeviceIdentity = async () => {
   const [profileId, deviceId] = await Promise.all([
@@ -55,13 +55,13 @@ const savePushState = async ({
   permissionStatus: PushPermissionStatus;
 }) => {
   const { profileId, deviceId } = await getDeviceIdentity();
-  const currentState = await notificationRepository.getPushState(
+  const currentState = await notificationApi.getPushState(
     profileId,
     deviceId,
   );
   const now = new Date().toISOString();
 
-  await notificationRepository.savePushToken({
+  await notificationApi.savePushToken({
     profileId,
     deviceId,
     pushToken,
@@ -185,7 +185,7 @@ const requestPermissionAndSave = async () => {
   return pushToken !== null;
 };
 
-export const notification: INotificationService = {
+export const notification = {
   async bootstrap() {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
@@ -203,16 +203,28 @@ export const notification: INotificationService = {
   },
   async getPushEnabledFromSettings() {
     const { profileId, deviceId } = await getDeviceIdentity();
-    return notificationRepository.getPushEnabled(profileId, deviceId);
+    return notificationApi.getPushEnabled(profileId, deviceId);
   },
   async getPushStateFromSettings() {
     const { profileId, deviceId } = await getDeviceIdentity();
-    return notificationRepository.getPushState(profileId, deviceId);
+    return notificationApi.getPushState(profileId, deviceId);
+  },
+  async getSettingsState() {
+    const [{ profileId, deviceId }, permissions] = await Promise.all([
+      getDeviceIdentity(),
+      Notifications.getPermissionsAsync(),
+    ]);
+    const pushState = await notificationApi.getPushState(profileId, deviceId);
+
+    return resolveNotificationSettingsState(
+      pushState,
+      resolvePermissionStatus(permissions.status),
+    );
   },
   async getPushTokenDebugInfo() {
     return getPushTokenDebugInfo();
   },
-  async setPushEnabledFromSettings(enabled) {
+  async setPushEnabledFromSettings(enabled: boolean) {
     if (!enabled) {
       const permissions = await Notifications.getPermissionsAsync();
 
@@ -230,7 +242,7 @@ export const notification: INotificationService = {
     await ensureAndroidChannels();
 
     const { profileId, deviceId } = await getDeviceIdentity();
-    const currentState = await notificationRepository.getPushState(
+    const currentState = await notificationApi.getPushState(
       profileId,
       deviceId,
     );

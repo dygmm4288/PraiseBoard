@@ -1,10 +1,10 @@
 import { supabase } from "@/shared/lib/supabase";
-import { IUserRepository } from "../model/user.interface";
+import { CurrentAuthUser, UpdateProfileInput } from "./model/user.interface";
 
 const PROFILE_SELECT =
   "id, auth_user_id, nickname, mbti, reminder_hour, reminder_minute, reminder_times, timezone, created_at, updated_at, last_login_at";
 
-export const userRepository: IUserRepository = {
+export const userApi = {
   ensureAnonymousSession: async () => {
     const {
       data: { session },
@@ -24,7 +24,7 @@ export const userRepository: IUserRepository = {
 
     return authUserId;
   },
-  createProfile: async (authUserId) => {
+  createProfile: async (authUserId: string) => {
     const { data, error } = await supabase
       .from("profiles")
       .insert({ auth_user_id: authUserId })
@@ -34,7 +34,7 @@ export const userRepository: IUserRepository = {
 
     return data;
   },
-  updateProfile: async (profileId, input) => {
+  updateProfile: async (profileId: string, input: UpdateProfileInput) => {
     const payload = {
       ...(input.nickname !== undefined ? { nickname: input.nickname } : {}),
       ...(input.reminderHour !== undefined
@@ -89,7 +89,7 @@ export const userRepository: IUserRepository = {
     );
     if (error) throw error;
   },
-  async syncLoginMetadata(profileId, deviceId) {
+  async syncLoginMetadata(profileId: string, deviceId: string) {
     const timestamp = new Date().toISOString();
 
     const [{ error: deviceError }, { error: profileError }] = await Promise.all(
@@ -110,7 +110,7 @@ export const userRepository: IUserRepository = {
     if (profileError) throw profileError;
   },
 
-  async getCurrentAuthUser() {
+  async getCurrentAuthUser(): Promise<CurrentAuthUser> {
     const {
       data: { user },
       error,

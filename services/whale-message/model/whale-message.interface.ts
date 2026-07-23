@@ -80,25 +80,3 @@ export type WhaleMessageResult = {
   message: WhaleMessage;
   log: WhaleMessageLog | null;
 };
-
-export type IWhaleMessageRepository = {
-  saveMessageLog: (
-    input: SaveWhaleMessageLogInput,
-  ) => Promise<WhaleMessageLog>;
-  getLatestMessage: (profileId: string) => Promise<WhaleMessageLog | null>;
-  findRecentMessage: (
-    input: FindRecentWhaleMessageLogInput,
-  ) => Promise<WhaleMessageLog | null>;
-};
-
-export type IWhaleMessageService = {
-  onHomeEntered: (input: HomeWhaleMessageInput) => Promise<WhaleMessageResult>;
-  onStickerCollected: (
-    input: HomeWhaleMessageInput,
-  ) => Promise<WhaleMessageResult>;
-  onRandomTransition: (profileId: string) => Promise<WhaleMessageResult>;
-  recordPushMessage: (
-    input: RecordPushWhaleMessageInput,
-  ) => Promise<WhaleMessageLog>;
-  getLatestMessage: (profileId: string) => Promise<WhaleMessageLog | null>;
-};

@@ -1,8 +1,3 @@
-import {
-  BoardCreatePayload,
-  BoardSetupPayload,
-  BoardUpdatePayload,
-} from "@/features/board/schema";
 import { Database } from "@/shared/types/supabase.types";
 
 export type BoardStatus = Database["public"]["Enums"]["board_status"];
@@ -94,40 +89,6 @@ export type CollectStickerError = Error & {
   currentCount?: number;
   todayStickerCount?: number;
   limitCount?: number;
-};
-
-export type IBoardRepository = {
-  createBoard: (input: BoardCreatePayload) => Promise<BoardRecord>;
-  updateBoard: (input: BoardUpdatePayload) => Promise<BoardRecord>;
-  deleteBoard: (boardId: string) => Promise<void>;
-  getBoards: (params: BoardListParams) => Promise<BoardListResult | null>;
-  getHomeBoards: () => Promise<BoardListResult | null>;
-  getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
-  collectSticker: (
-    boardId: string,
-    source: BoardStickerSource,
-  ) => Promise<BoardRecord>;
-  forceSetComplete: (boardId: string) => Promise<BoardRecord>;
-};
-
-export type IBoardService = {
-  createBoard: (payload: BoardCreatePayload) => Promise<BoardRecord>;
-  updateBoard: (payload: BoardUpdatePayload) => Promise<BoardRecord>;
-  deleteBoard: (boardId: string) => Promise<void>;
-  createBoardFromSetup: (
-    profileId: string,
-    payload: BoardSetupPayload,
-  ) => Promise<BoardRecord>;
-  getBoards: (params: BoardListParams) => Promise<BoardListResult | null>;
-  getHomeBoards: () => Promise<BoardListResult | null>;
-  getActiveBoards: () => Promise<BoardListResult | null>;
-  getCompletedBoards: () => Promise<BoardListResult | null>;
-  getTodayAchievement: (profileId: string) => Promise<BoardTodayAchievement>;
-  collectSticker: (
-    boardId: string,
-    source: BoardStickerSource,
-  ) => Promise<BoardRecord>;
-  forceSetComplete: (boardId: string) => Promise<BoardRecord>;
 };
 
 export type BoardListParams = {

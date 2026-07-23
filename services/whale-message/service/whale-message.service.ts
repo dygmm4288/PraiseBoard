@@ -1,6 +1,6 @@
 import {
   HomeWhaleMessageInput,
-  IWhaleMessageService,
+  RecordPushWhaleMessageInput,
   WhaleMessage,
   WhaleMessageResult,
 } from "../model/whale-message.interface";
@@ -8,7 +8,7 @@ import {
   resolveRandomTransitionWhaleMessage,
   resolveWhaleMessage,
 } from "../policies/whale-message.policy";
-import { whaleMessageRepository } from "../repository/whale-message.repository";
+import { whaleMessageApi } from "../whale-message.api";
 
 const getLocalDayStartIso = (now = new Date()) => {
   const start = new Date(now);
@@ -20,7 +20,7 @@ const saveInAppMessageOncePerDay = async (
   profileId: string,
   message: WhaleMessage,
 ): Promise<WhaleMessageResult> => {
-  const recentLog = await whaleMessageRepository.findRecentMessage({
+  const recentLog = await whaleMessageApi.findRecentMessage({
     profileId,
     channel: "in_app",
     messageTrigger: message.trigger,
@@ -35,7 +35,7 @@ const saveInAppMessageOncePerDay = async (
     };
   }
 
-  const log = await whaleMessageRepository.saveMessageLog({
+  const log = await whaleMessageApi.saveMessageLog({
     profileId,
     channel: "in_app",
     messageTrigger: message.trigger,
@@ -48,7 +48,7 @@ const saveInAppMessageOncePerDay = async (
   };
 };
 
-export const whaleMessageService: IWhaleMessageService = {
+export const whaleMessageService = {
   onHomeEntered(input: HomeWhaleMessageInput) {
     const message = resolveWhaleMessage(input);
     return saveInAppMessageOncePerDay(input.profileId, message);
@@ -64,8 +64,8 @@ export const whaleMessageService: IWhaleMessageService = {
     return saveInAppMessageOncePerDay(profileId, message);
   },
 
-  recordPushMessage(input) {
-    return whaleMessageRepository.saveMessageLog({
+  recordPushMessage(input: RecordPushWhaleMessageInput) {
+    return whaleMessageApi.saveMessageLog({
       profileId: input.profileId,
       channel: "push",
       messageTrigger: input.messageTrigger,
@@ -74,6 +74,6 @@ export const whaleMessageService: IWhaleMessageService = {
   },
 
   getLatestMessage(profileId: string) {
-    return whaleMessageRepository.getLatestMessage(profileId);
+    return whaleMessageApi.getLatestMessage(profileId);
   },
 };

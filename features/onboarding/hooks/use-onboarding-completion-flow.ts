@@ -7,7 +7,7 @@ import {
   type BoardSetupFormValues,
 } from "@/features/board";
 import { notification } from "@/services/notification";
-import { useUser, userRepository } from "@/services/user";
+import { useUser, userApi } from "@/services/user";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { toast } from "@/shared/toasts/toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -57,7 +57,7 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       throw new Error("Onboarding payload is invalid.");
     }
 
-    await userRepository.updateProfile(profileId, {
+    await userApi.updateProfile(profileId, {
       nickname: payload.profiles.nickname,
     });
     return board.createBoardFromSetup(profileId, payload);

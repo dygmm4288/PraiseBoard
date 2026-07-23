@@ -21,11 +21,3 @@ export type StatsMonth = {
   totalCount: number;
   maxStreak: number;
 };
-
-export type IStatsRepository = {
-  getMonth: (payload: StatsMonthRequest) => Promise<StatsMonth>;
-};
-
-export type IStatsService = {
-  getMonth: (payload: StatsMonthRequest) => Promise<StatsMonth>;
-};

@@ -4,12 +4,13 @@ import {
   throwLoggedSupabaseError,
 } from "@/shared/lib/supabase-error";
 import { getTodayRange } from "@/shared/utils/date";
+import { BoardCreatePayload, BoardUpdatePayload } from "./schema";
 import {
   ActiveBoardLimitError,
   BoardListParams,
+  BoardStickerSource,
   BoardTodayAchievement,
   CollectStickerRpcResult,
-  IBoardRepository,
 } from "./types";
 import { toBoardRecord } from "./mapper";
 
@@ -43,7 +44,7 @@ const applyBoardListOrder = (
   });
 };
 
-export const boardRepository: IBoardRepository = {
+export const boardApi = {
   async createBoard({
     profileId,
     title,
@@ -51,7 +52,7 @@ export const boardRepository: IBoardRepository = {
     targetCount,
     rewardMemo,
     limitCount,
-  }) {
+  }: BoardCreatePayload) {
     const { data, error } = await supabase.rpc(
       "create_board_with_active_limit",
       {
@@ -94,7 +95,14 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(boardData);
   },
 
-  async updateBoard({ id, title, emoji, targetCount, rewardMemo, limitCount }) {
+  async updateBoard({
+    id,
+    title,
+    emoji,
+    targetCount,
+    rewardMemo,
+    limitCount,
+  }: BoardUpdatePayload) {
     const { data, error } = await supabase
       .from("boards")
       .update({
@@ -134,7 +142,7 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(boardData);
   },
 
-  async deleteBoard(boardId) {
+  async deleteBoard(boardId: string) {
     const { error } = await supabase.from("boards").delete().eq("id", boardId);
 
     if (error) {
@@ -148,7 +156,7 @@ export const boardRepository: IBoardRepository = {
     }
   },
 
-  async collectSticker(boardId, source) {
+  async collectSticker(boardId: string, source: BoardStickerSource) {
     const { data: result, error } = await supabase.rpc("collect_sticker", {
       p_board_id: boardId,
       p_source: source,
@@ -206,7 +214,7 @@ export const boardRepository: IBoardRepository = {
     return toBoardRecord(boardData);
   },
 
-  async getBoards(params) {
+  async getBoards(params: BoardListParams) {
     const res = supabase.rpc("get_boards_with_stats", undefined, {
       count: "exact",
     });
@@ -293,7 +301,7 @@ export const boardRepository: IBoardRepository = {
     };
   },
 
-  async getTodayAchievement(profileId): Promise<BoardTodayAchievement> {
+  async getTodayAchievement(profileId: string): Promise<BoardTodayAchievement> {
     const { start, end } = getTodayRange();
 
     const { count, error } = await supabase
@@ -320,7 +328,7 @@ export const boardRepository: IBoardRepository = {
     };
   },
 
-  async forceSetComplete(boardId) {
+  async forceSetComplete(boardId: string) {
     const { data: boardSnapshot, error: selectError } = await supabase
       .from("boards")
       .select("target_count, completed_at")
