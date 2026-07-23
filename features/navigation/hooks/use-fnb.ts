@@ -1,20 +1,16 @@
 import { ICONS } from "@/assets/icons";
+import { FNB_PATHS } from "@/features/navigation/constants/fnb-paths";
 import { type Href, usePathname, useRouter } from "expo-router";
 import { useMemo } from "react";
 
-export type FnbKey = "home" | "stats" | "archives" | "setting";
+export type FnbKey = keyof typeof FNB_PATHS;
 export type FnbItem = {
   key: FnbKey;
   icon: React.ReactNode;
   label: string;
 };
 
-const pathMap = {
-  home: "/",
-  stats: "/stats",
-  archives: "/archives",
-  setting: "/settings",
-} as const satisfies Record<FnbKey, Href>;
+const pathMap = FNB_PATHS satisfies Record<FnbKey, Href>;
 
 const mapPathnameToKey = (pathName: string): FnbKey => {
   const entry = Object.entries(pathMap).find(([, value]) =>

@@ -1,4 +1,5 @@
 import { FnbContainer, useRootBackExit } from "@/features/navigation";
+import { isFnbRootPathname } from "@/features/navigation/constants/fnb-paths";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import {
@@ -20,7 +21,6 @@ import {
   Stack,
   useGlobalSearchParams,
   usePathname,
-  useSegments,
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from "posthog-react-native";
@@ -81,20 +81,14 @@ const useReactQueryAppLifecycle = () => {
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
-  const segments = useSegments();
   const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
   const insets = useSafeAreaInsets();
   useRootBackExit(pathname);
 
   if (!isInitialized) return null;
 
-  const hiddenPathnames = ["/login", "/signup"];
-  const hiddenGroups = ["(onboarding)", "(modals)"];
-  const routeGroup = segments[0];
-
   const shouldShowFnb =
-    !hiddenPathnames.includes(pathname) &&
-    !hiddenGroups.includes(routeGroup) &&
+    isFnbRootPathname(pathname) &&
     !(pathname === "/" && params.from === "onboarding" && params.boardId);
   const rootBackgroundColor = pathname === "/intro" ? "#000000" : "#FFFFFF";
 
