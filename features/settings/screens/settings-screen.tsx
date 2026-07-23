@@ -1,4 +1,5 @@
 import { Screen } from "@/shared/ui";
+import { useFnbContentInset } from "@/features/navigation";
 import { isDebugEnabled } from "@/shared/constants/environment";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { Link } from "expo-router";
@@ -12,13 +13,14 @@ import { useSettingsSheets } from "../hooks/use-settings-sheets";
 const SettingsScreen = () => {
   const { alarmTimeLabel, displayName, openAlarmTimeSheet, openNameSheet } =
     useSettingsSheets();
+  const fnbContentInset = useFnbContentInset();
 
   return (
-    <Screen padded={false}>
+    <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <ScreenHeader title="설정" className="px-screen" />
       <ScrollView
         className="mt-[12px] flex-1 px-screen"
-        contentContainerClassName="gap-[30px] pb-[24px]"
+        contentContainerStyle={{ gap: 30, paddingBottom: fnbContentInset }}
         showsVerticalScrollIndicator={false}
       >
         {/* 내 정보 */}

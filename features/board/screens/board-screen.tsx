@@ -1,4 +1,5 @@
 import OnboardCompletionPreview from "@/features/onboarding/components/onboard/onboard-completion-preview";
+import { useFnbContentInset } from "@/features/navigation";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
@@ -17,6 +18,7 @@ export const BoardScreenContent = () => {
     useHomeCompletionPreview({ boards: homeBoards });
 
   const showPreviewBoard = !!(showCompletionPreview && previewBoard);
+  const fnbContentInset = useFnbContentInset();
 
   return (
     <>
@@ -28,7 +30,7 @@ export const BoardScreenContent = () => {
           flexGrow: 1,
           paddingHorizontal: 16,
           paddingTop: 4,
-          paddingBottom: 32,
+          paddingBottom: fnbContentInset,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -49,7 +51,7 @@ export const BoardScreenContent = () => {
 
 const BoardScreen = () => {
   return (
-    <Screen padded={false}>
+    <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <BoardScreenContent />
     </Screen>
   );

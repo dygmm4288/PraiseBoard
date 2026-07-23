@@ -14,11 +14,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ArchiveDetailScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const params = useLocalSearchParams();
+  const insets = useSafeAreaInsets();
   const boardId = typeof params.id === "string" ? params.id : null;
   const todayKey = useTodayKey();
   const [month, setMonth] = useState(() => todayKey.slice(0, 7));
@@ -60,7 +62,7 @@ const ArchiveDetailScreen = () => {
   };
 
   return (
-    <Screen padded={false}>
+    <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <View className="px-screen">
         <View className="h-[45px] flex-row items-center justify-between px-[8px]">
           <Pressable
@@ -99,7 +101,7 @@ const ArchiveDetailScreen = () => {
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingTop: 12,
-          paddingBottom: 32,
+          paddingBottom: insets.bottom + 32,
         }}
         showsVerticalScrollIndicator={false}
       >

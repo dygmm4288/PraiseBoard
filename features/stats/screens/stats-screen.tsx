@@ -1,4 +1,5 @@
 import { useUser } from "@/services/user";
+import { useFnbContentInset } from "@/features/navigation";
 import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
 import {
@@ -33,6 +34,7 @@ const StatsScreen = () => {
     profileId,
     formatMonthKey(monthDate),
   );
+  const fnbContentInset = useFnbContentInset();
 
   const getAchievementStatusMessage = () => {
     if (isLoading) return "성취를 불러오는 중이에요.";
@@ -42,7 +44,7 @@ const StatsScreen = () => {
   };
 
   return (
-    <Screen padded={false}>
+    <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <View className="h-[45px] justify-center px-screen">
         <AppText variant="button1" className="text-neutral-850">
           {getMonthTitle(monthDate)}
@@ -55,7 +57,7 @@ const StatsScreen = () => {
           gap: 12,
           paddingHorizontal: 16,
           paddingTop: 12,
-          paddingBottom: 32,
+          paddingBottom: fnbContentInset,
         }}
         showsVerticalScrollIndicator={false}
       >

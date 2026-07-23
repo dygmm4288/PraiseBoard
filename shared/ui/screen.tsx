@@ -1,12 +1,13 @@
 import { cn } from "@/shared/utils/cn";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
 interface Props extends PropsWithChildren {
   className?: string;
   padded?: boolean;
   backgroundColor?: string;
+  safeEdges?: Edge[];
 }
 
 /**
@@ -17,9 +18,13 @@ const Screen = ({
   className = "",
   padded = true,
   backgroundColor = "#FFF",
+  safeEdges,
 }: Props) => {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor, position: "relative" }}>
+    <SafeAreaView
+      edges={safeEdges}
+      style={{ flex: 1, backgroundColor, position: "relative" }}
+    >
       <View className={cn("flex-1", padded && "px-screen", className)}>
         {children}
       </View>

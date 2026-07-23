@@ -20,6 +20,7 @@ import {
   View,
   type LayoutChangeEvent,
 } from "react-native";
+import { BlurView } from "expo-blur";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -296,9 +297,18 @@ const Fnb = <T extends string>({
     >
       <View
         className="w-full max-w-[360px] rounded-[296px]"
-        style={[styles.shadow, { minHeight: FNB_HEIGHT }]}
+        style={[styles.shadow, { height: FNB_HEIGHT }]}
       >
-        <View className="relative flex-row items-start justify-center overflow-hidden rounded-[296px] bg-white px-[6px] py-[4px]">
+        <View
+          className="relative flex-row items-start justify-center overflow-hidden rounded-[296px] px-[6px] py-[4px]"
+          style={styles.surface}
+        >
+          <BlurView
+            intensity={28}
+            tint="light"
+            pointerEvents="none"
+            style={StyleSheet.absoluteFill}
+          />
           <ActiveSurface
             x={activeSurfaceX}
             width={activeSurfaceWidth}
@@ -327,6 +337,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.18,
     shadowRadius: 24,
+  },
+  surface: {
+    backgroundColor: "rgba(255, 255, 255, 0.78)",
+    borderColor: "rgba(255, 255, 255, 0.72)",
+    borderWidth: 1,
   },
 });
 

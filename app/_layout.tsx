@@ -6,7 +6,6 @@ import {
   isDebugEnabled,
   isStorybookEnabled,
 } from "@/shared/constants/environment";
-import { FNB_CONTENT_CLEARANCE } from "@/shared/constants/layout";
 import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
 import NetInfo from "@react-native-community/netinfo";
 import {
@@ -17,22 +16,15 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import {
-  Stack,
-  useGlobalSearchParams,
-  usePathname,
-} from "expo-router";
+import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
 import { AppState, LogBox, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
 import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import StorybookUIRoot from "../.rnstorybook";
 import "../global.css";
@@ -82,7 +74,6 @@ const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
   const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
-  const insets = useSafeAreaInsets();
   useRootBackExit(pathname);
 
   if (!isInitialized) return null;
@@ -103,9 +94,6 @@ const RootLayoutNav = () => {
             className="flex-1"
             style={{
               backgroundColor: rootBackgroundColor,
-              paddingBottom: shouldShowFnb
-                ? insets.bottom + FNB_CONTENT_CLEARANCE
-                : 0,
             }}
           >
             <Stack

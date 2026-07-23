@@ -1,4 +1,6 @@
 import { BoardItem } from "@/features/board";
+import { useFnbContentInset } from "@/features/navigation";
+import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { ScrollView } from "react-native";
 import ArchiveSection from "../components/list/archive-list";
@@ -6,9 +8,10 @@ import useArchive from "../hooks/use-archive";
 
 const ArchiveScreen = () => {
   const { activeBoards, completedBoards } = useArchive();
+  const fnbContentInset = useFnbContentInset();
 
   return (
-    <>
+    <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <ScreenHeader title={"보관함"} className="px-screen" />
       <ScrollView
         className="flex-1"
@@ -17,7 +20,7 @@ const ArchiveScreen = () => {
           flexGrow: 1,
           paddingHorizontal: 16,
           paddingTop: 12,
-          paddingBottom: 32,
+          paddingBottom: fnbContentInset,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -38,7 +41,7 @@ const ArchiveScreen = () => {
           ))}
         </ArchiveSection>
       </ScrollView>
-    </>
+    </Screen>
   );
 };
 
