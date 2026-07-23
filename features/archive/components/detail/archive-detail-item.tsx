@@ -109,7 +109,11 @@ const ArchiveDetailRow = ({
 }) => {
   return (
     <View className="flex-row items-center justify-between">
-      <AppText variant="label12" weight="regular" className="text-content-tertiary">
+      <AppText
+        variant="label12"
+        weight="regular"
+        className="text-content-tertiary"
+      >
         {label}
       </AppText>
       <AppText variant="body14" className="text-black">
@@ -173,10 +177,17 @@ const ArchiveDetailOverview = ({ detail }: Props) => {
       </View>
 
       <View className="gap-[6px] pt-[16px]">
-        <ArchiveDetailRow
-          label="시작일"
-          value={formatShortDate(board?.startedAt, "-")}
-        />
+        {!board?.completed ? (
+          <ArchiveDetailRow
+            label="시작일"
+            value={formatShortDate(board?.startedAt, "-")}
+          />
+        ) : (
+          <ArchiveDetailRow
+            label="기간"
+            value={`${formatShortDate(board?.startedAt, "-")} ~ ${formatShortDate(board?.completedAt, "-")}`}
+          />
+        )}
         <ArchiveDetailRow
           label="목표 개수"
           value={`${board?.targetCount ?? 0}개 (일 최대 ${
@@ -230,7 +241,11 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
 
   return (
     <View className="h-[75px] flex-row items-center justify-between rounded-[14px] bg-primary-100 px-[20px]">
-      <AppText variant="caption1" weight="semibold" className="text-content-tertiary">
+      <AppText
+        variant="caption1"
+        weight="semibold"
+        className="text-content-tertiary"
+      >
         {formatKoreanMonthDay(detail?.selectedDay.date, "-")}
       </AppText>
 

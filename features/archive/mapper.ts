@@ -10,6 +10,7 @@ export type ArchiveBoardDetailRow = {
   limit_count: number;
   current_count: number;
   created_at: string | null;
+  completed_at: string | null;
 };
 
 export type ArchiveBoardStatsRow = {
@@ -81,6 +82,7 @@ export const toArchiveDetail = ({
       ).progressPercent,
       startedAt: boardRow.created_at,
       completed: boardRow.target_count <= boardRow.current_count,
+      completedAt: boardRow.completed_at,
     },
     calendar: {
       month,

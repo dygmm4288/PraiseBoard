@@ -17,7 +17,7 @@ import {
 } from "./types";
 
 const BOARD_DETAIL_FIELDS =
-  "id, title, emoji, reward_memo, target_count, limit_count, current_count, created_at";
+  "id, title, emoji, reward_memo, target_count, limit_count, current_count, created_at, completed_at";
 
 const getSelectedDate = (month: string, todayKey: string) => {
   const currentMonth = todayKey.slice(0, 7);
