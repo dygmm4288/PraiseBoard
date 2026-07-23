@@ -1,7 +1,4 @@
-import {
-  BOTTOM_CONTROL_INSET_GAP,
-  FNB_HEIGHT,
-} from "@/shared/constants/layout";
+import { FNB_METRICS } from "@/shared/constants/layout";
 import { COLORS } from "@/shared/theme";
 import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
@@ -163,7 +160,9 @@ const FnbItemBase = <T extends string>({
 
   return (
     <Pressable
+      testID={`fnb-${item.key}`}
       accessibilityRole="tab"
+      accessibilityLabel={item.label}
       accessibilityState={{ selected: isActive }}
       className="relative min-w-0 flex-1 items-center justify-center rounded-[100px] px-[8px] pb-[7px] pt-[6px]"
       style={{
@@ -293,11 +292,11 @@ const Fnb = <T extends string>({
       )}
       pointerEvents="box-none"
       onLayout={syncToastOffset}
-      style={{ bottom: insets.bottom + BOTTOM_CONTROL_INSET_GAP }}
+      style={{ bottom: insets.bottom + FNB_METRICS.bottomGap }}
     >
       <View
         className="w-full max-w-[360px] rounded-[296px]"
-        style={[styles.shadow, { height: FNB_HEIGHT }]}
+        style={[styles.shadow, { height: FNB_METRICS.height }]}
       >
         <View
           className="relative flex-row items-start justify-center overflow-hidden rounded-[296px] px-[6px] py-[4px]"

@@ -1,5 +1,5 @@
 import { useUser } from "@/services/user";
-import { useFnbContentInset } from "@/features/navigation";
+import { FnbScrollView } from "@/features/navigation";
 import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
 import {
@@ -8,7 +8,7 @@ import {
   parseMonthKey,
 } from "@/shared/utils/date";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import MonthAchievementCard from "../components/month-achievement-card";
 import MonthStreakCard from "../components/month-streak-card";
 import StatsCard from "../components/stats-card";
@@ -34,7 +34,6 @@ const StatsScreen = () => {
     profileId,
     formatMonthKey(monthDate),
   );
-  const fnbContentInset = useFnbContentInset();
 
   const getAchievementStatusMessage = () => {
     if (isLoading) return "성취를 불러오는 중이에요.";
@@ -51,13 +50,13 @@ const StatsScreen = () => {
         </AppText>
       </View>
 
-      <ScrollView
+      <FnbScrollView
         className="flex-1"
         contentContainerStyle={{
           gap: 12,
           paddingHorizontal: 16,
           paddingTop: 12,
-          paddingBottom: fnbContentInset,
+          paddingBottom: 32,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -81,7 +80,7 @@ const StatsScreen = () => {
             <MonthStreakCard streakDays={data?.maxStreak ?? 0} />
           </>
         )}
-      </ScrollView>
+      </FnbScrollView>
     </Screen>
   );
 };

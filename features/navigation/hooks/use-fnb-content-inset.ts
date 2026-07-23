@@ -1,23 +1,23 @@
-import { isFnbRootPathname } from "@/features/navigation/constants/fnb-paths";
-import {
-  BOTTOM_CONTROL_INSET_GAP,
-  FNB_CONTENT_GAP,
-  FNB_HEIGHT,
-} from "@/shared/constants/layout";
-import { usePathname } from "expo-router";
+import { FNB_METRICS } from "@/shared/constants/layout";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useIsFnbVisible from "./use-is-fnb-visible";
 
 /**
  * Keeps the last scrollable item above the floating navigation bar while the
  * screen itself remains edge-to-edge.
  */
 const useFnbContentInset = () => {
-  const pathname = usePathname();
   const insets = useSafeAreaInsets();
+  const isFnbVisible = useIsFnbVisible();
 
-  if (!isFnbRootPathname(pathname)) return 0;
+  if (!isFnbVisible) return 0;
 
-  return insets.bottom + BOTTOM_CONTROL_INSET_GAP + FNB_HEIGHT + FNB_CONTENT_GAP;
+  return (
+    insets.bottom +
+    FNB_METRICS.bottomGap +
+    FNB_METRICS.height +
+    FNB_METRICS.contentGap
+  );
 };
 
 export default useFnbContentInset;

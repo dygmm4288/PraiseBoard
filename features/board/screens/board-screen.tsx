@@ -1,9 +1,8 @@
 import OnboardCompletionPreview from "@/features/onboarding/components/onboard/onboard-completion-preview";
-import { useFnbContentInset } from "@/features/navigation";
+import { FnbScrollView } from "@/features/navigation";
 import { useCurrentProfile, useUser } from "@/services/user";
 import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
-import { ScrollView } from "react-native";
 import BoardToday from "../components/board-today/board-today";
 import BoardHomeWhaleMessage from "../components/board/board-home-whale-message";
 import BoardList from "../components/board/board-list";
@@ -18,26 +17,25 @@ export const BoardScreenContent = () => {
     useHomeCompletionPreview({ boards: homeBoards });
 
   const showPreviewBoard = !!(showCompletionPreview && previewBoard);
-  const fnbContentInset = useFnbContentInset();
 
   return (
     <>
       <ScreenHeader title="홈" className="px-screen" />
-      <ScrollView
+      <FnbScrollView
         className="flex-1 "
         contentContainerStyle={{
           gap: 12,
           flexGrow: 1,
           paddingHorizontal: 16,
           paddingTop: 4,
-          paddingBottom: fnbContentInset,
+          paddingBottom: 32,
         }}
         showsVerticalScrollIndicator={false}
       >
         <BoardHomeWhaleMessage />
         <BoardToday />
         <BoardList showPreviewBoard={showPreviewBoard} />
-      </ScrollView>
+      </FnbScrollView>
       {showPreviewBoard ? (
         <OnboardCompletionPreview
           nickname={nickname}

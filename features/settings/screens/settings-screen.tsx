@@ -1,9 +1,8 @@
 import { Screen } from "@/shared/ui";
-import { useFnbContentInset } from "@/features/navigation";
+import { FnbScrollView } from "@/features/navigation";
 import { isDebugEnabled } from "@/shared/constants/environment";
 import ScreenHeader from "@/shared/ui/screen-header";
 import { Link } from "expo-router";
-import { ScrollView } from "react-native";
 import SettingEnv from "../components/sections/setting-env";
 import SettingInfo from "../components/sections/setting-info";
 import SettingNotification from "../components/sections/setting-notification";
@@ -13,14 +12,13 @@ import { useSettingsSheets } from "../hooks/use-settings-sheets";
 const SettingsScreen = () => {
   const { alarmTimeLabel, displayName, openAlarmTimeSheet, openNameSheet } =
     useSettingsSheets();
-  const fnbContentInset = useFnbContentInset();
 
   return (
     <Screen padded={false} safeEdges={["top", "left", "right"]}>
       <ScreenHeader title="설정" className="px-screen" />
-      <ScrollView
+      <FnbScrollView
         className="mt-[12px] flex-1 px-screen"
-        contentContainerStyle={{ gap: 30, paddingBottom: fnbContentInset }}
+        contentContainerStyle={{ gap: 30, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
         {/* 내 정보 */}
@@ -40,7 +38,7 @@ const SettingsScreen = () => {
         {isDebugEnabled ? (
           <Link href="/debug-settings">debug settings 이동</Link>
         ) : null}
-      </ScrollView>
+      </FnbScrollView>
     </Screen>
   );
 };

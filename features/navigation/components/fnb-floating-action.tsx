@@ -1,8 +1,5 @@
 import { COLORS } from "@/shared/theme";
-import {
-  BOTTOM_CONTROL_INSET_GAP,
-  FNB_HEIGHT,
-} from "@/shared/constants/layout";
+import { FNB_METRICS } from "@/shared/constants/layout";
 import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
@@ -69,6 +66,7 @@ const FnbFloatingAction = ({ onPress }: Props) => {
 
   return (
     <AnimatedPressable
+      testID="board-add"
       accessibilityLabel="보드 추가"
       accessibilityRole="button"
       className="absolute right-[25px] h-[54px] w-[54px] items-center justify-center rounded-[50px]"
@@ -76,7 +74,10 @@ const FnbFloatingAction = ({ onPress }: Props) => {
         styles.container,
         {
           bottom:
-            insets.bottom + BOTTOM_CONTROL_INSET_GAP + FNB_HEIGHT + 12,
+            insets.bottom +
+            FNB_METRICS.bottomGap +
+            FNB_METRICS.height +
+            FNB_METRICS.floatingActionGap,
         },
         animatedStyle,
       ]}

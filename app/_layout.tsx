@@ -1,5 +1,8 @@
-import { FnbContainer, useRootBackExit } from "@/features/navigation";
-import { isFnbRootPathname } from "@/features/navigation/constants/fnb-paths";
+import {
+  FnbContainer,
+  useIsFnbVisible,
+  useRootBackExit,
+} from "@/features/navigation";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import {
@@ -16,7 +19,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
@@ -73,14 +76,11 @@ const useReactQueryAppLifecycle = () => {
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
   const pathname = usePathname();
-  const params = useGlobalSearchParams<{ from?: string; boardId?: string }>();
+  const shouldShowFnb = useIsFnbVisible();
   useRootBackExit(pathname);
 
   if (!isInitialized) return null;
 
-  const shouldShowFnb =
-    isFnbRootPathname(pathname) &&
-    !(pathname === "/" && params.from === "onboarding" && params.boardId);
   const rootBackgroundColor = pathname === "/intro" ? "#000000" : "#FFFFFF";
 
   return (
