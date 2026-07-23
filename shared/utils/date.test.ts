@@ -1,50 +1,39 @@
-import assert from "node:assert/strict";
-import { createRequire } from "node:module";
-import test from "node:test";
-
-import type * as DateUtils from "./date";
-
-const require = createRequire(import.meta.url);
-const { getCalendarDateDiff, getLastDate, getTodayRange } = require(
-  "./date.ts",
-) as typeof DateUtils;
+import { getCalendarDateDiff, getLastDate, getTodayRange } from "./date";
 
 test("getLastDate returns 31 for a 31-day month", () => {
-  assert.equal(getLastDate(new Date(2026, 0, 10)), 31);
+  expect(getLastDate(new Date(2026, 0, 10))).toBe(31);
 });
 
 test("getLastDate returns 30 for a 30-day month", () => {
-  assert.equal(getLastDate(new Date(2026, 3, 10)), 30);
+  expect(getLastDate(new Date(2026, 3, 10))).toBe(30);
 });
 
 test("getLastDate returns 29 for leap-year February", () => {
-  assert.equal(getLastDate(new Date(2024, 1, 10)), 29);
+  expect(getLastDate(new Date(2024, 1, 10))).toBe(29);
 });
 
 test("getLastDate returns 28 for non-leap-year February", () => {
-  assert.equal(getLastDate(new Date(2025, 1, 10)), 28);
+  expect(getLastDate(new Date(2025, 1, 10))).toBe(28);
 });
 
 test("getCalendarDateDiff returns 0 for the same calendar date", () => {
-  assert.equal(
+  expect(
     getCalendarDateDiff(
       new Date(2026, 4, 16, 1, 0, 0),
       new Date(2026, 4, 16, 23, 0, 0),
     ),
-    0,
-  );
+  ).toBe(0);
 });
 
 test("getCalendarDateDiff returns elapsed calendar days", () => {
-  assert.equal(
+  expect(
     getCalendarDateDiff(new Date(2026, 3, 30), new Date(2026, 4, 5)),
-    5,
-  );
+  ).toBe(5);
 });
 
 test("getTodayRange returns the KST calendar day regardless of local timezone", () => {
   const { start, end } = getTodayRange(new Date("2026-06-27T16:30:00.000Z"));
 
-  assert.equal(start.toISOString(), "2026-06-27T15:00:00.000Z");
-  assert.equal(end.toISOString(), "2026-06-28T15:00:00.000Z");
+  expect(start.toISOString()).toBe("2026-06-27T15:00:00.000Z");
+  expect(end.toISOString()).toBe("2026-06-28T15:00:00.000Z");
 });
