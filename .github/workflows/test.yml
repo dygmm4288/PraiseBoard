@@ -1,0 +1,49 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Type, lint, unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm test -- --runInBand
+
+  database:
+    name: Database and API contract
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run supabase:test:start
+      - run: npm run test:db
+      - run: npm run test:integration
+
+      - name: Stop local Supabase
+        if: always()
+        run: npm run supabase:test:stop
