@@ -29,6 +29,9 @@ const OnboardSelectList = ({ items, onPress, disabled = false }: Props) => {
             .reduceMotion(ReduceMotion.System)}
         >
           <Pressable
+            testID={`onboarding-option-${item.text}`}
+            accessibilityRole="button"
+            accessibilityLabel={item.text}
             className="w-full rounded-[16px] border border-[#EFF1F5] bg-white px-[14px] py-[12px]"
             disabled={disabled}
             onPress={() => onPress(item)}

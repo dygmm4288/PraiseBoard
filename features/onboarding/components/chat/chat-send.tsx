@@ -10,6 +10,9 @@ type Props = {
 const ChatSend = ({ onPress, disabled = false }: Props) => {
   return (
     <Pressable
+      testID="onboarding-chat-send"
+      accessibilityRole="button"
+      accessibilityLabel="답변 보내기"
       className={cn(
         "h-[33px] w-[33px] items-center justify-center rounded-full",
         disabled

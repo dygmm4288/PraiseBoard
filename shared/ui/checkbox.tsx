@@ -7,9 +7,17 @@ type Props = {
   onPress: () => void;
   disabled: boolean;
   variant?: "default" | "todayDone" | "completed";
+  testID?: string;
+  accessibilityLabel?: string;
 };
 
-const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
+const AppCheckbox = ({
+  onPress,
+  disabled,
+  variant = "default",
+  testID,
+  accessibilityLabel,
+}: Props) => {
   // TODO(theme): Move todayDone/completed color ownership with the feature-state
   // mapping when this board-specific component boundary is addressed.
   const [isHovered, setIsHovered] = useState(false);
@@ -28,6 +36,10 @@ const AppCheckbox = ({ onPress, disabled, variant = "default" }: Props) => {
 
   return (
     <Pressable
+      testID={testID}
+      accessibilityRole="checkbox"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: isTodayDone || isCompleted, disabled }}
       onPress={onPress}
       disabled={disabled || isTodayDone || isCompleted}
       onHoverIn={() => setIsHovered(true)}

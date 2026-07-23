@@ -1,0 +1,14 @@
+appId: com.whaledone.whaledone
+name: 오늘의 스티커 수집
+tags:
+  - critical
+---
+- runFlow: subflows/complete-onboarding.yaml
+- tapOn:
+    id: "collect-sticker-.*"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: "collect-sticker-.*"
+      checked: true
+    timeout: 15000

@@ -1,0 +1,10 @@
+appId: com.whaledone.whaledone
+name: 온보딩 완료
+tags:
+  - smoke
+---
+- runFlow: subflows/complete-onboarding.yaml
+- assertVisible:
+    id: "fnb-home"
+    selected: true
+- assertVisible: "아침에 물 한 잔"

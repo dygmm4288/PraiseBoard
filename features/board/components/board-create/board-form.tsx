@@ -156,6 +156,7 @@ const BoardForm = ({
         <BoardFormSection label="습관 이름">
           <View className="flex-row items-center gap-[6px]">
             <BottomSheetInput
+              testID="board-title-input"
               reset
               value={formData.title}
               onReset={() => onChangeFormData("title")("")}

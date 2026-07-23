@@ -1,0 +1,17 @@
+appId: com.whaledone.whaledone
+name: 보드 추가
+tags:
+  - critical
+---
+- runFlow: subflows/complete-onboarding.yaml
+- tapOn:
+    id: "board-add"
+- assertVisible: "새로운 습관 만들기"
+- tapOn:
+    id: "board-title-input"
+- inputText: "추가 습관"
+- tapOn:
+    id: "bottom-sheet-confirm"
+- extendedWaitUntil:
+    visible: "추가 습관"
+    timeout: 15000

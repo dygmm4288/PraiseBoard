@@ -1,0 +1,48 @@
+appId: com.whaledone.whaledone
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+    permissions:
+      all: deny
+- tapOn: "다음"
+- tapOn: "시작하기"
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-chat-input"
+    timeout: 15000
+- tapOn:
+    id: "onboarding-chat-input"
+- inputText: "E2E 사용자"
+- tapOn:
+    id: "onboarding-chat-send"
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-option-아침에 물 한 잔"
+    timeout: 15000
+- tapOn:
+    id: "onboarding-option-아침에 물 한 잔"
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-option-30개"
+    timeout: 15000
+- tapOn:
+    id: "onboarding-option-30개"
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-option-1번·30일"
+    timeout: 15000
+- tapOn:
+    id: "onboarding-option-1번·30일"
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-option-보상 비워두기"
+    timeout: 15000
+- tapOn:
+    id: "onboarding-option-보상 비워두기"
+- extendedWaitUntil:
+    visible:
+      id: "fnb-home"
+    timeout: 30000
+- assertVisible: "아침에 물 한 잔"
+- waitForAnimationToEnd

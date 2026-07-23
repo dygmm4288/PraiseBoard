@@ -101,6 +101,8 @@ const ChatInput = ({
           ) : null}
           <TextInput
             ref={inputRef}
+            testID="onboarding-chat-input"
+            accessibilityLabel="온보딩 답변"
             className="h-full w-full py-0 font-pretendard text-[14px] leading-[20px] text-black"
             style={{ includeFontPadding: false, textAlignVertical: "center" }}
             value={value}

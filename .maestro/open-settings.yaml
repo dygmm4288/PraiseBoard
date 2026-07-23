@@ -1,0 +1,13 @@
+appId: com.whaledone.whaledone
+name: 설정 진입
+tags:
+  - smoke
+---
+- runFlow: subflows/complete-onboarding.yaml
+- tapOn:
+    id: "fnb-setting"
+- extendedWaitUntil:
+    visible: "내 정보"
+    timeout: 15000
+- assertVisible: "E2E 사용자"
+- assertVisible: "알림"

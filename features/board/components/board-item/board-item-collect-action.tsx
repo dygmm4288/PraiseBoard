@@ -45,6 +45,8 @@ const BoardItemCollectAction = ({ board, ui }: Props) => {
       </AppText>
       <View className="relative h-[34px] w-[34px] overflow-visible">
         <AppCheckbox
+          testID={`collect-sticker-${board.id}`}
+          accessibilityLabel={`${board.title} 스티커 받기`}
           disabled={actionDisabled}
           variant={
             isCompleted ? "completed" : isTodayDone ? "todayDone" : "default"

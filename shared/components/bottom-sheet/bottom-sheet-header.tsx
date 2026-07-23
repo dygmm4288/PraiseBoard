@@ -8,6 +8,7 @@ type HeaderButtonProps = {
   variant: "close" | "confirm";
   disabled?: boolean;
   accessibilityLabel: string;
+  testID: string;
   onPress: () => void;
 };
 
@@ -25,6 +26,7 @@ const HeaderButton = ({
   variant,
   disabled,
   accessibilityLabel,
+  testID,
   onPress,
 }: HeaderButtonProps) => {
   const isConfirm = variant === "confirm";
@@ -32,6 +34,7 @@ const HeaderButton = ({
 
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       disabled={disabled}
@@ -71,6 +74,7 @@ const BottomSheetHeader = ({
     >
       <HeaderButton
         variant="close"
+        testID="bottom-sheet-close"
         accessibilityLabel={closeAccessibilityLabel}
         onPress={onClose}
       />
@@ -84,6 +88,7 @@ const BottomSheetHeader = ({
       </AppText>
       <HeaderButton
         variant="confirm"
+        testID="bottom-sheet-confirm"
         disabled={confirmDisabled}
         accessibilityLabel={confirmAccessibilityLabel}
         onPress={onConfirm}

@@ -1,0 +1,23 @@
+name: e2e-test-android
+
+jobs:
+  build_android_for_e2e:
+    type: build
+    params:
+      platform: android
+      profile: e2e-test
+
+  maestro_test:
+    needs: [build_android_for_e2e]
+    type: maestro
+    environment: preview
+    runs_on: linux-medium-nested-virtualization
+    params:
+      build_id: ${{ needs.build_android_for_e2e.outputs.build_id }}
+      flow_path:
+        - .maestro/onboarding.yaml
+        - .maestro/collect-sticker.yaml
+        - .maestro/create-board.yaml
+        - .maestro/open-settings.yaml
+      retries: 1
+      record_screen: true
