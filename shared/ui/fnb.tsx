@@ -1,6 +1,6 @@
 import { FNB_METRICS } from "@/shared/constants/layout";
 import { COLORS } from "@/shared/theme";
-import { setFnbToastOffset, TOAST_BOTTOM_GAP } from "@/shared/toasts/toast";
+import { setFnbToastOffset } from "@/shared/toasts/toast";
 import { cn } from "@/shared/utils/cn";
 import React, {
   memo,
@@ -241,7 +241,7 @@ const Fnb = <T extends string>({
   const syncToastOffset = useCallback(() => {
     requestAnimationFrame(() => {
       containerRef.current?.measureInWindow((_, y) => {
-        setFnbToastOffset(Math.max(0, windowHeight - y) + TOAST_BOTTOM_GAP);
+        setFnbToastOffset(Math.max(0, windowHeight - y));
       });
     });
   }, [windowHeight]);

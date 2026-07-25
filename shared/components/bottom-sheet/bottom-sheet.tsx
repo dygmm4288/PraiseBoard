@@ -100,8 +100,7 @@ const AppBottomSheet = forwardRef<AppBottomSheetRef, Props>(
             disappearsOnIndex={-1}
             opacity={0.5}
             pressBehavior="none"
-            accessibilityRole="button"
-            accessibilityLabel="바텀시트 닫기"
+            accessible={false}
           >
             <Pressable
               accessibilityRole="button"

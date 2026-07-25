@@ -36,57 +36,55 @@ const toInitialValues = (
 
 export const useBoardSheet = () => {
   const { profileId } = useUser();
-  const { presentTopLevelSheet, dismissTopLevelSheet } = useTopLevelSheet();
+  const { presentTopLevelSheet } = useTopLevelSheet();
   const { data: activeBoards } = useActiveBoardQuery(profileId);
   const activeBoardCount = activeBoards?.items.length ?? 0;
 
   const openCreateSheet = useCallback(() => {
     if (!canCreateBoard(activeBoardCount)) {
-      return toast.chatError(ACTIVE_BOARD_LIMIT_MESSAGE);
+      return toast.error(ACTIVE_BOARD_LIMIT_MESSAGE);
     }
 
     presentTopLevelSheet({
+      sheetKey: "board-create",
       snapPoints: BOARD_SHEET_SNAP_POINTS,
       keyboardBehavior: "fillParent",
       keyboardBlurBehavior: "restore",
       enableBlurKeyboardOnGesture: true,
-      children: (
+      renderContent: ({ dismiss }) => (
         <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
-          <BoardCreate
-            onClose={dismissTopLevelSheet}
-            onCreated={dismissTopLevelSheet}
-          />
+          <BoardCreate onClose={dismiss} onCreated={dismiss} />
         </BottomSheetView>
       ),
     });
-  }, [activeBoardCount, dismissTopLevelSheet, presentTopLevelSheet]);
+  }, [activeBoardCount, presentTopLevelSheet]);
 
   const openEditSheet = useCallback(
     (board: BoardEditSheetInput) => {
       presentTopLevelSheet({
+        sheetKey: `board-edit:${board.id}`,
         snapPoints: BOARD_SHEET_SNAP_POINTS,
         keyboardBehavior: "fillParent",
         keyboardBlurBehavior: "restore",
         enableBlurKeyboardOnGesture: true,
-        children: (
+        renderContent: ({ dismiss }) => (
           <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
             <BoardEditSheetContent
               boardId={board.id}
               initialValues={toInitialValues(board)}
-              onClose={dismissTopLevelSheet}
-              onUpdated={dismissTopLevelSheet}
+              onClose={dismiss}
+              onUpdated={dismiss}
               onDeleted={board.onDeleted}
             />
           </BottomSheetView>
         ),
       });
     },
-    [dismissTopLevelSheet, presentTopLevelSheet],
+    [presentTopLevelSheet],
   );
 
   return {
     openCreateSheet,
     openEditSheet,
-    closeBoardSheet: dismissTopLevelSheet,
   };
 };

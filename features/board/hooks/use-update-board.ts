@@ -1,15 +1,15 @@
-import { archiveKeys } from "@/features/archive/queries/archive.query.key";
+import { boardApi } from "@/features/board/board.api";
 import {
   BoardCreateFormValues,
   BoardUpdatePayload,
   normalizeBoardUpdatePayload,
 } from "@/features/board/schema";
-import { board } from "@/features/board/service";
 import { toast } from "@/shared/toasts/toast";
+import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ZodError } from "zod";
-import { boardKeys } from "../queries/board.query.key";
+import { refreshAfterBoardChanged } from "../queries/board-cache";
 
 export const useUpdateBoard = (
   boardId: string,
@@ -27,15 +27,14 @@ export const useUpdateBoard = (
 
   const { mutateAsync } = useMutation({
     mutationFn: (payload: BoardUpdatePayload) => {
-      return board.updateBoard(payload);
+      return boardApi.updateBoard(payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: boardKeys.all });
-      queryClient.invalidateQueries({ queryKey: archiveKeys.detail(boardId) });
+      void refreshAfterBoardChanged(queryClient, boardId);
     },
     onError: (error) => {
-      console.log(error);
-      toast.chatError("수정에 실패했습니다");
+      reportError(error, { scope: "board.update" });
+      toast.error("수정에 실패했습니다");
     },
   });
 
@@ -46,7 +45,7 @@ export const useUpdateBoard = (
       payload = normalizeBoardUpdatePayload(formData, boardId);
     } catch (error) {
       if (error instanceof ZodError) {
-        toast.chatError(error.issues[0]?.message);
+        toast.error(error.issues[0]?.message);
         return;
       }
 

@@ -4,10 +4,10 @@ import AppBottomSheet, {
 import {
   getDismissalResult,
   getSafeInitialIndex,
+  hasSheetKey,
   hasSnapPoints,
 } from "@/shared/components/bottom-sheet/top-level-sheet-state";
 import type {
-  DismissTopLevelSheetOptions,
   TopLevelSheetConfig,
   TopLevelSheetPresentation,
 } from "@/shared/components/bottom-sheet/top-level-sheet-state";
@@ -22,11 +22,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { usePathname } from "expo-router";
 import { KeyboardController } from "react-native-keyboard-controller";
 
 type TopLevelSheetContextValue = {
   presentTopLevelSheet: (config: TopLevelSheetConfig) => void;
-  dismissTopLevelSheet: (options?: DismissTopLevelSheetOptions) => void;
 };
 
 const TopLevelSheetContext = createContext<TopLevelSheetContextValue | null>(
@@ -34,35 +34,22 @@ const TopLevelSheetContext = createContext<TopLevelSheetContextValue | null>(
 );
 
 export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
+  const pathname = usePathname();
   const [config, setConfig] = useState<TopLevelSheetConfig | null>(null);
   const modalRef = useRef<AppBottomSheetRef>(null);
   const nextPresentationIdRef = useRef(0);
   const activePresentationRef = useRef<TopLevelSheetPresentation | null>(null);
   const pendingPresentationRef = useRef<TopLevelSheetPresentation | null>(null);
-  const dismissRunOnCloseRef = useRef(new Map<number, boolean>());
   const isDismissingRef = useRef(false);
+  const previousPathnameRef = useRef(pathname);
 
-  const dismissActivePresentation = useCallback(
-    (runOnClose: boolean, overwriteRunOnClose: boolean) => {
-      const activePresentation = activePresentationRef.current;
+  const dismissActivePresentation = useCallback(() => {
+    if (!activePresentationRef.current || isDismissingRef.current) return;
 
-      if (!activePresentation) {
-        return;
-      }
-
-      if (
-        overwriteRunOnClose ||
-        !dismissRunOnCloseRef.current.has(activePresentation.id)
-      ) {
-        dismissRunOnCloseRef.current.set(activePresentation.id, runOnClose);
-      }
-
-      isDismissingRef.current = true;
-      void KeyboardController.dismiss();
-      modalRef.current?.dismiss();
-    },
-    [],
-  );
+    isDismissingRef.current = true;
+    void KeyboardController.dismiss();
+    modalRef.current?.dismiss();
+  }, []);
 
   const presentTopLevelSheet = useCallback(
     (config: TopLevelSheetConfig) => {
@@ -75,6 +62,26 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
         return;
       }
 
+      if (!hasSheetKey(config)) {
+        if (__DEV__) {
+          console.warn(
+            "presentTopLevelSheet requires a non-empty sheetKey; the request was ignored.",
+          );
+        }
+        return;
+      }
+
+      const activePresentation = activePresentationRef.current;
+      const pendingPresentation = pendingPresentationRef.current;
+
+      if (
+        (!pendingPresentation &&
+          activePresentation?.config.sheetKey === config.sheetKey) ||
+        pendingPresentation?.config.sheetKey === config.sheetKey
+      ) {
+        return;
+      }
+
       const nextPresentation: TopLevelSheetPresentation = {
         id: nextPresentationIdRef.current + 1,
         config: { ...config },
@@ -84,7 +91,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
       if (activePresentationRef.current) {
         // A replacement waits for the active modal's onDismiss; only the latest request is retained.
         pendingPresentationRef.current = nextPresentation;
-        dismissActivePresentation(true, false);
+        dismissActivePresentation();
         return;
       }
 
@@ -94,13 +101,30 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
     [dismissActivePresentation],
   );
 
-  const dismissTopLevelSheet = useCallback(
-    (options?: DismissTopLevelSheetOptions) => {
+  const dismissPresentation = useCallback(
+    (presentationId: number) => {
+      if (
+        activePresentationRef.current?.id !== presentationId ||
+        isDismissingRef.current
+      ) {
+        return;
+      }
+
       pendingPresentationRef.current = null;
-      dismissActivePresentation(options?.runOnClose ?? true, true);
+      dismissActivePresentation();
     },
     [dismissActivePresentation],
   );
+
+  useEffect(() => {
+    if (previousPathnameRef.current === pathname) {
+      return;
+    }
+
+    previousPathnameRef.current = pathname;
+    pendingPresentationRef.current = null;
+    dismissActivePresentation();
+  }, [dismissActivePresentation, pathname]);
 
   useEffect(() => {
     if (!config || activePresentationRef.current?.config !== config) {
@@ -127,34 +151,37 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
       return;
     }
 
-    const runOnClose =
-      dismissRunOnCloseRef.current.get(dismissedPresentationId) ?? true;
-    dismissRunOnCloseRef.current.delete(dismissedPresentationId);
-
     pendingPresentationRef.current = null;
     activePresentationRef.current = dismissalResult.nextPresentation;
     isDismissingRef.current = false;
     setConfig(dismissalResult.nextPresentation?.config ?? null);
 
-    if (runOnClose) {
-      dismissalResult.dismissedPresentation.config.onClose?.();
-    }
+    dismissalResult.dismissedPresentation.config.onClose?.();
   }, []);
 
   const value = useMemo(
     () => ({
       presentTopLevelSheet,
-      dismissTopLevelSheet,
     }),
-    [dismissTopLevelSheet, presentTopLevelSheet],
+    [presentTopLevelSheet],
   );
   const activePresentation = activePresentationRef.current;
+  const activePresentationId = activePresentation?.id;
+  const sheetControls = useMemo(
+    () =>
+      activePresentationId === undefined
+        ? null
+        : {
+            dismiss: () => dismissPresentation(activePresentationId),
+          },
+    [activePresentationId, dismissPresentation],
+  );
 
   return (
     <BottomSheetModalProvider>
       <TopLevelSheetContext.Provider value={value}>
         {children}
-        {config && activePresentation ? (
+        {config && activePresentation && sheetControls ? (
           <AppBottomSheet
             key={activePresentation.id}
             ref={modalRef}
@@ -167,9 +194,9 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
             enableBlurKeyboardOnGesture={config.enableBlurKeyboardOnGesture}
             androidKeyboardInputMode={config.androidKeyboardInputMode}
             enableContentPanningGesture={config.enableContentPanningGesture}
-            onRequestClose={dismissTopLevelSheet}
+            onRequestClose={sheetControls.dismiss}
           >
-            {config.children}
+            {config.renderContent(sheetControls)}
           </AppBottomSheet>
         ) : null}
       </TopLevelSheetContext.Provider>

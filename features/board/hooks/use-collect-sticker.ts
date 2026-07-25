@@ -5,6 +5,7 @@ import {
 } from "@/features/board/types";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
+import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   refreshAfterStickerCollected,
@@ -38,18 +39,18 @@ export const useCollectSticker = () => {
     ) => {
       if (error.reason === "DAILY_LIMIT_EXCEEDED") {
         await refreshAfterStickerRejected(queryClient, variables.boardId);
-        toast.chatError("오늘 받을 수 있는 스티커를 모두 받았어요");
+        toast.error("오늘 받을 수 있는 스티커를 모두 받았어요");
         return;
       }
 
       if (error.reason === "BOARD_COMPLETED") {
-        toast.chatError("이미 완료된 습관이에요");
+        toast.error("이미 완료된 습관이에요");
         await refreshAfterStickerRejected(queryClient, variables.boardId);
         return;
       }
 
-      console.log(error);
-      toast.chatError("실패했습니다");
+      reportError(error, { scope: "board.collect" });
+      toast.error("실패했습니다");
     },
   });
 };

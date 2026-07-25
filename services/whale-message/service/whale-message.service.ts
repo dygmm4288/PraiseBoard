@@ -49,9 +49,8 @@ const saveInAppMessageOncePerDay = async (
 };
 
 export const whaleMessageService = {
-  onHomeEntered(input: HomeWhaleMessageInput) {
-    const message = resolveWhaleMessage(input);
-    return saveInAppMessageOncePerDay(input.profileId, message);
+  recordInAppMessage(profileId: string, message: WhaleMessage) {
+    return saveInAppMessageOncePerDay(profileId, message);
   },
 
   onStickerCollected(input: HomeWhaleMessageInput) {

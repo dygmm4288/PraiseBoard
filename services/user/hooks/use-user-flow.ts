@@ -1,5 +1,6 @@
 import { localStorage } from "@/infra/storage";
 import { isDebugEnabled } from "@/shared/constants/environment";
+import { reportError } from "@/shared/lib/report-error";
 import { useEffect, useState } from "react";
 
 const DEBUG_USER_FLOW_OVERRIDE_KEY = "debug_user_flow_override";
@@ -51,7 +52,7 @@ export const useUserFlow = () => {
           setOverrideModeState(storedOverrideMode);
         }
       } catch (error) {
-        console.error("앱 초기화 중 오류 발생", error);
+        reportError(error, { scope: "user.flow.initialize" });
       } finally {
         setIsInitialized(true);
       }
@@ -64,7 +65,7 @@ export const useUserFlow = () => {
       await localStorage.setItem("has_seen_intro", "true");
       setHasSeenIntro(true);
     } catch (error) {
-      console.error("인트로 초기화 오류 발생", error);
+      reportError(error, { scope: "user.flow.completeIntro" });
     }
   };
 
@@ -73,7 +74,7 @@ export const useUserFlow = () => {
       await localStorage.setItem("has_completed_onboarding", "true");
       setHasCompletedOnboarding(true);
     } catch (error) {
-      console.error("온보딩 완료 처리 오류 발생", error);
+      reportError(error, { scope: "user.flow.completeOnboarding" });
     }
   };
 
@@ -91,7 +92,7 @@ export const useUserFlow = () => {
 
       setOverrideModeState(mode);
     } catch (error) {
-      console.error("디버그 온보딩 오버라이드 저장 오류 발생", error);
+      reportError(error, { scope: "user.flow.setDebugOverride" });
     }
   };
 
@@ -104,7 +105,7 @@ export const useUserFlow = () => {
       setHasSeenIntro(false);
       setHasCompletedOnboarding(false);
     } catch (error) {
-      console.error("온보딩 상태 초기화 오류 발생", error);
+      reportError(error, { scope: "user.flow.resetOnboarding" });
     }
   };
 

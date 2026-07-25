@@ -4,6 +4,7 @@ import AppCheckbox from "@/shared/ui/checkbox";
 import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { useState } from "react";
 import { View } from "react-native";
+import { playStickerCollectionFeedback } from "../../feedback/sticker-collection-feedback";
 import { BoardItemUi } from "../../hooks/use-board-item-ui";
 import { useCollectSticker } from "../../hooks/use-collect-sticker";
 
@@ -28,6 +29,7 @@ const BoardItemCollectAction = ({ board, ui }: Props) => {
   const handlePress = () => {
     if (isCompleted || isTodayDone || actionDisabled) return;
     setBurstKey((key) => key + 1);
+    playStickerCollectionFeedback();
 
     collectSticker({ boardId: board.id, source: "app" });
   };

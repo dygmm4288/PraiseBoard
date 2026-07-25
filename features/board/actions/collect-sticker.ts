@@ -1,4 +1,5 @@
 import { whaleMessageService } from "@/services/whale-message/service/whale-message.service";
+import { reportError } from "@/shared/lib/report-error";
 import { boardApi } from "../board.api";
 import { BoardStickerSource } from "../types";
 
@@ -22,7 +23,10 @@ const defaultDependencies: CollectStickerDependencies = {
   getTodayAchievement: boardApi.getTodayAchievement,
   recordWhaleMessage: whaleMessageService.onStickerCollected,
   reportSecondaryError: (error) => {
-    console.warn("스티커 저장 후 고래 메시지 동기화에 실패했습니다.", error);
+    reportError(error, {
+      scope: "board.collect.syncWhaleMessage",
+      severity: "warning",
+    });
   },
 };
 

@@ -1,4 +1,5 @@
 import { ArchiveDetail } from "@/features/archive/types";
+import { playStickerCollectionFeedback } from "@/features/board/feedback/sticker-collection-feedback";
 import { useCollectSticker } from "@/features/board/hooks/use-collect-sticker";
 import { Calendar } from "@/shared/components";
 import useTodayKey from "@/shared/hooks/use-today-key";
@@ -236,6 +237,7 @@ const ArchiveDetailDailyRecord = ({ detail }: Props) => {
     if (actionDisabled || !board) return;
 
     setBurstKey((key) => key + 1);
+    playStickerCollectionFeedback();
     collectSticker({ boardId: board.id, source: "app" });
   };
 

@@ -25,7 +25,7 @@ jest.mock("@/services/user", () => ({
 
 jest.mock("@/shared/toasts/toast", () => ({
   toast: {
-    chatError: jest.fn(),
+    error: jest.fn(),
   },
 }));
 
@@ -36,7 +36,7 @@ jest.mock("@/services/whale-message", () => ({
 }));
 
 const collectStickerActionMock = jest.mocked(collectStickerAction);
-const chatErrorMock = jest.mocked(toast.chatError);
+const errorMock = jest.mocked(toast.error);
 
 const updatedBoard: BoardRecord = {
   id: "board-1",
@@ -162,7 +162,7 @@ test("일일 제한 초과는 사용자 메시지를 표시한다", async () => 
   });
   await waitFor(() => expect(result.current.isPending).toBe(false));
 
-  expect(chatErrorMock).toHaveBeenCalledWith(
+  expect(errorMock).toHaveBeenCalledWith(
     "오늘 받을 수 있는 스티커를 모두 받았어요",
   );
 });
@@ -187,5 +187,5 @@ test("완료된 보드에는 완료 상태 안내를 표시한다", async () => 
   });
   await waitFor(() => expect(result.current.isPending).toBe(false));
 
-  expect(chatErrorMock).toHaveBeenCalledWith("이미 완료된 습관이에요");
+  expect(errorMock).toHaveBeenCalledWith("이미 완료된 습관이에요");
 });

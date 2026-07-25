@@ -1,4 +1,4 @@
-import { board } from "@/features/board/service";
+import { boardApi } from "@/features/board/board.api";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { useQuery } from "@tanstack/react-query";
 import { boardKeys } from "./board.query.key";
@@ -10,7 +10,7 @@ export const useBoardsQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getBoards({});
+      return boardApi.getBoards({});
     },
 
     enabled: !!profileId,
@@ -34,7 +34,7 @@ export const useHomeBoardsQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getHomeBoards();
+      return boardApi.getHomeBoards();
     },
 
     enabled: !!profileId,
@@ -58,7 +58,11 @@ export const useActiveBoardQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getActiveBoards();
+      return boardApi.getBoards({
+        status: "active",
+        orderBy: "created_at",
+        order: "desc",
+      });
     },
 
     enabled: !!profileId,
@@ -82,7 +86,11 @@ export const useCompletedBoardQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getCompletedBoards();
+      return boardApi.getBoards({
+        status: "completed",
+        orderBy: "completed_at",
+        order: "desc",
+      });
     },
 
     enabled: !!profileId,

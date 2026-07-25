@@ -1,20 +1,14 @@
 import type { WhaleMessage } from "@/services/whale-message";
-import { resolveWhaleMessage } from "@/services/whale-message";
 import WhaleAvatar from "@/shared/components/whale-avatar";
 import { AppText } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { LinearGradient } from "expo-linear-gradient";
 import { View } from "react-native";
 import { BOARD_COLORS } from "../../theme/colors";
-import { BoardRecord } from "../../types";
 
 type BoardWhaleMessageProps = {
-  message?: WhaleMessage;
-  todayStickerCount?: number;
+  message: WhaleMessage;
   latestMessageCreatedAt?: string | null;
-  nickname?: string | null;
-  boards?: BoardRecord[];
-  lastLoginAt?: string | null;
   className?: string;
 };
 
@@ -33,22 +27,9 @@ const formatLatestMessageLabel = (value: string | null) => {
 
 const BoardWhaleMessage = ({
   message,
-  todayStickerCount = 0,
   latestMessageCreatedAt = null,
-  nickname,
-  boards,
-  lastLoginAt,
   className,
 }: BoardWhaleMessageProps) => {
-  const whaleMessage =
-    message ??
-    resolveWhaleMessage({
-      nickname,
-      todayStickerCount,
-      boards,
-      lastLoginAt,
-    });
-
   return (
     <View className={cn("overflow-hidden rounded-[20px]", className)}>
       <LinearGradient
@@ -94,7 +75,7 @@ const BoardWhaleMessage = ({
             weight="medium"
             style={{ color: BOARD_COLORS.whale.text }}
           >
-            {whaleMessage.body}
+            {message.body}
           </AppText>
         </View>
       </LinearGradient>

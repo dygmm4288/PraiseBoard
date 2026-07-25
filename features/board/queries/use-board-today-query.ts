@@ -1,4 +1,4 @@
-import { board } from "@/features/board/service";
+import { boardApi } from "@/features/board/board.api";
 import useTodayKey from "@/shared/hooks/use-today-key";
 import { useQuery } from "@tanstack/react-query";
 import { boardKeys } from "./board.query.key";
@@ -13,7 +13,7 @@ export const useBoardTodayAchievementQuery = (profileId: string | null) => {
     queryFn: async () => {
       if (!profileId) throw new Error("profileId required");
 
-      return board.getTodayAchievement(profileId);
+      return boardApi.getTodayAchievement(profileId);
     },
     enabled: !!profileId,
     staleTime: 1000 * 60,

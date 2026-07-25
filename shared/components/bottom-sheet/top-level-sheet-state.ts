@@ -1,12 +1,13 @@
 import type { BottomSheetProps } from "@gorhom/bottom-sheet";
 import type { ReactNode } from "react";
 
-export type DismissTopLevelSheetOptions = {
-  runOnClose?: boolean;
+export type TopLevelSheetControls = {
+  dismiss: () => void;
 };
 
 export type TopLevelSheetConfig = {
-  children: ReactNode;
+  sheetKey: string;
+  renderContent: (controls: TopLevelSheetControls) => ReactNode;
   snapPoints: readonly (string | number)[];
   initialIndex?: number;
   keyboardBehavior?: BottomSheetProps["keyboardBehavior"];
@@ -36,6 +37,9 @@ export const getSafeInitialIndex = (config: TopLevelSheetConfig) => {
 
 export const hasSnapPoints = (config: TopLevelSheetConfig) =>
   config.snapPoints.length > 0;
+
+export const hasSheetKey = (config: TopLevelSheetConfig) =>
+  config.sheetKey.trim().length > 0;
 
 export const getDismissalResult = (
   activePresentation: TopLevelSheetPresentation | null,

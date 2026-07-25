@@ -1,6 +1,7 @@
 import {
   getDismissalResult,
   getSafeInitialIndex,
+  hasSheetKey,
   hasSnapPoints,
   type TopLevelSheetConfig,
   type TopLevelSheetPresentation,
@@ -9,7 +10,8 @@ import {
 const createConfig = (
   overrides: Partial<TopLevelSheetConfig> = {},
 ): TopLevelSheetConfig => ({
-  children: null,
+  sheetKey: "test-sheet",
+  renderContent: () => null,
   snapPoints: ["40%", "90%"],
   ...overrides,
 });
@@ -17,6 +19,11 @@ const createConfig = (
 test("empty snapPoints are rejected before presentation", () => {
   expect(hasSnapPoints(createConfig({ snapPoints: [] }))).toBe(false);
   expect(hasSnapPoints(createConfig())).toBe(true);
+});
+
+test("empty sheetKey is rejected before presentation", () => {
+  expect(hasSheetKey(createConfig({ sheetKey: "  " }))).toBe(false);
+  expect(hasSheetKey(createConfig())).toBe(true);
 });
 
 test("initialIndex is clamped to the available snap points", () => {
@@ -49,4 +56,18 @@ test("a stale dismiss cannot remove the replacement presentation", () => {
 
   expect(replacement?.nextPresentation).toBe(presentationB);
   expect(staleDismiss).toBeNull();
+});
+
+test("pending sheet가 없으면 현재 sheet만 닫는다", () => {
+  const presentation: TopLevelSheetPresentation = {
+    id: 1,
+    config: createConfig(),
+  };
+
+  const result = getDismissalResult(presentation, null, presentation.id);
+
+  expect(result).toEqual({
+    dismissedPresentation: presentation,
+    nextPresentation: null,
+  });
 });

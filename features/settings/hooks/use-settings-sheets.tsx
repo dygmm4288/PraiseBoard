@@ -1,6 +1,6 @@
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import AlarmTimeSheetContent from "../components/sheets/alarm-time-sheet-content";
 import NameEditSheetContent from "../components/sheets/name-edit-sheet-content";
 import {
@@ -9,8 +9,6 @@ import {
   useAlarmTimeDraft,
 } from "./use-alarm-time-draft";
 import { useSettingsProfile } from "./use-settings-profile";
-
-type EditingSheet = "name" | "time" | null;
 
 type AlarmTimeSheetControllerProps = {
   initialHour: number | null | undefined;
@@ -96,8 +94,7 @@ const getPrimaryReminderTime = (
 };
 
 export const useSettingsSheets = () => {
-  const { dismissTopLevelSheet, presentTopLevelSheet } = useTopLevelSheet();
-  const [editingSheet, setEditingSheet] = useState<EditingSheet>(null);
+  const { presentTopLevelSheet } = useTopLevelSheet();
   const { displayName, profile, saveName, saveReminderTime } =
     useSettingsProfile();
   const primaryReminderTime = getPrimaryReminderTime(
@@ -116,83 +113,55 @@ export const useSettingsSheets = () => {
     ).padStart(2, "0")}`;
   }, [primaryReminderTime.hour, primaryReminderTime.minute]);
 
-  const closeSheet = useCallback(() => {
-    setEditingSheet(null);
-  }, []);
-
-  const requestCloseSheet = useCallback(() => {
-    dismissTopLevelSheet({ runOnClose: true });
-  }, [dismissTopLevelSheet]);
-
   const openNameSheet = useCallback(() => {
-    setEditingSheet("name");
-
     presentTopLevelSheet({
+      sheetKey: "settings-name",
       snapPoints: [300],
-      onClose: closeSheet,
       keyboardBehavior: "interactive",
       keyboardBlurBehavior: "restore",
       enableBlurKeyboardOnGesture: true,
       androidKeyboardInputMode: "adjustPan",
-      children: (
+      renderContent: ({ dismiss }) => (
         <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
           <NameEditSheetContent
             initialName={displayName}
-            onClose={requestCloseSheet}
+            onClose={dismiss}
             onConfirm={saveName}
           />
         </BottomSheetView>
       ),
     });
   }, [
-    closeSheet,
     displayName,
     presentTopLevelSheet,
-    requestCloseSheet,
     saveName,
   ]);
 
   const openAlarmTimeSheet = useCallback(() => {
-    setEditingSheet("time");
-
     presentTopLevelSheet({
+      sheetKey: "settings-alarm-time",
       snapPoints: [345],
-      onClose: closeSheet,
       keyboardBehavior: "interactive",
       keyboardBlurBehavior: "restore",
       enableBlurKeyboardOnGesture: true,
       enableContentPanningGesture: false,
-      children: (
+      renderContent: ({ dismiss }) => (
         <BottomSheetView className="flex-1">
           <AlarmTimeSheetController
             initialHour={primaryReminderTime.hour}
             initialMinute={primaryReminderTime.minute}
-            onClose={requestCloseSheet}
+            onClose={dismiss}
             onConfirm={saveReminderTime}
           />
         </BottomSheetView>
       ),
     });
   }, [
-    closeSheet,
     presentTopLevelSheet,
     primaryReminderTime.hour,
     primaryReminderTime.minute,
-    requestCloseSheet,
     saveReminderTime,
   ]);
-
-  useEffect(() => {
-    return () => {
-      dismissTopLevelSheet();
-    };
-  }, [dismissTopLevelSheet]);
-
-  useEffect(() => {
-    if (!editingSheet) {
-      dismissTopLevelSheet();
-    }
-  }, [dismissTopLevelSheet, editingSheet]);
 
   return {
     alarmTimeLabel: savedAlarmTimeLabel,

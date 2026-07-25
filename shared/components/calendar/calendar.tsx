@@ -152,7 +152,7 @@ const Calendar = ({
     [stickerCounts],
   );
 
-  const { dismissTopLevelSheet, presentTopLevelSheet } = useTopLevelSheet();
+  const { presentTopLevelSheet } = useTopLevelSheet();
 
   const changeMonth = useCallback(
     (nextDate: Date) => {
@@ -166,20 +166,21 @@ const Calendar = ({
 
   const openMonthPicker = useCallback(() => {
     presentTopLevelSheet({
+      sheetKey: "calendar-month-picker",
       snapPoints: [342],
-      children: (
+      renderContent: ({ dismiss }) => (
         <BottomSheetView className="flex-1 overflow-hidden rounded-t-[38px] bg-white pb-[18px]">
           <CalendarMonthPickerSheet
             currentDate={date}
             minDate={minDate}
             maxDate={maxDate}
-            onClose={dismissTopLevelSheet}
+            onClose={dismiss}
             onSelectMonth={changeMonth}
           />
         </BottomSheetView>
       ),
     });
-  }, [changeMonth, date, dismissTopLevelSheet, presentTopLevelSheet]);
+  }, [changeMonth, date, maxDate, minDate, presentTopLevelSheet]);
 
   return (
     <View

@@ -36,30 +36,8 @@ export type BoardRecord = {
   status: BoardStatus;
 };
 
-export type BoardCardData = {
-  id: string;
-  title: string;
-  rewardMemo?: string | null;
-  totalCount: number;
-  completedCount: number;
-  todayStickerCount: number;
-  latestStickerCollectedAt: string | null;
-};
-
 export type BoardTodayAchievement = {
   count: number;
-};
-
-export type BoardCardProps = {
-  className?: string;
-  columns?: number;
-};
-
-export type BoardStickerGridProps = {
-  totalCount: number;
-  completedCount: number;
-  className?: string;
-  columns?: number;
 };
 
 export type BoardProgress = {

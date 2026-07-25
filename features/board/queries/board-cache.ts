@@ -10,6 +10,20 @@ const invalidateActive = (queryClient: QueryClient, queryKey: readonly unknown[]
     refetchType: "active",
   });
 
+export const refreshAfterBoardChanged = (
+  queryClient: QueryClient,
+  boardId?: string,
+) =>
+  Promise.all([
+    invalidateActive(queryClient, boardKeys.all),
+    invalidateActive(queryClient, statsKeys.all),
+    invalidateActive(
+      queryClient,
+      boardId ? archiveKeys.detail(boardId) : archiveKeys.all,
+    ),
+    invalidateActive(queryClient, whaleMessageKeys.all),
+  ]);
+
 export const refreshAfterStickerCollected = (
   queryClient: QueryClient,
   boardId: string,

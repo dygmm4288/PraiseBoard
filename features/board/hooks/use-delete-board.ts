@@ -1,32 +1,20 @@
-import { archiveKeys } from "@/features/archive/queries/archive.query.key";
-import { board } from "@/features/board/service";
-import { statsKeys } from "@/features/stats/queries/stats.query.key";
+import { boardApi } from "@/features/board/board.api";
 import { toast } from "@/shared/toasts/toast";
+import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { boardKeys } from "../queries/board.query.key";
+import { refreshAfterBoardChanged } from "../queries/board-cache";
 
 export const useDeleteBoard = (boardId: string) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () => board.deleteBoard(boardId),
+    mutationFn: () => boardApi.deleteBoard(boardId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: boardKeys.all,
-        refetchType: "all",
-      });
-      queryClient.invalidateQueries({
-        queryKey: statsKeys.all,
-        refetchType: "all",
-      });
-      queryClient.invalidateQueries({
-        queryKey: archiveKeys.detail(boardId),
-        refetchType: "all",
-      });
+      void refreshAfterBoardChanged(queryClient, boardId);
     },
     onError: (error) => {
-      console.log(error);
-      toast.chatError("삭제에 실패했습니다");
+      reportError(error, { scope: "board.delete" });
+      toast.error("삭제에 실패했습니다");
     },
   });
 

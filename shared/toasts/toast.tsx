@@ -1,20 +1,16 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
-import { KeyboardController } from "react-native-keyboard-controller";
+import { useEffect } from "react";
+import { useKeyboardState } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast, { BaseToast, BaseToastProps } from "react-native-toast-message";
-import { COLORS } from "@/shared/theme";
 import { AppText } from "../ui";
+import { resolveToastBottomOffset } from "./toast-layout";
 
 type ToastOverrides = Partial<
   Pick<
     Parameters<typeof Toast.show>[0],
-    | "position"
     | "autoHide"
     | "visibilityTime"
-    | "topOffset"
-    | "bottomOffset"
-    | "keyboardOffset"
-    | "avoidKeyboard"
     | "onShow"
     | "onHide"
     | "onPress"
@@ -23,37 +19,66 @@ type ToastOverrides = Partial<
   >
 >;
 
-export const TOAST_BOTTOM_GAP = 12;
-let fnbToastOffset = 0;
-
-const toSafeOffset = (value: number | null | undefined) => {
-  if (typeof value !== "number") return 0;
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, value);
+type ActiveErrorToast = {
+  id: number;
+  message: string;
+  options?: ToastOverrides;
 };
 
-const getKeyboardHeight = () => {
-  try {
-    return KeyboardController.isVisible()
-      ? toSafeOffset(KeyboardController.state().height)
-      : 0;
-  } catch {
-    return 0;
-  }
+let viewport = {
+  bottomSafeAreaInset: 0,
+  fnbClearance: 0,
+  keyboardHeight: 0,
 };
+let activeErrorToast: ActiveErrorToast | null = null;
+let nextToastId = 0;
 
-const getBottomToastOptions = (): ToastOverrides => ({
-  position: "bottom",
-  bottomOffset: Math.max(
-    fnbToastOffset,
-    getKeyboardHeight() + TOAST_BOTTOM_GAP,
-    TOAST_BOTTOM_GAP,
-  ),
+const getBottomToastOptions = () => ({
+  position: "bottom" as const,
+  bottomOffset: resolveToastBottomOffset(viewport),
   avoidKeyboard: false,
 });
 
-export const setFnbToastOffset = (offset: number) => {
-  fnbToastOffset = toSafeOffset(offset);
+const showActiveErrorToast = (activeToast: ActiveErrorToast) => {
+  const { id, message, options } = activeToast;
+
+  Toast.show({
+    type: "error",
+    text1: message,
+    ...options,
+    ...getBottomToastOptions(),
+    onHide: () => {
+      if (activeErrorToast?.id === id) {
+        activeErrorToast = null;
+      }
+
+      options?.onHide?.();
+    },
+  });
+};
+
+const refreshActiveErrorToast = () => {
+  if (activeErrorToast) {
+    showActiveErrorToast(activeErrorToast);
+  }
+};
+
+const updateViewport = (nextViewport: Partial<typeof viewport>) => {
+  const next = { ...viewport, ...nextViewport };
+  const didChange =
+    next.bottomSafeAreaInset !== viewport.bottomSafeAreaInset ||
+    next.fnbClearance !== viewport.fnbClearance ||
+    next.keyboardHeight !== viewport.keyboardHeight;
+
+  viewport = next;
+
+  if (didChange) {
+    refreshActiveErrorToast();
+  }
+};
+
+export const setFnbToastOffset = (fnbClearance: number) => {
+  updateViewport({ fnbClearance });
 };
 
 export const toast = {
@@ -68,12 +93,14 @@ export const toast = {
   },
 
   error(message: string, options?: ToastOverrides) {
-    Toast.show({
-      type: "error",
-      text1: message,
-      ...getBottomToastOptions(),
-      ...options,
-    });
+    const activeToast = {
+      id: ++nextToastId,
+      message,
+      options,
+    };
+
+    activeErrorToast = activeToast;
+    showActiveErrorToast(activeToast);
   },
 
   info(message: string, options?: ToastOverrides) {
@@ -85,23 +112,25 @@ export const toast = {
     });
   },
 
-  chatError(message: string, options?: ToastOverrides & { refresh?: boolean }) {
-    const { refresh: _refresh, ...toastOptions } = options ?? {};
-
-    Toast.show({
-      type: "chatError",
-      text1: message,
-      ...getBottomToastOptions(),
-      ...toastOptions,
-    });
-  },
-
   hideToast() {
+    activeErrorToast = null;
     Toast.hide();
   },
 };
 
 export const ToastKeyboardSync = () => {
+  const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardState((state) =>
+    state.isVisible ? state.height : 0,
+  );
+
+  useEffect(() => {
+    updateViewport({
+      bottomSafeAreaInset: insets.bottom,
+      keyboardHeight,
+    });
+  }, [insets.bottom, keyboardHeight]);
+
   return null;
 };
 
@@ -120,23 +149,6 @@ export const toastConfig = {
   ),
 
   error: ({ text1 }: BaseToastProps) => {
-    const message = text1 ?? "";
-
-    return (
-      <View className="self-center flex-row items-center gap-[5px] rounded-[10px] bg-neutral-700 px-[14px] py-[8px]">
-        <MaterialIcons
-          name="error-outline"
-          size={24}
-          color={COLORS.content.inverse}
-        />
-        <AppText variant="caption1" weight="regular" className="text-white">
-          {message}
-        </AppText>
-      </View>
-    );
-  },
-
-  chatError: ({ text1 }: BaseToastProps) => {
     const message = text1 ?? "";
 
     return (

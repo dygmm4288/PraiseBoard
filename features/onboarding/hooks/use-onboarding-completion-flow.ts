@@ -1,40 +1,18 @@
 import {
-  board,
-  boardKeys,
   normalizeBoardSetupPayload,
-  type BoardListResult,
   type BoardRecord,
   type BoardSetupFormValues,
 } from "@/features/board";
+import { refreshAfterBoardChanged } from "@/features/board/queries/board-cache";
 import { notification } from "@/services/notification";
-import { useUser, userApi } from "@/services/user";
-import useTodayKey from "@/shared/hooks/use-today-key";
+import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
+import { reportError } from "@/shared/lib/report-error";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
 import type { UseFormReturn } from "react-hook-form";
-
-const addBoardToHomeList = (
-  boardList: BoardListResult | null | undefined,
-  createdBoard: BoardRecord,
-): BoardListResult => {
-  if (!boardList) {
-    return {
-      items: [createdBoard],
-      pageInfo: {},
-    };
-  }
-
-  if (boardList.items.some((board) => board.id === createdBoard.id)) {
-    return boardList;
-  }
-
-  return {
-    ...boardList,
-    items: [createdBoard, ...boardList.items],
-  };
-};
+import { saveOnboardingSetup } from "../actions/save-onboarding-setup";
 
 type Props = {
   form: UseFormReturn<BoardSetupFormValues>;
@@ -43,7 +21,6 @@ type Props = {
 const useOnboardingCompletionFlow = ({ form }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const todayKey = useTodayKey();
   const { completeOnboarding, overrideMode, profileId, setOverrideMode } =
     useUser();
 
@@ -57,40 +34,17 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       throw new Error("Onboarding payload is invalid.");
     }
 
-    await userApi.updateProfile(profileId, {
-      nickname: payload.profiles.nickname,
-    });
-    return board.createBoardFromSetup(profileId, payload);
+    return saveOnboardingSetup(profileId, payload);
   }, [form, profileId]);
 
   const requestNotificationPermission = useCallback(async () => {
     try {
       await notification.requestPermissionFromOnboarding();
     } catch (error) {
-      console.error("알림 권한 설정 중 오류 발생", error);
-      toast.error("알림 권한 정보를 저장하는 중 오류가 발생했어요.", {
-        position: "top",
-      });
+      reportError(error, { scope: "onboarding.notificationPermission" });
+      toast.error("알림 권한 정보를 저장하는 중 오류가 발생했어요.");
     }
   }, []);
-
-  const cacheCreatedBoardForHomePreview = useCallback(
-    async (createdBoard: BoardRecord) => {
-      if (!profileId) {
-        throw new Error("profileId is required to cache onboarding board.");
-      }
-
-      queryClient.setQueryData<BoardListResult | null>(
-        boardKeys.homeLists(profileId, todayKey),
-        (boardList) => addBoardToHomeList(boardList, createdBoard),
-      );
-      await queryClient.invalidateQueries({
-        queryKey: boardKeys.all,
-        refetchType: "active",
-      });
-    },
-    [profileId, queryClient, todayKey],
-  );
 
   const openHomePreview = useCallback(
     (createdBoard: BoardRecord) => {
@@ -111,10 +65,8 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
     try {
       createdBoard = await persistOnboardingSetup();
     } catch (error) {
-      console.error("온보딩 보드 저장 중 오류 발생", error);
-      toast.error("보드를 저장하는 중 오류가 발생했어요.", {
-        position: "top",
-      });
+      reportError(error, { scope: "onboarding.saveSetup" });
+      toast.error("보드를 저장하는 중 오류가 발생했어요.");
       return;
     }
 
@@ -125,14 +77,14 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
       await setOverrideMode("real");
     }
 
-    await cacheCreatedBoardForHomePreview(createdBoard);
+    await refreshAfterBoardChanged(queryClient);
     openHomePreview(createdBoard);
   }, [
-    cacheCreatedBoardForHomePreview,
     completeOnboarding,
     openHomePreview,
     overrideMode,
     persistOnboardingSetup,
+    queryClient,
     requestNotificationPermission,
     setOverrideMode,
   ]);

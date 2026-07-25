@@ -1,6 +1,7 @@
 import { localStorage } from "@/infra/storage";
 import { IStorage } from "@/infra/storage/storage.interface";
 import * as Crypto from "expo-crypto";
+import { reportError } from "@/shared/lib/report-error";
 import { AuthState } from "../model/user.interface";
 import { userApi } from "../user.api";
 
@@ -33,7 +34,10 @@ const defaultDependencies: BootstrapUserDependencies = {
   storage: localStorage,
   createDeviceId: Crypto.randomUUID,
   reportSecondaryError: (error) => {
-    console.warn("로그인 메타데이터 동기화에 실패했습니다.", error);
+    reportError(error, {
+      scope: "user.bootstrap.syncLoginMetadata",
+      severity: "warning",
+    });
   },
 };
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { reportError } from "@/shared/lib/report-error";
 import { bootstrapUser } from "../actions/bootstrap-user";
 import { AuthState } from "../model/user.interface";
 
@@ -33,7 +34,7 @@ export const useUserBootstrap = (): UserBootstrapState => {
           ...result,
         });
       } catch (error) {
-        console.error("유저 bootstrap 중 오류 발생", error);
+        reportError(error, { scope: "user.bootstrap" });
 
         if (!isMounted) return;
 
