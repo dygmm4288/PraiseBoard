@@ -49,48 +49,52 @@ const RootLayoutNav = () => {
   if (!isInitialized) return null;
 
   const rootBackgroundColor = pathname === "/intro" ? "#000000" : "#FFFFFF";
+  const statusBarStyle = pathname === "/intro" ? "light" : "dark";
 
   return (
-    <View className="flex-1" style={{ backgroundColor: rootBackgroundColor }}>
-      <PostHogProvider
-        apiKey={process.env.EXPO_PUBLIC_POST_HOG_API_KEY}
-        options={{ host: process.env.EXPO_PUBLIC_POST_HOG_URL }}
-      >
-        <TopLevelSheetProvider>
-          <View
-            className="flex-1"
-            style={{
-              backgroundColor: rootBackgroundColor,
-            }}
-          >
-            <Stack
-              screenOptions={{ animation: "fade", animationDuration: 175 }}
+    <>
+      <StatusBar style={statusBarStyle} />
+      <View className="flex-1" style={{ backgroundColor: rootBackgroundColor }}>
+        <PostHogProvider
+          apiKey={process.env.EXPO_PUBLIC_POST_HOG_API_KEY}
+          options={{ host: process.env.EXPO_PUBLIC_POST_HOG_URL }}
+        >
+          <TopLevelSheetProvider>
+            <View
+              className="flex-1"
+              style={{
+                backgroundColor: rootBackgroundColor,
+              }}
             >
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="(onboarding)"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(modals)"
-                options={{ presentation: "modal", headerShown: false }}
-              />
-              <Stack.Screen name="signup" options={{ headerShown: false }} />
-              <Stack.Screen name="settings" options={{ headerShown: false }} />
-              <Stack.Screen name="stats" options={{ headerShown: false }} />
-              <Stack.Screen name="archives" options={{ headerShown: false }} />
-              {isDebugEnabled ? (
+              <Stack
+                screenOptions={{ animation: "fade", animationDuration: 175 }}
+              >
+                <Stack.Screen name="index" options={{ headerShown: false }} />
                 <Stack.Screen
-                  name="debug-settings"
+                  name="(onboarding)"
                   options={{ headerShown: false }}
                 />
-              ) : null}
-            </Stack>
-          </View>
-          {shouldShowFnb && <FnbContainer />}
-        </TopLevelSheetProvider>
-      </PostHogProvider>
-    </View>
+                <Stack.Screen
+                  name="(modals)"
+                  options={{ presentation: "modal", headerShown: false }}
+                />
+                <Stack.Screen name="signup" options={{ headerShown: false }} />
+                <Stack.Screen name="settings" options={{ headerShown: false }} />
+                <Stack.Screen name="stats" options={{ headerShown: false }} />
+                <Stack.Screen name="archives" options={{ headerShown: false }} />
+                {isDebugEnabled ? (
+                  <Stack.Screen
+                    name="debug-settings"
+                    options={{ headerShown: false }}
+                  />
+                ) : null}
+              </Stack>
+            </View>
+            {shouldShowFnb && <FnbContainer />}
+          </TopLevelSheetProvider>
+        </PostHogProvider>
+      </View>
+    </>
   );
 };
 export default function RootLayout() {
@@ -118,7 +122,6 @@ export default function RootLayout() {
               <RootLayoutNav />
               <ToastKeyboardSync />
               <Toast config={toastConfig} />
-              <StatusBar style="auto" />
             </UserProvider>
           </KeyboardProvider>
         </QueryClientProvider>
