@@ -17,13 +17,15 @@ export const throwLoggedSupabaseError = (
 ): never => {
   const supabaseError = error as SupabaseLikeError;
 
-  console.error(`[Supabase][${context.domain}.${context.operation}]`, {
-    message: supabaseError.message,
-    code: supabaseError.code,
-    details: supabaseError.details,
-    hint: supabaseError.hint,
-    params: context.params,
-    raw: error,
+  reportError(error, {
+    scope: `${context.domain}.${context.operation}`,
+    details: {
+      message: supabaseError.message,
+      code: supabaseError.code,
+      details: supabaseError.details,
+      hint: supabaseError.hint,
+      params: context.params,
+    },
   });
 
   throw error;
@@ -45,3 +47,4 @@ export const ensureSupabaseData = <T>(
 
   return data;
 };
+import { reportError } from "./report-error";
