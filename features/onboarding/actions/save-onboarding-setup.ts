@@ -3,6 +3,11 @@ import type { BoardSetupPayload } from "@/features/board/schema";
 import type { BoardRecord } from "@/features/board/types";
 import { userApi } from "@/services/user/user.api";
 
+const DEFAULT_REMINDER_TIME = {
+  hour: 21,
+  minute: 0,
+} as const;
+
 export type OnboardingSetupStage = "profile" | "board";
 
 export class OnboardingSetupError extends Error {
@@ -33,6 +38,9 @@ export const saveOnboardingSetup = async (
   try {
     await dependencies.updateProfile(profileId, {
       nickname: payload.profiles.nickname,
+      reminderHour: DEFAULT_REMINDER_TIME.hour,
+      reminderMinute: DEFAULT_REMINDER_TIME.minute,
+      reminderTimes: [DEFAULT_REMINDER_TIME],
     });
   } catch (cause) {
     throw new OnboardingSetupError("profile", { cause });

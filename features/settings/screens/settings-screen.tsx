@@ -5,7 +5,7 @@ import ScreenHeader from "@/shared/ui/screen-header";
 import { Link } from "expo-router";
 import SettingEnv from "../components/sections/setting-env";
 import SettingInfo from "../components/sections/setting-info";
-import SettingNotification from "../components/sections/setting-notification";
+import SettingNotification from "../components/sections/setting-notification-route";
 import SettingProfile from "../components/sections/setting-profile";
 import { useSettingsSheets } from "../hooks/use-settings-sheets";
 

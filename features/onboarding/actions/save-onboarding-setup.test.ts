@@ -48,6 +48,9 @@ test("프로필 저장 후 보드를 만들고 생성 결과를 반환한다", a
 
   expect(updateProfile).toHaveBeenCalledWith("profile-1", {
     nickname: "두리",
+    reminderHour: 21,
+    reminderMinute: 0,
+    reminderTimes: [{ hour: 21, minute: 0 }],
   });
   expect(createBoard).toHaveBeenCalledWith({
     profileId: "profile-1",
