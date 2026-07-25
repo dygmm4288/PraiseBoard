@@ -11,6 +11,7 @@ import {
   isStorybookEnabled,
 } from "@/shared/constants/environment";
 import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
+import { ToastRouteSync } from "@/shared/toasts/toast-route-sync";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack, usePathname } from "expo-router";
@@ -120,6 +121,7 @@ export default function RootLayout() {
             <UserProvider>
               <AppLifecycleEffects />
               <RootLayoutNav />
+              <ToastRouteSync />
               <ToastKeyboardSync />
               <Toast config={toastConfig} />
             </UserProvider>

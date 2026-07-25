@@ -10,6 +10,7 @@ import type { TopLevelSheetControls } from "./top-level-sheet-state";
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
 const mockKeyboardDismiss = jest.fn();
+const mockHideToast = jest.fn();
 let mockPathname = "/";
 let mockBottomSheetProps: {
   children?: ReactNode;
@@ -25,6 +26,12 @@ jest.mock("expo-router", () => ({
 jest.mock("react-native-keyboard-controller", () => ({
   KeyboardController: {
     dismiss: () => mockKeyboardDismiss(),
+  },
+}));
+
+jest.mock("@/shared/toasts/toast", () => ({
+  toast: {
+    hideToast: () => mockHideToast(),
   },
 }));
 
@@ -168,6 +175,7 @@ test("화면이 바뀌면 현재 sheet를 닫는다", async () => {
 
   expect(mockKeyboardDismiss).toHaveBeenCalledTimes(1);
   expect(mockDismiss).toHaveBeenCalledTimes(1);
+  expect(mockHideToast).toHaveBeenCalledTimes(1);
 });
 
 test("현재 sheet의 dismiss는 keyboard와 modal을 닫는다", async () => {
@@ -184,4 +192,5 @@ test("현재 sheet의 dismiss는 keyboard와 modal을 닫는다", async () => {
 
   expect(mockKeyboardDismiss).toHaveBeenCalledTimes(1);
   expect(mockDismiss).toHaveBeenCalledTimes(1);
+  expect(mockHideToast).toHaveBeenCalledTimes(1);
 });

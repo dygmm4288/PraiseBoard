@@ -28,7 +28,9 @@ export const AppInput = ({
   placeholder,
   inputComponent: InputComponent = TextInput,
   maxLength,
+  onBlur,
   onChangeText,
+  onFocus,
   onKeyPress,
   onMaxLengthExceeded,
   onReset,
@@ -72,6 +74,16 @@ export const AppInput = ({
     onChangeText?.("");
   };
 
+  const handleFocus: NonNullable<TextInputProps["onFocus"]> = (event) => {
+    setFocus(true);
+    onFocus?.(event);
+  };
+
+  const handleBlur: NonNullable<TextInputProps["onBlur"]> = (event) => {
+    setFocus(false);
+    onBlur?.(event);
+  };
+
   return (
     <View
       className={cn(
@@ -92,8 +104,8 @@ export const AppInput = ({
         maxLength={maxLength}
         onChangeText={handleChangeText}
         onKeyPress={handleKeyPress}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         {...props}
       />
       {reset && hasValue ? (

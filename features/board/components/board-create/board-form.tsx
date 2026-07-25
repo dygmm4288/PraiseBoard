@@ -7,6 +7,7 @@ import {
 import { EmojiPickerModal, useBoardEmojiOptions } from "@/features/emoji";
 import { BottomSheetHeader, BottomSheetInput } from "@/shared/components";
 import { COLORS } from "@/shared/theme";
+import { toast } from "@/shared/toasts/toast";
 import { AppText, ConfirmModal } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -67,8 +68,9 @@ const OptionRow = ({
             accessibilityState={{ selected, disabled }}
             disabled={locked}
             className={cn(
-              "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[12px] border border-line-subtle bg-white px-[12px]",
+              "h-[42px] min-w-0 flex-1 items-center justify-center rounded-[12px] border border-line-subtle px-[12px]",
               selected && "rounded-[9px] border-primary-50 bg-primary-10",
+              !selected && "bg-white ",
             )}
             onPress={() => onSelect(value)}
           >
@@ -100,7 +102,11 @@ const BoardFormSection = ({
 }) => {
   return (
     <View className="gap-[6px]">
-      <AppText variant="label12" weight="semibold" className="text-content-tertiary">
+      <AppText
+        variant="label12"
+        weight="semibold"
+        className="text-content-tertiary"
+      >
         {label}
       </AppText>
       {children}
@@ -162,6 +168,12 @@ const BoardForm = ({
               onReset={() => onChangeFormData("title")("")}
               onChangeText={onChangeFormData("title")}
               maxLength={TITLE_MAX_LENGTH}
+              onBlur={toast.hideToast}
+              onMaxLengthExceeded={() =>
+                toast.error(
+                  `습관 이름은 ${TITLE_MAX_LENGTH}자까지 입력할 수 있어요.`,
+                )
+              }
               placeholder="어떤 습관을 시작해볼까요?"
               placeholderTextColor={COLORS.content.disabled}
               className="flex-1"
@@ -202,10 +214,17 @@ const BoardForm = ({
 
         <BoardFormSection label="보상 (선택)">
           <BottomSheetInput
+            testID="board-reward-input"
             value={formData.rewardMemo ?? ""}
             onChangeText={onChangeFormData("rewardMemo")}
             placeholder="나에게 어떤 선물을 주고싶나요?"
             maxLength={REWARD_MEMO_LENGTH}
+            onBlur={toast.hideToast}
+            onMaxLengthExceeded={() =>
+              toast.error(
+                `보상은 ${REWARD_MEMO_LENGTH}자까지 입력할 수 있어요.`,
+              )
+            }
             placeholderTextColor={COLORS.content.disabled}
           />
         </BoardFormSection>

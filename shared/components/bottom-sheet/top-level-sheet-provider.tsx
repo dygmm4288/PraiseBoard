@@ -11,6 +11,7 @@ import type {
   TopLevelSheetConfig,
   TopLevelSheetPresentation,
 } from "@/shared/components/bottom-sheet/top-level-sheet-state";
+import { toast } from "@/shared/toasts/toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
   createContext,
@@ -47,6 +48,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
     if (!activePresentationRef.current || isDismissingRef.current) return;
 
     isDismissingRef.current = true;
+    toast.hideToast();
     void KeyboardController.dismiss();
     modalRef.current?.dismiss();
   }, []);

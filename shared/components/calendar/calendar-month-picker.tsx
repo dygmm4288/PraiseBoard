@@ -124,9 +124,9 @@ const CalendarMonthPicker = ({
                   weight="medium"
                   numberOfLines={1}
                   className={cn(
-                    "text-center text-neutral-700",
+                    "text-center ",
                     selected && "text-primary-50",
-                    disabled && "text-content-disabled",
+                    disabled ? "text-content-disabled" : "text-neutral-700",
                   )}
                 >
                   {month}월
