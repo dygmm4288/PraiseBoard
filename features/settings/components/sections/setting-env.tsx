@@ -1,7 +1,16 @@
 import { useVibrationEnabled } from "@/shared/hooks/use-vibration-enabled";
 import { toast } from "@/shared/toasts/toast";
+import { Skeleton } from "@/shared/ui";
+import { View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingToggle from "../setting-toggle";
+
+const SettingEnvSkeleton = () => (
+  <View className="flex-row items-center justify-between px-[20px] py-[3px]">
+    <Skeleton width={92} height={18} borderRadius={6} />
+    <Skeleton width={39} height={24} borderRadius={100} />
+  </View>
+);
 
 const SettingEnv = () => {
   const {
@@ -20,12 +29,16 @@ const SettingEnv = () => {
 
   return (
     <SettingSectionLayout title="환경">
-      <SettingToggle
-        label="앱 실행 중 진동"
-        value={isVibrationEnabled}
-        onToggle={handleToggle}
-        disabled={isLoading}
-      />
+      {isLoading ? (
+        <SettingEnvSkeleton />
+      ) : (
+        <SettingToggle
+          label="앱 실행 중 진동"
+          value={isVibrationEnabled}
+          onToggle={handleToggle}
+          disabled={false}
+        />
+      )}
     </SettingSectionLayout>
   );
 };

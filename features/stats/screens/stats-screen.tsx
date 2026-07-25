@@ -12,6 +12,7 @@ import { View } from "react-native";
 import MonthAchievementCard from "../components/month-achievement-card";
 import MonthStreakCard from "../components/month-streak-card";
 import StatsCard from "../components/stats-card";
+import StatsSkeleton from "../components/stats-skeleton";
 import { useStatsMonthQuery } from "../queries/use-stats-month-query";
 
 const getMonthTitle = (date: Date) =>
@@ -60,18 +61,20 @@ const StatsScreen = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Calendar
-          defaultDate={monthDate}
-          minDate={parseMonthKey(data?.startMonth)}
-          onMonthChange={setMonthDate}
-          stickerCounts={data?.stickerCounts ?? []}
-        />
         {!profileId ? (
           <StatsCard>
             <StatsStatusText message="프로필 정보를 확인할 수 없어요." />
           </StatsCard>
+        ) : isLoading ? (
+          <StatsSkeleton />
         ) : (
           <>
+            <Calendar
+              defaultDate={monthDate}
+              minDate={parseMonthKey(data?.startMonth)}
+              onMonthChange={setMonthDate}
+              stickerCounts={data?.stickerCounts ?? []}
+            />
             <MonthAchievementCard
               items={data?.boardItems ?? []}
               totalCount={data?.totalCount ?? 0}
