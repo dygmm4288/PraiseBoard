@@ -6,3 +6,4 @@ export * from "./text";
 export { default as Screen } from "./screen";
 export { IconSymbol } from "./icon-symbol";
 export { default as Toggle } from "./toggle";
+export { default as Skeleton } from "./skeleton";

@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { useHomeBoardsQuery } from "../../queries/use-board-query";
 import BoardItem from "../board-item/board-item";
 import BoardEmptyItem from "./board-empty-item";
+import BoardListSkeleton from "./board-list-skeleton";
 type Props = {
   showPreviewBoard: boolean;
 };
@@ -16,7 +17,7 @@ const BoardList = ({ showPreviewBoard }: Props) => {
   }
 
   if (isLoading) {
-    return <BoardListStatus message="보드를 불러오는 중이에요." />;
+    return <BoardListSkeleton />;
   }
 
   if (error) {

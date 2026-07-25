@@ -1,5 +1,6 @@
 import { Icon } from "@/assets/icons";
 import ArchiveDetailItem from "@/features/archive/components/detail/archive-detail-item";
+import ArchiveDetailSkeleton from "@/features/archive/components/detail/archive-detail-skeleton";
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
 import { useBoardSheet } from "@/features/board";
 import DebugForceCompleteBoardButton from "@/features/debug/debug-force-complete-board-button";
@@ -87,7 +88,7 @@ const ArchiveDetailScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {isLoading ? (
-          <AppText>ArchiveDetailLoading</AppText>
+          <ArchiveDetailSkeleton />
         ) : error ? (
           <AppText>ArchiveDetailError</AppText>
         ) : (
