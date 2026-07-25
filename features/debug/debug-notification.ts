@@ -4,6 +4,7 @@ import type {
   PushPermissionStatus,
   PushPlatform,
   PushState,
+  TestPushResult,
 } from "@/services/notification/model/notification.interface";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
@@ -23,6 +24,19 @@ export type NotificationDebugSnapshot = {
   deviceId: string | null;
   osPermissionStatus: string;
   pushState: PushState | null;
+};
+
+const getDebugDeviceIdentity = async () => {
+  const [profileId, deviceId] = await Promise.all([
+    localStorage.getItem("profile_id"),
+    localStorage.getItem("device_id"),
+  ]);
+
+  if (!profileId || !deviceId) {
+    throw new Error("테스트 푸시를 보낼 프로필과 기기 정보가 없습니다.");
+  }
+
+  return { profileId, deviceId };
 };
 
 const resolvePlatform = (): PushPlatform => {
@@ -112,4 +126,10 @@ export const getPushTokenDebugInfo =
         errorMessage: error instanceof Error ? error.message : String(error),
       };
     }
+  };
+
+export const sendTestPushToCurrentDevice =
+  async (): Promise<TestPushResult> => {
+    const { profileId, deviceId } = await getDebugDeviceIdentity();
+    return notificationApi.sendTestPush(profileId, deviceId);
   };

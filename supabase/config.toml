@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.check-push-receipts]
 verify_jwt = false
+
+[functions.send-test-push]
+verify_jwt = false

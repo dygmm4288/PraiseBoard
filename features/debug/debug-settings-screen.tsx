@@ -1,15 +1,17 @@
 import { useHomeBoardsQuery } from "@/features/board";
-import type { PushState } from "@/services/notification";
+import { FnbScrollView } from "@/features/navigation";
+import type { PushState, TestPushResult } from "@/services/notification";
 import { UserFlowOverrideMode, useUser } from "@/services/user";
 import { reportError } from "@/shared/lib/report-error";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
 import {
   getNotificationDebugSnapshot,
   getPushTokenDebugInfo,
+  sendTestPushToCurrentDevice,
   type PushTokenDebugInfo,
 } from "./debug-notification";
 
@@ -84,12 +86,16 @@ const formatPushToken = (token: string | null | undefined) => {
   return `${token.slice(0, 18)}...${token.slice(-8)}`;
 };
 
+const formatSentAt = (sentAt: string) =>
+  new Date(sentAt).toLocaleString("ko-KR");
+
 type NotificationDebugState = {
   profileId: string | null;
   deviceId: string | null;
   osPermissionStatus: string;
   pushState: PushState | null;
   tokenDebugInfo: PushTokenDebugInfo | null;
+  testPushResult: TestPushResult | null;
   errorMessage: string | null;
 };
 
@@ -100,10 +106,12 @@ const NotificationDebugCard = () => {
     osPermissionStatus: "-",
     pushState: null,
     tokenDebugInfo: null,
+    testPushResult: null,
     errorMessage: null,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isDiagnosingToken, setIsDiagnosingToken] = useState(false);
+  const [isSendingTestPush, setIsSendingTestPush] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -114,6 +122,7 @@ const NotificationDebugCard = () => {
       setState((current) => ({
         ...snapshot,
         tokenDebugInfo: current.tokenDebugInfo,
+        testPushResult: current.testPushResult,
         errorMessage: snapshot.pushState
           ? null
           : "push state를 불러오지 못했어요.",
@@ -151,9 +160,41 @@ const NotificationDebugCard = () => {
     }
   }, []);
 
+  const sendTestPush = useCallback(async () => {
+    try {
+      setIsSendingTestPush(true);
+
+      const testPushResult = await sendTestPushToCurrentDevice();
+
+      setState((current) => ({
+        ...current,
+        testPushResult,
+        errorMessage: null,
+      }));
+    } catch (error) {
+      reportError(error, { scope: "debug.sendTestPush" });
+      setState((current) => ({
+        ...current,
+        testPushResult: null,
+        errorMessage:
+          "테스트 푸시를 보내지 못했어요. 권한과 토큰 상태를 확인해 주세요.",
+      }));
+    } finally {
+      setIsSendingTestPush(false);
+    }
+  }, []);
+
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const canSendTestPush = Boolean(
+    state.profileId &&
+    state.deviceId &&
+    state.pushState?.pushEnabled &&
+    state.pushState.pushPermissionStatus === "granted" &&
+    state.pushState.pushToken,
+  );
 
   return (
     <View className="rounded-[28px] bg-white px-5 py-5">
@@ -201,6 +242,22 @@ const NotificationDebugCard = () => {
           label="debug token"
           value={formatPushToken(state.tokenDebugInfo?.token)}
         />
+        <StatusRow
+          label="테스트 발송"
+          value={state.testPushResult ? "Expo 접수됨" : "대기"}
+        />
+        {state.testPushResult ? (
+          <>
+            <StatusRow
+              label="발송 시각"
+              value={formatSentAt(state.testPushResult.sentAt)}
+            />
+            <StatusRow
+              label="ticket_id"
+              value={formatPushToken(state.testPushResult.ticketId)}
+            />
+          </>
+        ) : null}
       </View>
       {state.errorMessage ? (
         <AppText variant="body14" className="mt-3 text-danger">
@@ -227,6 +284,19 @@ const NotificationDebugCard = () => {
       >
         {isDiagnosingToken ? "진단 중" : "푸시 토큰 진단"}
       </AppButton>
+      <AppButton
+        variant="primary"
+        className="mt-3"
+        disabled={isSendingTestPush || !canSendTestPush}
+        onPress={() => {
+          void sendTestPush();
+        }}
+      >
+        {isSendingTestPush ? "전송 중" : "푸시알림 전송"}
+      </AppButton>
+      <AppText variant="body14" className="mt-3 text-neutral-500">
+        현재 profile_id와 device_id에 연결된 기기로 테스트 알림을 보냅니다.
+      </AppText>
     </View>
   );
 };
@@ -265,7 +335,7 @@ export const DebugSettingsScreenContent = ({
 
   return (
     <Screen className="bg-[#F3F4F6] px-0 pt-0">
-      <ScrollView
+      <FnbScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 16 }}
       >
@@ -395,7 +465,7 @@ export const DebugSettingsScreenContent = ({
             </View>
           ) : null}
         </View>
-      </ScrollView>
+      </FnbScrollView>
     </Screen>
   );
 };

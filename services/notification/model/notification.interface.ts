@@ -17,6 +17,12 @@ export type NotificationSettingsState = PushState & {
   isOperational: boolean;
 };
 
+export type TestPushResult = {
+  notificationLogId: string;
+  ticketId: string;
+  sentAt: string;
+};
+
 export type SavePushTokenInput = {
   profileId: string;
   deviceId: string;

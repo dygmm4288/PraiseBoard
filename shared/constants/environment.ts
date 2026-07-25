@@ -1,5 +1,10 @@
 /** Build-time feature flags exposed to the app bundle. */
-const DEBUG_APP_ENVIRONMENTS = ["dev", "development", "preview"];
+const DEBUG_APP_ENVIRONMENTS = [
+  "dev",
+  "development",
+  "preview",
+  "production",
+];
 
 export const resolveDebugEnabled = (
   appEnvironment: string | undefined,

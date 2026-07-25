@@ -3,6 +3,7 @@ import {
   PushPermissionStatus,
   PushState,
   SavePushTokenInput,
+  TestPushResult,
 } from "./model/notification.interface";
 
 const releaseDuplicatePushToken = async ({
@@ -36,6 +37,35 @@ const releaseDuplicatePushToken = async ({
 };
 
 export const notificationApi = {
+  async sendTestPush(
+    profileId: string,
+    deviceId: string,
+  ): Promise<TestPushResult> {
+    const { data, error } = await supabase.functions.invoke<{
+      ok: boolean;
+      notificationLogId?: string;
+      ticketId?: string;
+      sentAt?: string;
+    }>("send-test-push", {
+      body: { profileId, deviceId },
+    });
+
+    if (error) throw error;
+    if (
+      !data?.ok ||
+      !data.notificationLogId ||
+      !data.ticketId ||
+      !data.sentAt
+    ) {
+      throw new Error("Test push response is invalid.");
+    }
+
+    return {
+      notificationLogId: data.notificationLogId,
+      ticketId: data.ticketId,
+      sentAt: data.sentAt,
+    };
+  },
   async getPushEnabled(profileId: string, deviceId: string) {
     const state = await this.getPushState(profileId, deviceId);
     return state.pushEnabled;
