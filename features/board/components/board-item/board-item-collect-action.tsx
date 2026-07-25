@@ -4,7 +4,7 @@ import AppCheckbox from "@/shared/ui/checkbox";
 import StickerBubbleBurst from "@/shared/ui/sticker-bubble-burst";
 import { useState } from "react";
 import { View } from "react-native";
-import { playStickerCollectionFeedback } from "../../feedback/sticker-collection-feedback";
+import { useStickerCollectionFeedback } from "../../feedback/sticker-collection-feedback";
 import { BoardItemUi } from "../../hooks/use-board-item-ui";
 import { useCollectSticker } from "../../hooks/use-collect-sticker";
 
@@ -15,6 +15,7 @@ type Props = {
 
 const BoardItemCollectAction = ({ board, ui }: Props) => {
   const [burstKey, setBurstKey] = useState(0);
+  const playStickerCollectionFeedback = useStickerCollectionFeedback();
   const {
     progressColor,
     progressPercent,

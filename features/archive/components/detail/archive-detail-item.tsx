@@ -1,5 +1,5 @@
 import { ArchiveDetail } from "@/features/archive/types";
-import { playStickerCollectionFeedback } from "@/features/board/feedback/sticker-collection-feedback";
+import { useStickerCollectionFeedback } from "@/features/board/feedback/sticker-collection-feedback";
 import { useCollectSticker } from "@/features/board/hooks/use-collect-sticker";
 import { Calendar } from "@/shared/components";
 import useTodayKey from "@/shared/hooks/use-today-key";
@@ -216,6 +216,7 @@ const ArchiveDetailCalendar = ({
 
 const ArchiveDetailDailyRecord = ({ detail }: Props) => {
   const [burstKey, setBurstKey] = useState(0);
+  const playStickerCollectionFeedback = useStickerCollectionFeedback();
   const todayKey = useTodayKey();
   const { mutate: collectSticker, isPending } = useCollectSticker();
   const board = detail?.board;
