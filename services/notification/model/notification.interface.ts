@@ -28,12 +28,3 @@ export type SavePushTokenInput = {
   pushPermissionGrantedAt: string | null;
   pushPermissionUpdatedAt: string | null;
 };
-
-export type PushTokenDebugInfo = {
-  platform: PushPlatform;
-  projectId: string | null;
-  hasAndroidFcmConfig: boolean;
-  permissionStatus: PushPermissionStatus;
-  token: string | null;
-  errorMessage: string | null;
-};

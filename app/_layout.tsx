@@ -3,6 +3,7 @@ import {
   useIsFnbVisible,
   useRootBackExit,
 } from "@/features/navigation";
+import { AppLifecycleEffects } from "@/services/app-lifecycle";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import {
@@ -10,20 +11,12 @@ import {
   isStorybookEnabled,
 } from "@/shared/constants/environment";
 import { toastConfig, ToastKeyboardSync } from "@/shared/toasts/toast";
-import NetInfo from "@react-native-community/netinfo";
-import {
-  focusManager,
-  MutationCache,
-  onlineManager,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from "posthog-react-native";
-import { useEffect } from "react";
-import { AppState, LogBox, Platform, View } from "react-native";
+import { LogBox, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -45,33 +38,7 @@ const queryClient = new QueryClient({
       retry: 1,
     },
   },
-  mutationCache: new MutationCache({
-    onError: (error, variables, context) => {
-      // TODO: Global Error Handling
-    },
-  }),
 });
-
-const useReactQueryAppLifecycle = () => {
-  // app 백그라운드 갔다가 다시 켜졌을 때, Tanstack Query가 "다시 활성화됨"을 알게 하는 것
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (status) => {
-      if (Platform.OS !== "web") {
-        focusManager.setFocused(status === "active");
-      }
-    });
-    return () => subscription.remove();
-  }, []);
-
-  useEffect(() => {
-    // 오프라인었다가 온라인으로 돌아왔을 때, stale query를 다시 가져올 수 있게 하는 것.
-    return onlineManager.setEventListener((setOnline) => {
-      return NetInfo.addEventListener((state) => {
-        setOnline(Boolean(state.isConnected));
-      });
-    });
-  });
-};
 
 const RootLayoutNav = () => {
   const { isInitialized } = useUser();
@@ -134,9 +101,6 @@ export default function RootLayout() {
     "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.otf"),
   });
 
-  // 앱 활성화/네트워크 상태를 React Query에 동기화
-  useReactQueryAppLifecycle();
-
   // 폰트가 로드되기 전에는 시스템 폰트로 한 프레임 렌더링하지 않는다.
   if (!fontsLoaded && !fontLoadError) return null;
 
@@ -150,6 +114,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <KeyboardProvider>
             <UserProvider>
+              <AppLifecycleEffects />
               <RootLayoutNav />
               <ToastKeyboardSync />
               <Toast config={toastConfig} />

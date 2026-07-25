@@ -1,10 +1,11 @@
-import { notification } from "@/services/notification";
+import { useNotificationSettings } from "@/services/notification";
+import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
+import { reportError } from "@/shared/lib/report-error";
 import { AppText } from "@/shared/ui";
 import Constants from "expo-constants";
 import * as IntentLauncher from "expo-intent-launcher";
-import { useEffect, useState } from "react";
-import { AppState, Linking, Platform, Pressable, View } from "react-native";
+import { Linking, Platform, Pressable, View } from "react-native";
 import SettingSectionLayout from "../layout/setting-section-layout";
 import SettingLink from "../setting-link";
 import SettingToggle from "../setting-toggle";
@@ -36,7 +37,7 @@ const DeviceNotificationSettingsLink = () => {
 
       await Linking.openSettings();
     } catch (error) {
-      console.error("기기 알림 설정 화면을 여는 중 오류 발생", error);
+      reportError(error, { scope: "notification.openDeviceSettings" });
       toast.error("기기 설정 화면을 열지 못했어요.");
     }
   };
@@ -64,92 +65,45 @@ const SettingNotification = ({
   alarmTimeLabel,
   onEditAlarmTime,
 }: SettingNotificationProps) => {
-  const [isNotifications, setIsNotifications] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const syncNotificationState = async () => {
-      try {
-        const settingsState = await notification.getSettingsState();
-
-        if (!isMounted) return;
-
-        setIsNotifications(settingsState.pushEnabled);
-        setHasPermission(settingsState.hasPermission);
-      } catch (error) {
-        console.error("알림 설정 상태 조회 중 오류 발생", error);
-
-        if (!isMounted) return;
-
-        setIsNotifications(false);
-        setHasPermission(false);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void syncNotificationState();
-
-    const subscription = AppState.addEventListener("change", (state) => {
-      if (state === "active") {
-        void syncNotificationState();
-      }
-    });
-
-    return () => {
-      isMounted = false;
-      subscription.remove();
-    };
-  }, []);
+  const { profileId } = useUser();
+  const {
+    settingsState,
+    isLoading,
+    isUpdating,
+    setPushEnabled,
+  } = useNotificationSettings(profileId);
+  const isNotifications = settingsState?.pushEnabled ?? false;
+  const hasPermission = settingsState?.hasPermission ?? false;
 
   const handleToggle = async (nextValue: boolean) => {
     if (isUpdating) return;
 
-    const previousValue = isNotifications;
-
-    setIsNotifications(nextValue);
-    setIsUpdating(true);
-
     try {
-      await notification.setPushEnabledFromSettings(nextValue);
-
-      const settingsState = await notification.getSettingsState();
-
-      setIsNotifications(settingsState.pushEnabled);
-      setHasPermission(settingsState.hasPermission);
+      const nextSettingsState = await setPushEnabled(nextValue);
 
       if (!nextValue) {
         return;
       }
 
-      if (!settingsState.hasPermission) {
+      if (!nextSettingsState.hasPermission) {
         toast.error("기기 설정에서 알림 권한을 허용해 주세요.");
         return;
       }
 
-      if (!settingsState.pushEnabled) {
+      if (!nextSettingsState.pushEnabled) {
         toast.error("알림을 켜지 못했어요. 잠시 후 다시 시도해 주세요.");
         return;
       }
 
-      if (!settingsState.hasPushToken) {
+      if (!nextSettingsState.hasPushToken) {
         toast.error(
           "알림 권한은 켰지만 푸시 토큰을 발급받지 못했어요. 앱을 다시 실행한 뒤 확인해 주세요.",
         );
         return;
       }
     } catch (error) {
-      console.error("알림 설정 변경 중 오류 발생", error);
-      setIsNotifications(previousValue);
+      reportError(error, { scope: "notification.updateSettings" });
       toast.error("알림 설정을 변경하는 중 오류가 발생했어요.");
-    } finally {
-      setIsUpdating(false);
     }
   };
 
