@@ -61,6 +61,9 @@ type SettingNotificationProps = {
   onEditAlarmTime: () => void;
 };
 
+// EAS-79: 지정 시간 기능은 삭제하지 않고, 21시 고정 정책 동안 진입점만 숨긴다.
+const CUSTOM_REMINDER_TIME_UI_ENABLED = false;
+
 const SettingNotification = ({
   alarmTimeLabel,
   onEditAlarmTime,
@@ -112,12 +115,16 @@ const SettingNotification = ({
       {!isLoading && hasPermission && (
         <SettingToggle
           label="정기 알림"
-          description="설정한 시간에 알림을 보내드려요"
+          description={
+            CUSTOM_REMINDER_TIME_UI_ENABLED
+              ? "설정한 시간에 알림을 보내드려요"
+              : "오후 9시에 알림을 보내드려요"
+          }
           value={isNotifications}
           onToggle={handleToggle}
           disabled={isLoading || isUpdating}
           accessory={
-            isNotifications ? (
+            CUSTOM_REMINDER_TIME_UI_ENABLED && isNotifications ? (
               <Pressable
                 className="mt-[9px] h-[26px] self-start flex-row items-center gap-[3px] rounded-[100px] bg-primary-10 px-[9px] py-[3px]"
                 onPress={onEditAlarmTime}

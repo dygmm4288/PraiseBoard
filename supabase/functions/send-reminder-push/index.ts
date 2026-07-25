@@ -8,6 +8,8 @@ const MESSAGE_TITLE = "웨일던";
 const MESSAGE_BODY =
   "오늘 하루도 얼마 남지 않았어요. 1분만 투자해서 습관을 지켜볼까요?";
 
+type ReminderPolicy = "custom_time" | "fixed_21";
+
 type ExpoTicket = {
   status: "ok" | "error";
   id?: string;
@@ -27,6 +29,11 @@ type PushMessage = {
   logId: string;
   token: string;
 };
+
+const CLAIM_RPC_BY_POLICY = {
+  custom_time: "claim_due_push_reminders",
+  fixed_21: "claim_fixed_21_push_reminders",
+} as const satisfies Record<ReminderPolicy, string>;
 
 const getEnv = (key: string) => {
   const value = Deno.env.get(key);
@@ -72,6 +79,17 @@ serve(async (request: Request) => {
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const requestBody = (await request.json().catch(() => ({}))) as {
+      policy?: unknown;
+    };
+    const policy = requestBody.policy ?? "custom_time";
+    if (policy !== "custom_time" && policy !== "fixed_21") {
+      return Response.json(
+        { ok: false, error: "Invalid reminder policy" },
+        { status: 400 },
+      );
+    }
+
     const supabase = createClient(
       getEnv("SUPABASE_URL"),
       getSupabaseServiceKey(),
@@ -79,7 +97,7 @@ serve(async (request: Request) => {
     );
 
     const { data: claimedReminders, error: claimError } = await supabase.rpc(
-      "claim_due_push_reminders",
+      CLAIM_RPC_BY_POLICY[policy],
       {
         p_limit: 1000,
         p_message_type: MESSAGE_TYPE,
@@ -208,6 +226,7 @@ serve(async (request: Request) => {
 
     const summary = {
       ok: true,
+      policy,
       claimedProfiles: reminders.length,
       queuedTokens: messages.length,
       sentTokens: sentTokenCount,
