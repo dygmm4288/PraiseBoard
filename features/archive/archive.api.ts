@@ -1,4 +1,3 @@
-import { boardApi } from "@/features/board/board.api";
 import { supabase } from "@/shared/lib/supabase";
 import { getMonthRange } from "@/shared/utils/month";
 import {
@@ -29,10 +28,6 @@ const getSelectedDate = (month: string, todayKey: string) => {
 };
 
 export const archiveApi = {
-  async forceSetComplete(boardId: string) {
-    await boardApi.forceSetComplete(boardId);
-  },
-
   async getDetail({
     boardId,
     month,

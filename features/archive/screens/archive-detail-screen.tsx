@@ -1,16 +1,12 @@
 import { Icon } from "@/assets/icons";
 import ArchiveDetailItem from "@/features/archive/components/detail/archive-detail-item";
-import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
-import { archive } from "@/features/archive/service";
-import { boardKeys, useBoardSheet } from "@/features/board";
+import { useBoardSheet } from "@/features/board";
+import DebugForceCompleteBoardButton from "@/features/debug/debug-force-complete-board-button";
 import useTodayKey from "@/shared/hooks/use-today-key";
-import { toast } from "@/shared/toasts/toast";
-import { AppButton, AppText, Screen } from "@/shared/ui";
-import { isDebugEnabled } from "@/shared/constants/environment";
+import { AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { formatMonthKey } from "@/shared/utils/date";
-import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -18,7 +14,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ArchiveDetailScreen = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const boardId = typeof params.id === "string" ? params.id : null;
@@ -45,20 +40,6 @@ const ArchiveDetailScreen = () => {
       rewardMemo: board.rewardMemo,
       onDeleted: () => router.back(),
     });
-  };
-
-  const handleForceComplete = async () => {
-    if (!isDebugEnabled || !boardId) return;
-
-    try {
-      await archive.forceSetComplete(boardId);
-      await queryClient.invalidateQueries({ queryKey: boardKeys.all });
-      await queryClient.invalidateQueries({ queryKey: archiveKeys.all });
-      toast.chatError("보드를 강제 완료했어요.");
-    } catch (error) {
-      console.error("보드 강제 완료 중 오류 발생", error);
-      toast.chatError("보드 강제 완료에 실패했어요.");
-    }
   };
 
   return (
@@ -115,16 +96,7 @@ const ArchiveDetailScreen = () => {
               detail={detail}
               onMonthChange={(date) => setMonth(formatMonthKey(date))}
             />
-            {isDebugEnabled ? (
-              <AppButton
-                variant="tertiary"
-                className="mt-6"
-                disabled={!boardId}
-                onPress={handleForceComplete}
-              >
-                디버그: 강제 완료
-              </AppButton>
-            ) : null}
+            <DebugForceCompleteBoardButton boardId={boardId} />
           </>
         )}
       </ScrollView>

@@ -1,17 +1,17 @@
 import { useHomeBoardsQuery } from "@/features/board";
-import { localStorage } from "@/infra/storage";
-import {
-  notification,
-  PushState,
-  PushTokenDebugInfo,
-} from "@/services/notification";
+import type { PushState } from "@/services/notification";
 import { UserFlowOverrideMode, useUser } from "@/services/user";
+import { reportError } from "@/shared/lib/report-error";
 import { AppButton, AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
-import * as Notifications from "expo-notifications";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import {
+  getNotificationDebugSnapshot,
+  getPushTokenDebugInfo,
+  type PushTokenDebugInfo,
+} from "./debug-notification";
 
 const USER_FLOW_OPTIONS: {
   value: UserFlowOverrideMode;
@@ -109,23 +109,17 @@ const NotificationDebugCard = () => {
     try {
       setIsLoading(true);
 
-      const [profileId, deviceId, permissions, pushState] = await Promise.all([
-        localStorage.getItem("profile_id"),
-        localStorage.getItem("device_id"),
-        Notifications.getPermissionsAsync(),
-        notification.getPushStateFromSettings().catch(() => null),
-      ]);
+      const snapshot = await getNotificationDebugSnapshot();
 
-      setState({
-        profileId,
-        deviceId,
-        osPermissionStatus: permissions.status,
-        pushState,
-        tokenDebugInfo: state.tokenDebugInfo,
-        errorMessage: pushState ? null : "push state를 불러오지 못했어요.",
-      });
+      setState((current) => ({
+        ...snapshot,
+        tokenDebugInfo: current.tokenDebugInfo,
+        errorMessage: snapshot.pushState
+          ? null
+          : "push state를 불러오지 못했어요.",
+      }));
     } catch (error) {
-      console.error("알림 디버그 상태 조회 중 오류 발생", error);
+      reportError(error, { scope: "debug.notificationSnapshot" });
       setState((current) => ({
         ...current,
         errorMessage: "알림 디버그 상태 조회 중 오류가 발생했어요.",
@@ -133,13 +127,13 @@ const NotificationDebugCard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [state.tokenDebugInfo]);
+  }, []);
 
   const diagnosePushToken = useCallback(async () => {
     try {
       setIsDiagnosingToken(true);
 
-      const tokenDebugInfo = await notification.getPushTokenDebugInfo();
+      const tokenDebugInfo = await getPushTokenDebugInfo();
 
       setState((current) => ({
         ...current,
@@ -147,7 +141,7 @@ const NotificationDebugCard = () => {
         errorMessage: tokenDebugInfo.errorMessage,
       }));
     } catch (error) {
-      console.error("푸시 토큰 진단 중 오류 발생", error);
+      reportError(error, { scope: "debug.pushToken" });
       setState((current) => ({
         ...current,
         errorMessage: "푸시 토큰 진단 중 오류가 발생했어요.",

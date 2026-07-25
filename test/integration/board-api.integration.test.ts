@@ -16,6 +16,7 @@ jest.mock("@/infra/storage", () => {
 
 import { boardApi } from "@/features/board/board.api";
 import { ActiveBoardLimitError } from "@/features/board/types";
+import { forceCompleteBoard } from "@/features/debug/debug-board";
 import { userApi } from "@/services/user/user.api";
 import { supabase } from "@/shared/lib/supabase";
 
@@ -77,8 +78,11 @@ describe("local Supabase API contract", () => {
       },
     );
 
-    const completedBoard = await boardApi.forceSetComplete(board.id);
-    expect(completedBoard.status).toBe("completed");
+    await forceCompleteBoard(board.id);
+    const completedBoard = (await boardApi.getBoards({})).items.find(
+      (item) => item.id === board.id,
+    );
+    expect(completedBoard?.status).toBe("completed");
     await expect(boardApi.collectSticker(board.id, "app")).rejects.toMatchObject(
       {
         reason: "BOARD_COMPLETED",
