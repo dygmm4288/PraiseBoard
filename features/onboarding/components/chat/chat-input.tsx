@@ -37,15 +37,9 @@ const ChatInput = ({
   const sendDisabled = useMemo(() => value.length === 0, [value]);
   const handleChangeText = useCallback(
     (nextValue: string) => {
-      if (maxLength !== undefined && nextValue.length > maxLength) {
-        onMaxLengthExceeded?.();
-        onChangeText(nextValue.slice(0, maxLength));
-        return;
-      }
-
       onChangeText(nextValue);
     },
-    [maxLength, onChangeText, onMaxLengthExceeded],
+    [onChangeText],
   );
   const handleKeyPress = useCallback(
     (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -106,6 +100,7 @@ const ChatInput = ({
             className="h-full w-full py-0 font-pretendard text-[14px] leading-[20px] text-black"
             style={{ includeFontPadding: false, textAlignVertical: "center" }}
             value={value}
+            maxLength={maxLength}
             onChangeText={handleChangeText}
             onKeyPress={handleKeyPress}
             onSubmitEditing={handleSubmitEditing}
