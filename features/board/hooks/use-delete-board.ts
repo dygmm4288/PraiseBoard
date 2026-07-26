@@ -1,4 +1,5 @@
 import { boardApi } from "@/features/board/board.api";
+import { analytics } from "@/services/analytics";
 import { toast } from "@/shared/toasts/toast";
 import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,9 +11,11 @@ export const useDeleteBoard = (boardId: string) => {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: () => boardApi.deleteBoard(boardId),
     onSuccess: () => {
+      void analytics.board.deleted();
       void refreshAfterBoardChanged(queryClient, boardId);
     },
     onError: (error) => {
+      void analytics.action.failed("board_delete");
       reportError(error, { scope: "board.delete" });
       toast.error("삭제에 실패했습니다");
     },

@@ -93,8 +93,10 @@ const presentSheet = async (
   label: string,
   captureControls?: (controls: TopLevelSheetControls) => void,
 ) => {
+  let wasAccepted = false;
+
   await act(async () => {
-    sheetApi.presentTopLevelSheet({
+    wasAccepted = sheetApi.presentTopLevelSheet({
       sheetKey,
       snapPoints: [300],
       renderContent: (controls) => {
@@ -103,6 +105,8 @@ const presentSheet = async (
       },
     });
   });
+
+  return wasAccepted;
 };
 
 beforeEach(() => {
@@ -138,9 +142,11 @@ test("이전 sheet의 늦은 dismiss가 교체된 sheet를 닫지 않는다", as
 test("같은 sheetKey의 연속 요청은 현재 sheet를 다시 열지 않는다", async () => {
   await render(<TestApp />);
 
-  await presentSheet("board-create", "기존 입력");
-  await presentSheet("board-create", "새 입력");
+  const firstAccepted = await presentSheet("board-create", "기존 입력");
+  const duplicateAccepted = await presentSheet("board-create", "새 입력");
 
+  expect(firstAccepted).toBe(true);
+  expect(duplicateAccepted).toBe(false);
   expect(mockDismiss).not.toHaveBeenCalled();
   expect(mockPresent).toHaveBeenCalledTimes(1);
   expect(screen.getByText("기존 입력")).toBeTruthy();

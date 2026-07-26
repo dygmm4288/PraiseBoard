@@ -12,6 +12,7 @@
       "supportsTablet": true,
       "icon": "./assets/images/app-icon.png",
       "bundleIdentifier": "com.whaledone.whaledone",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -58,7 +59,17 @@
       "expo-notifications",
       "expo-web-browser",
       "expo-video",
-      "expo-localization"
+      "expo-localization",
+      "@react-native-firebase/app",
+      "@react-native-firebase/analytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

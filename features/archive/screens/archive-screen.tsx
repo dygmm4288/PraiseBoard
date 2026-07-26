@@ -1,11 +1,13 @@
 import { BoardItem } from "@/features/board";
 import { FnbScrollView } from "@/features/navigation";
+import { useTrackView } from "@/services/analytics";
 import { Screen } from "@/shared/ui";
 import ScreenHeader from "@/shared/ui/screen-header";
 import ArchiveSection from "../components/list/archive-list";
 import useArchive from "../hooks/use-archive";
 
 const ArchiveScreen = () => {
+  useTrackView("archive");
   const { activeBoards, completedBoards } = useArchive();
 
   return (

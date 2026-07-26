@@ -3,6 +3,7 @@ import {
   BoardStickerSource,
   CollectStickerError,
 } from "@/features/board/types";
+import { analytics } from "@/services/analytics";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { reportError } from "@/shared/lib/report-error";
@@ -30,7 +31,8 @@ export const useCollectSticker = () => {
         profileId,
       });
     },
-    onSuccess: async (updatedBoard) => {
+    onSuccess: async (updatedBoard, variables) => {
+      void analytics.board.stickerCollected(variables.source);
       await refreshAfterStickerCollected(queryClient, updatedBoard.id);
     },
     onError: async (
@@ -49,6 +51,7 @@ export const useCollectSticker = () => {
         return;
       }
 
+      void analytics.action.failed("sticker_collect");
       reportError(error, { scope: "board.collect" });
       toast.error("실패했습니다");
     },

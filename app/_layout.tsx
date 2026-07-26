@@ -3,6 +3,7 @@ import {
   useIsFnbVisible,
   useRootBackExit,
 } from "@/features/navigation";
+import { postHogClient } from "@/services/analytics";
 import { AppLifecycleEffects } from "@/services/app-lifecycle";
 import { UserProvider, useUser } from "@/services/user";
 import { TopLevelSheetProvider } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
@@ -57,8 +58,8 @@ const RootLayoutNav = () => {
       <StatusBar style={statusBarStyle} />
       <View className="flex-1" style={{ backgroundColor: rootBackgroundColor }}>
         <PostHogProvider
-          apiKey={process.env.EXPO_PUBLIC_POST_HOG_API_KEY}
-          options={{ host: process.env.EXPO_PUBLIC_POST_HOG_URL }}
+          autocapture={false}
+          client={postHogClient}
         >
           <TopLevelSheetProvider>
             <View

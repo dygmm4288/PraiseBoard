@@ -4,6 +4,7 @@ import {
   BoardUpdatePayload,
   normalizeBoardUpdatePayload,
 } from "@/features/board/schema";
+import { analytics } from "@/services/analytics";
 import { toast } from "@/shared/toasts/toast";
 import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -30,9 +31,11 @@ export const useUpdateBoard = (
       return boardApi.updateBoard(payload);
     },
     onSuccess: () => {
+      void analytics.board.updated();
       void refreshAfterBoardChanged(queryClient, boardId);
     },
     onError: (error) => {
+      void analytics.action.failed("board_update");
       reportError(error, { scope: "board.update" });
       toast.error("수정에 실패했습니다");
     },

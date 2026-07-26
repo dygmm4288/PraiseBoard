@@ -5,6 +5,7 @@ import {
 } from "@/features/board";
 import { refreshAfterBoardChanged } from "@/features/board/queries/board-cache";
 import { notification } from "@/services/notification";
+import { analytics } from "@/services/analytics";
 import { useUser } from "@/services/user";
 import { toast } from "@/shared/toasts/toast";
 import { reportError } from "@/shared/lib/report-error";
@@ -41,6 +42,7 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
     try {
       await notification.requestPermissionFromOnboarding();
     } catch (error) {
+      void analytics.action.failed("notification_permission");
       reportError(error, { scope: "onboarding.notificationPermission" });
       toast.error("알림 권한 정보를 저장하는 중 오류가 발생했어요.");
     }
@@ -65,11 +67,13 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
     try {
       createdBoard = await persistOnboardingSetup();
     } catch (error) {
+      void analytics.action.failed("onboarding_setup");
       reportError(error, { scope: "onboarding.saveSetup" });
       toast.error("보드를 저장하는 중 오류가 발생했어요.");
       return;
     }
 
+    void analytics.board.created("onboarding");
     await requestNotificationPermission();
     await completeOnboarding();
 
@@ -78,6 +82,7 @@ const useOnboardingCompletionFlow = ({ form }: Props) => {
     }
 
     await refreshAfterBoardChanged(queryClient);
+    void analytics.onboarding.stepCompleted("notification");
     openHomePreview(createdBoard);
   }, [
     completeOnboarding,

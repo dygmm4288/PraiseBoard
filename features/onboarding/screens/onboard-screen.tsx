@@ -2,6 +2,11 @@ import {
   BOARD_SETUP_DEFAULT_VALUES,
   type BoardSetupFormValues,
 } from "@/features/board";
+import {
+  analytics,
+  useTrackOnboardingStart,
+  type OnboardingStep,
+} from "@/services/analytics";
 import { Stepper } from "@/shared/components";
 import { ReactNode } from "react";
 import { FormProvider } from "react-hook-form";
@@ -44,6 +49,11 @@ const buildInitialValues = (
   },
 });
 
+export const completeStep = (step: OnboardingStep, next: () => void) => {
+  void analytics.onboarding.stepCompleted(step);
+  next();
+};
+
 export const OnboardScreenContent = ({
   defaultStep = "name",
   initialValues,
@@ -59,19 +69,34 @@ export const OnboardScreenContent = ({
             <View className="flex-1">
               <OnboardHeader stepName={currentValue as STEPS} />
               {currentValue === "name" && (
-                <OnboardStepName form={form} onNext={next} />
+                <OnboardStepName
+                  form={form}
+                  onNext={() => completeStep("name", next)}
+                />
               )}
               {currentValue === "title" && (
-                <OnboardStepTitle form={form} onNext={next} />
+                <OnboardStepTitle
+                  form={form}
+                  onNext={() => completeStep("title", next)}
+                />
               )}
               {currentValue === "reward" && (
-                <OnboardStepReward form={form} onNext={next} />
+                <OnboardStepReward
+                  form={form}
+                  onNext={() => completeStep("reward", next)}
+                />
               )}
               {currentValue === "limit" && (
-                <OnboardStepLimit form={form} onNext={next} />
+                <OnboardStepLimit
+                  form={form}
+                  onNext={() => completeStep("limit", next)}
+                />
               )}
               {currentValue === "limitCount" && (
-                <OnboardStepCount form={form} onNext={next} />
+                <OnboardStepCount
+                  form={form}
+                  onNext={() => completeStep("limitCount", next)}
+                />
               )}
               {currentValue === "notification" && (
                 <>
@@ -94,6 +119,8 @@ export const OnboardScreenContent = ({
 };
 
 const OnboardScreen = () => {
+  useTrackOnboardingStart();
+
   return <OnboardScreenContent />;
 };
 

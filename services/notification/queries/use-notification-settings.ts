@@ -1,3 +1,4 @@
+import { analytics } from "@/services/analytics";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { notification } from "../service/notification.service";
 import { notificationKeys } from "./notification.query.key";
@@ -18,8 +19,16 @@ export const useNotificationSettings = (profileId: string | null) => {
       await notification.setPushEnabledFromSettings(enabled);
       return notification.getSettingsState();
     },
-    onSuccess: (settingsState) => {
+    onSuccess: (settingsState, enabled) => {
       queryClient.setQueryData(queryKey, settingsState);
+      void analytics.notification.toggled({
+        requestedEnabled: enabled,
+        resultEnabled: settingsState.pushEnabled,
+        permissionStatus: settingsState.permissionStatus,
+      });
+    },
+    onError: () => {
+      void analytics.action.failed("notification_toggle");
     },
   });
 

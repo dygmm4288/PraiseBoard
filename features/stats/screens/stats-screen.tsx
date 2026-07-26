@@ -1,4 +1,5 @@
 import { useUser } from "@/services/user";
+import { useTrackView } from "@/services/analytics";
 import { FnbScrollView } from "@/features/navigation";
 import { Calendar } from "@/shared/components";
 import { AppText, Screen } from "@/shared/ui";
@@ -27,6 +28,7 @@ const StatsStatusText = ({ message }: { message: string }) => {
 };
 
 const StatsScreen = () => {
+  useTrackView("stats");
   const { profileId } = useUser();
   const [monthDate, setMonthDate] = useState(() => {
     return getMonthDate(new Date());

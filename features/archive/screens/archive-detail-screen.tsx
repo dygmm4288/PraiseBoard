@@ -4,7 +4,8 @@ import ArchiveDetailSkeleton from "@/features/archive/components/detail/archive-
 import { useArchiveDetailQuery } from "@/features/archive/queries/use-archive-detail-query";
 import { useBoardSheet } from "@/features/board";
 import DebugForceCompleteBoardButton from "@/features/debug/debug-force-complete-board-button";
-import useTodayKey from "@/shared/hooks/use-today-key";
+import { useTrackView } from "@/services/analytics";
+import { useTodayKey } from "@/shared/hooks/use-today-key";
 import { AppText, Screen } from "@/shared/ui";
 import { cn } from "@/shared/utils/cn";
 import { formatMonthKey } from "@/shared/utils/date";
@@ -14,6 +15,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ArchiveDetailScreen = () => {
+  useTrackView("detail");
   const router = useRouter();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();

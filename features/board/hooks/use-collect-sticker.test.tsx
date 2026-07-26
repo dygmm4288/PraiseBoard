@@ -1,6 +1,7 @@
 import { archiveKeys } from "@/features/archive/queries/archive.query.key";
 import { collectStickerAction } from "@/features/board/actions/collect-sticker";
 import { BoardRecord, CollectStickerError } from "@/features/board/types";
+import { analytics } from "@/services/analytics";
 import { toast } from "@/shared/toasts/toast";
 import {
   defaultScheduler,
@@ -23,6 +24,17 @@ jest.mock("@/services/user", () => ({
   }),
 }));
 
+jest.mock("@/services/analytics", () => ({
+  analytics: {
+    action: {
+      failed: jest.fn().mockResolvedValue(undefined),
+    },
+    board: {
+      stickerCollected: jest.fn().mockResolvedValue(undefined),
+    },
+  },
+}));
+
 jest.mock("@/shared/toasts/toast", () => ({
   toast: {
     error: jest.fn(),
@@ -37,6 +49,7 @@ jest.mock("@/services/whale-message", () => ({
 
 const collectStickerActionMock = jest.mocked(collectStickerAction);
 const errorMock = jest.mocked(toast.error);
+const stickerCollectedMock = jest.mocked(analytics.board.stickerCollected);
 
 const updatedBoard: BoardRecord = {
   id: "board-1",
@@ -118,6 +131,7 @@ test("스티커 저장 성공 후 관련 조회를 갱신한다", async () => {
       queryKey: archiveKeys.detail("board-1"),
     }),
   );
+  expect(stickerCollectedMock).toHaveBeenCalledWith("app");
 });
 
 test("스티커 action에 현재 사용자 정보를 전달한다", async () => {

@@ -1,6 +1,7 @@
 import BoardCreate from "@/features/board/components/board-create/board-create";
 import BoardEditSheetContent from "@/features/board/components/board-create/board-edit-sheet-content";
 import { BoardCreateFormValues } from "@/features/board/schema";
+import { analytics } from "@/services/analytics";
 import { useUser } from "@/services/user";
 import { useTopLevelSheet } from "@/shared/components/bottom-sheet/top-level-sheet-provider";
 import { toast } from "@/shared/toasts/toast";
@@ -42,6 +43,7 @@ export const useBoardSheet = () => {
 
   const openCreateSheet = useCallback(() => {
     if (!canCreateBoard(activeBoardCount)) {
+      void analytics.board.activeLimitReached("client");
       return toast.error(ACTIVE_BOARD_LIMIT_MESSAGE);
     }
 
@@ -61,7 +63,7 @@ export const useBoardSheet = () => {
 
   const openEditSheet = useCallback(
     (board: BoardEditSheetInput) => {
-      presentTopLevelSheet({
+      const wasAccepted = presentTopLevelSheet({
         sheetKey: `board-edit:${board.id}`,
         snapPoints: BOARD_SHEET_SNAP_POINTS,
         keyboardBehavior: "fillParent",
@@ -79,6 +81,9 @@ export const useBoardSheet = () => {
           </BottomSheetView>
         ),
       });
+      if (wasAccepted) {
+        void analytics.board.editStarted();
+      }
     },
     [presentTopLevelSheet],
   );

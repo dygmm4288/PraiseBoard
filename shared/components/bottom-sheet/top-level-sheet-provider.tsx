@@ -27,7 +27,7 @@ import { usePathname } from "expo-router";
 import { KeyboardController } from "react-native-keyboard-controller";
 
 type TopLevelSheetContextValue = {
-  presentTopLevelSheet: (config: TopLevelSheetConfig) => void;
+  presentTopLevelSheet: (config: TopLevelSheetConfig) => boolean;
 };
 
 const TopLevelSheetContext = createContext<TopLevelSheetContextValue | null>(
@@ -61,7 +61,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
             "presentTopLevelSheet requires at least one snap point; the request was ignored.",
           );
         }
-        return;
+        return false;
       }
 
       if (!hasSheetKey(config)) {
@@ -70,7 +70,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
             "presentTopLevelSheet requires a non-empty sheetKey; the request was ignored.",
           );
         }
-        return;
+        return false;
       }
 
       const activePresentation = activePresentationRef.current;
@@ -81,7 +81,7 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
           activePresentation?.config.sheetKey === config.sheetKey) ||
         pendingPresentation?.config.sheetKey === config.sheetKey
       ) {
-        return;
+        return false;
       }
 
       const nextPresentation: TopLevelSheetPresentation = {
@@ -94,11 +94,12 @@ export const TopLevelSheetProvider = ({ children }: PropsWithChildren) => {
         // A replacement waits for the active modal's onDismiss; only the latest request is retained.
         pendingPresentationRef.current = nextPresentation;
         dismissActivePresentation();
-        return;
+        return true;
       }
 
       activePresentationRef.current = nextPresentation;
       setConfig(nextPresentation.config);
+      return true;
     },
     [dismissActivePresentation],
   );

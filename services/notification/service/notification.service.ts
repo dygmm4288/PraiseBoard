@@ -1,5 +1,6 @@
 import { ensureAndroidChannels } from "@/infra/notification/channel";
 import { localStorage } from "@/infra/storage";
+import { analytics } from "@/services/analytics";
 import { reportError } from "@/shared/lib/report-error";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
@@ -114,11 +115,13 @@ const requestPermissionAndSave = async () => {
   }
 
   if (status !== "granted") {
+    const permissionStatus = resolvePermissionStatus(status);
     await savePushState({
       pushEnabled: false,
       pushToken: null,
-      permissionStatus: resolvePermissionStatus(status),
+      permissionStatus,
     });
+    void analytics.notification.permissionResolved(permissionStatus);
     return false;
   }
 
@@ -128,6 +131,7 @@ const requestPermissionAndSave = async () => {
     pushToken,
     permissionStatus: "granted",
   });
+  void analytics.notification.permissionResolved("granted");
   return pushToken !== null;
 };
 

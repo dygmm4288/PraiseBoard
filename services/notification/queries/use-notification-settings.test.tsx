@@ -1,6 +1,7 @@
 import { NotificationSettingsState } from "../model/notification.interface";
 import { notification } from "../service/notification.service";
 import { useNotificationSettings } from "./use-notification-settings";
+import { analytics } from "@/services/analytics";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { PropsWithChildren } from "react";
@@ -12,10 +13,22 @@ jest.mock("../service/notification.service", () => ({
   },
 }));
 
+jest.mock("@/services/analytics", () => ({
+  analytics: {
+    action: {
+      failed: jest.fn().mockResolvedValue(undefined),
+    },
+    notification: {
+      toggled: jest.fn().mockResolvedValue(undefined),
+    },
+  },
+}));
+
 const getSettingsStateMock = jest.mocked(notification.getSettingsState);
 const setPushEnabledMock = jest.mocked(
   notification.setPushEnabledFromSettings,
 );
+const notificationToggledMock = jest.mocked(analytics.notification.toggled);
 
 const disabledState: NotificationSettingsState = {
   pushToken: null,
@@ -38,6 +51,13 @@ const enabledState: NotificationSettingsState = {
   isOperational: true,
 };
 
+const deniedState: NotificationSettingsState = {
+  ...disabledState,
+  pushPermissionStatus: "denied",
+  permissionStatus: "denied",
+  hasPermission: false,
+};
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -52,9 +72,11 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: PropsWithChildren) => (
+  const Wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
+  return Wrapper;
 };
 
 beforeEach(() => {
@@ -108,4 +130,35 @@ test("알림 변경 후 서버에서 다시 확인한 상태를 cache에 공유�
     expect(result.current.second.settingsState).toEqual(enabledState);
   });
   expect(setPushEnabledMock).toHaveBeenCalledWith(true);
+  expect(notificationToggledMock).toHaveBeenCalledWith({
+    requestedEnabled: true,
+    resultEnabled: true,
+    permissionStatus: "granted",
+  });
+});
+
+test("toggle 요청값과 서버에서 확인한 실제 결과를 분리한다", async () => {
+  getSettingsStateMock
+    .mockResolvedValueOnce(disabledState)
+    .mockResolvedValueOnce(deniedState);
+  const { result } = await renderHook(
+    () => useNotificationSettings("profile-1"),
+    { wrapper: createWrapper() },
+  );
+  await waitFor(() =>
+    expect(result.current.settingsState).toEqual(disabledState),
+  );
+
+  await act(async () => {
+    await result.current.setPushEnabled(true);
+  });
+
+  await waitFor(() =>
+    expect(result.current.settingsState).toEqual(deniedState),
+  );
+  expect(notificationToggledMock).toHaveBeenCalledWith({
+    requestedEnabled: true,
+    resultEnabled: false,
+    permissionStatus: "denied",
+  });
 });

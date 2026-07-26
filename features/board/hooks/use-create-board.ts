@@ -7,6 +7,7 @@ import {
 import { boardApi } from "@/features/board/board.api";
 import { ActiveBoardLimitError } from "@/features/board/types";
 import { useUser } from "@/services/user";
+import { analytics } from "@/services/analytics";
 import { toast } from "@/shared/toasts/toast";
 import { reportError } from "@/shared/lib/report-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -38,15 +39,18 @@ export const useCreateBoard = () => {
       return boardApi.createBoard(payload);
     },
     onSuccess: () => {
+      void analytics.board.created("board_create");
       resetBoard();
       void refreshAfterBoardChanged(queryClient);
     },
     onError: (error) => {
       if (error instanceof ActiveBoardLimitError) {
+        void analytics.board.activeLimitReached("server");
         toast.error(ACTIVE_BOARD_LIMIT_MESSAGE);
         return;
       }
 
+      void analytics.action.failed("board_create");
       reportError(error, { scope: "board.create" });
       toast.error("실패했습니다");
     },
