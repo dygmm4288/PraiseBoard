@@ -1,8 +1,12 @@
+import type { AnalyticsEventMap } from "../core/analytics.types";
 import { trackEvent } from "../core/track-event";
 
-export type BoardCreatedSource = "board_create" | "onboarding";
-export type StickerSource = "app" | "widget";
-export type ActiveLimitSource = "client" | "server";
+export type BoardCreatedSource =
+  AnalyticsEventMap["board_created"]["source"];
+export type StickerSource =
+  AnalyticsEventMap["sticker_collected"]["source"];
+export type ActiveLimitSource =
+  AnalyticsEventMap["active_limit_reached"]["source"];
 
 /**
  * TODO(EAS-86)

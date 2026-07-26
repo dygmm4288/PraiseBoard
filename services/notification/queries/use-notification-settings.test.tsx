@@ -2,7 +2,12 @@ import { NotificationSettingsState } from "../model/notification.interface";
 import { notification } from "../service/notification.service";
 import { useNotificationSettings } from "./use-notification-settings";
 import { analytics } from "@/services/analytics";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  defaultScheduler,
+  notifyManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { PropsWithChildren } from "react";
 
@@ -29,6 +34,7 @@ const setPushEnabledMock = jest.mocked(
   notification.setPushEnabledFromSettings,
 );
 const notificationToggledMock = jest.mocked(analytics.notification.toggled);
+const actionFailedMock = jest.mocked(analytics.action.failed);
 
 const disabledState: NotificationSettingsState = {
   pushToken: null,
@@ -57,6 +63,14 @@ const deniedState: NotificationSettingsState = {
   permissionStatus: "denied",
   hasPermission: false,
 };
+
+beforeAll(() => {
+  notifyManager.setScheduler((callback) => callback());
+});
+
+afterAll(() => {
+  notifyManager.setScheduler(defaultScheduler);
+});
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -161,4 +175,23 @@ test("toggle 요청값과 서버에서 확인한 실제 결과를 분리한다",
     resultEnabled: false,
     permissionStatus: "denied",
   });
+});
+
+test("toggle 저장 실패는 결과 event 대신 action_failed를 기록한다", async () => {
+  const error = new Error("save failed");
+  setPushEnabledMock.mockRejectedValueOnce(error);
+  const { result } = await renderHook(
+    () => useNotificationSettings("profile-1"),
+    { wrapper: createWrapper() },
+  );
+  await waitFor(() =>
+    expect(result.current.settingsState).toEqual(disabledState),
+  );
+
+  await act(async () => {
+    await expect(result.current.setPushEnabled(true)).rejects.toBe(error);
+  });
+
+  expect(actionFailedMock).toHaveBeenCalledWith("notification_toggle");
+  expect(notificationToggledMock).not.toHaveBeenCalled();
 });

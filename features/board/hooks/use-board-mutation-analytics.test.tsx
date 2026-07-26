@@ -1,7 +1,12 @@
 import { boardApi } from "@/features/board/board.api";
 import { ActiveBoardLimitError } from "@/features/board/types";
 import { analytics } from "@/services/analytics";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  defaultScheduler,
+  notifyManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react-native";
 import type { PropsWithChildren } from "react";
 import { refreshAfterBoardChanged } from "../queries/board-cache";
@@ -84,6 +89,14 @@ const validBoardValues = {
   rewardMemo: "",
 };
 
+beforeAll(() => {
+  notifyManager.setScheduler((callback) => callback());
+});
+
+afterAll(() => {
+  notifyManager.setScheduler(defaultScheduler);
+});
+
 test("board 생성 API 성공 뒤 created를 기록한다", async () => {
   createBoardMock.mockResolvedValue({} as never);
   const { result } = await renderHook(() => useCreateBoard(), {
@@ -125,6 +138,28 @@ test("server 활성 board 제한은 expected event로 분리한다", async () =>
 
   expect(activeLimitReachedMock).toHaveBeenCalledWith("server");
   expect(actionFailedMock).not.toHaveBeenCalled();
+});
+
+test("board 생성의 일반 실패는 action_failed로 기록한다", async () => {
+  const error = new Error("create failed");
+  createBoardMock.mockRejectedValueOnce(error);
+  const { result } = await renderHook(() => useCreateBoard(), {
+    wrapper: createWrapper(),
+  });
+
+  await act(async () => {
+    for (const [key, value] of Object.entries(validBoardValues)) {
+      result.current.changeFormData(
+        key as keyof typeof validBoardValues,
+      )(value as never);
+    }
+  });
+  await act(async () => {
+    await expect(result.current.createBoard()).rejects.toBe(error);
+  });
+
+  expect(actionFailedMock).toHaveBeenCalledWith("board_create");
+  expect(boardCreatedMock).not.toHaveBeenCalled();
 });
 
 test("board 수정 성공과 실패를 각각 기록한다", async () => {

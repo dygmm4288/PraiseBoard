@@ -188,3 +188,23 @@ test("onboarding 저장 실패에는 성공 event 대신 action_failed를 기록
   expect(boardCreatedMock).not.toHaveBeenCalled();
   expect(stepCompletedMock).not.toHaveBeenCalled();
 });
+
+test("permission 처리 실패를 기록하되 onboarding 완료는 이어간다", async () => {
+  requestPermissionMock.mockRejectedValueOnce(
+    new Error("permission save failed"),
+  );
+  const { result } = await renderHook(
+    () => useOnboardingCompletionFlow({ form }),
+    { wrapper: createWrapper() },
+  );
+
+  await act(async () => {
+    await result.current.completeWithHomePreview();
+  });
+
+  expect(actionFailedMock).toHaveBeenCalledWith(
+    "notification_permission",
+  );
+  expect(stepCompletedMock).toHaveBeenCalledWith("notification");
+  expect(replaceMock).toHaveBeenCalled();
+});

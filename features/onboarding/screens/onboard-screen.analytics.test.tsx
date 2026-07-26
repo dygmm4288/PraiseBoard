@@ -14,6 +14,11 @@ jest.mock("@/shared/lib/supabase", () => ({
   supabase: {},
 }));
 
+jest.mock("../components/onboard/onboard-step-notification", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 const stepCompletedMock = jest.mocked(analytics.onboarding.stepCompleted);
 
 beforeEach(() => {

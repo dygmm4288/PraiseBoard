@@ -1,9 +1,8 @@
+import type { AnalyticsEventMap } from "../core/analytics.types";
 import { trackEvent } from "../core/track-event";
 
 export type NotificationPermissionStatus =
-  | "granted"
-  | "denied"
-  | "undetermined";
+  AnalyticsEventMap["notification_permission_result"]["status"];
 
 type NotificationToggleResult = {
   requestedEnabled: boolean;

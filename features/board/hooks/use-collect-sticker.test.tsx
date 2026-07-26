@@ -41,6 +41,10 @@ jest.mock("@/shared/toasts/toast", () => ({
   },
 }));
 
+jest.mock("@/shared/lib/report-error", () => ({
+  reportError: jest.fn(),
+}));
+
 jest.mock("@/services/whale-message", () => ({
   whaleMessageKeys: {
     all: ["whale-message"],
@@ -50,6 +54,7 @@ jest.mock("@/services/whale-message", () => ({
 const collectStickerActionMock = jest.mocked(collectStickerAction);
 const errorMock = jest.mocked(toast.error);
 const stickerCollectedMock = jest.mocked(analytics.board.stickerCollected);
+const actionFailedMock = jest.mocked(analytics.action.failed);
 
 const updatedBoard: BoardRecord = {
   id: "board-1",
@@ -202,4 +207,23 @@ test("완료된 보드에는 완료 상태 안내를 표시한다", async () => 
   await waitFor(() => expect(result.current.isPending).toBe(false));
 
   expect(errorMock).toHaveBeenCalledWith("이미 완료된 습관이에요");
+});
+
+test("알 수 없는 sticker 저장 실패는 action_failed로 기록한다", async () => {
+  const { wrapper } = createHarness();
+  const error = new Error("network failed");
+  collectStickerActionMock.mockRejectedValueOnce(error);
+  const { result } = await renderHook(() => useCollectSticker(), { wrapper });
+
+  await act(async () => {
+    await expect(
+      result.current.mutateAsync({
+        boardId: "board-1",
+        source: "app",
+      }),
+    ).rejects.toBe(error);
+  });
+
+  expect(actionFailedMock).toHaveBeenCalledWith("sticker_collect");
+  expect(stickerCollectedMock).not.toHaveBeenCalled();
 });
