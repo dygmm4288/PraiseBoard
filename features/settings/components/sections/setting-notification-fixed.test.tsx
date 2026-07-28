@@ -29,7 +29,7 @@ jest.mock("expo-intent-launcher", () => ({
 
 const useNotificationSettingsMock = jest.mocked(useNotificationSettings);
 
-test("고정 시간과 사용자 지정 시간 모두 노출하지 않는다", async () => {
+test("고정 21시 안내만 노출하고 사용자 지정 시간은 노출하지 않는다", async () => {
   useNotificationSettingsMock.mockReturnValue({
     settingsState: {
       pushToken: "ExponentPushToken[test]",
@@ -56,9 +56,8 @@ test("고정 시간과 사용자 지정 시간 모두 노출하지 않는다", a
     />,
   );
 
-  expect(screen.getByText("매일 알림을 보내드려요")).toBeTruthy();
+  expect(screen.getByText("오후 9시에 알림을 보내드려요")).toBeTruthy();
   expect(screen.queryByText("21:00")).toBeNull();
-  expect(screen.queryByText("오후 9시에 알림을 보내드려요")).toBeNull();
   expect(screen.queryByText("설정한 시간에 알림을 보내드려요")).toBeNull();
   expect(screen.queryByText("오전 10:00")).toBeNull();
 });

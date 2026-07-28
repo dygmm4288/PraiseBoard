@@ -107,7 +107,7 @@ const SettingNotificationFixed = (_props: SettingNotificationFixedProps) => {
       {!isLoading && hasPermission && (
         <SettingToggle
           label="정기 알림"
-          description="매일 알림을 보내드려요"
+          description="오후 9시에 알림을 보내드려요"
           value={isNotifications}
           onToggle={handleToggle}
           disabled={isLoading || isUpdating}
