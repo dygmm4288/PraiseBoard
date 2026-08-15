@@ -38,8 +38,8 @@ export const useCreateBoard = () => {
     mutationFn: (payload: BoardCreatePayload) => {
       return boardApi.createBoard(payload);
     },
-    onSuccess: () => {
-      void analytics.board.created("board_create");
+    onSuccess: (createdBoard) => {
+      void analytics.board.created(createdBoard, "board_create");
       resetBoard();
       void refreshAfterBoardChanged(queryClient);
     },

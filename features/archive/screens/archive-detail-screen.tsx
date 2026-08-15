@@ -39,6 +39,7 @@ const ArchiveDetailScreen = () => {
       title: board.title,
       emoji: board.emoji,
       targetCount: board.targetCount,
+      currentCount: board.currentCount,
       limitCount: board.limitCount,
       rewardMemo: board.rewardMemo,
       onDeleted: () => router.back(),

@@ -39,6 +39,7 @@ type BoardFormProps = {
   onClose: () => void;
   onSubmit: () => void;
   onDelete?: () => void;
+  onDeleteCancel?: () => void;
   isDeleting?: boolean;
 };
 
@@ -122,6 +123,7 @@ const BoardForm = ({
   onClose,
   onSubmit,
   onDelete,
+  onDeleteCancel,
   isDeleting = false,
 }: BoardFormProps) => {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
@@ -133,6 +135,11 @@ const BoardForm = ({
   const handleDelete = () => {
     setDeleteConfirmVisible(false);
     onDelete?.();
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmVisible(false);
+    onDeleteCancel?.();
   };
 
   const handleSelectEmoji = (emoji: string) => {
@@ -258,7 +265,7 @@ const BoardForm = ({
         confirmText="삭제하기"
         confirmVariant="danger"
         confirmDisabled={isDeleting}
-        onCancel={() => setDeleteConfirmVisible(false)}
+        onCancel={handleDeleteCancel}
         onConfirm={handleDelete}
       />
       <EmojiPickerModal

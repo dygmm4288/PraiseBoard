@@ -18,6 +18,7 @@ export type BoardEditSheetInput = {
   title: string;
   emoji: string;
   targetCount: number;
+  currentCount: number;
   limitCount: number;
   rewardMemo?: string | null;
   onDeleted?: () => void;
@@ -73,6 +74,7 @@ export const useBoardSheet = () => {
           <BottomSheetView className="flex-1 px-[16px] pb-[16px]">
             <BoardEditSheetContent
               boardId={board.id}
+              currentCount={board.currentCount}
               initialValues={toInitialValues(board)}
               onClose={dismiss}
               onUpdated={dismiss}

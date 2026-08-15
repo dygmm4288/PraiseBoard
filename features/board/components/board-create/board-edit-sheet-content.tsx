@@ -5,6 +5,7 @@ import BoardForm from "./board-form";
 
 type BoardEditSheetContentProps = {
   boardId: string;
+  currentCount: number;
   initialValues: BoardCreateFormValues;
   onClose: () => void;
   onUpdated?: () => void;
@@ -13,6 +14,7 @@ type BoardEditSheetContentProps = {
 
 const BoardEditSheetContent = ({
   boardId,
+  currentCount,
   initialValues,
   onClose,
   onUpdated,
@@ -22,7 +24,11 @@ const BoardEditSheetContent = ({
     boardId,
     initialValues,
   );
-  const { deleteBoard, isDeleting } = useDeleteBoard(boardId);
+  const { cancelDelete, deleteBoard, isDeleting } = useDeleteBoard({
+    id: boardId,
+    currentCount,
+    targetCount: initialValues.targetCount,
+  });
 
   const handleUpdateBoard = () => {
     updateBoard()?.then(() => {
@@ -46,6 +52,7 @@ const BoardEditSheetContent = ({
       onClose={onClose}
       onSubmit={handleUpdateBoard}
       onDelete={handleDeleteBoard}
+      onDeleteCancel={cancelDelete}
       isDeleting={isDeleting}
     />
   );

@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.3";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 const MESSAGE_TYPE = "debug";
 const MESSAGE_TRIGGER = "qa_manual";
+const PUSH_TYPE = "debug";
 const MESSAGE_TITLE = "[테스트] 웨일던";
 const MESSAGE_BODY = "푸시 알림 전송 테스트가 정상적으로 도착했어요.";
 const COOLDOWN_MS = 10_000;
@@ -174,7 +175,11 @@ serve(async (request: Request) => {
         body: MESSAGE_BODY,
         sound: "default",
         channelId: "remind.v1",
-        data: { trigger: MESSAGE_TRIGGER },
+        data: {
+          trigger: MESSAGE_TRIGGER,
+          push_type: PUSH_TYPE,
+          push_id: log.id,
+        },
       }),
     });
 

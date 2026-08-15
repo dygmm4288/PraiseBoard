@@ -5,6 +5,7 @@ import type {
 
 export type AnalyticsAdapter = {
   name: string;
+  identify?: (userId: string) => Promise<void> | void;
   track: (
     eventName: AnalyticsEventName,
     properties?: AnalyticsProperties,

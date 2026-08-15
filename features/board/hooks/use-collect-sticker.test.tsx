@@ -136,7 +136,7 @@ test("스티커 저장 성공 후 관련 조회를 갱신한다", async () => {
       queryKey: archiveKeys.detail("board-1"),
     }),
   );
-  expect(stickerCollectedMock).toHaveBeenCalledWith("app");
+  expect(stickerCollectedMock).toHaveBeenCalledWith(updatedBoard, "app");
 });
 
 test("스티커 action에 현재 사용자 정보를 전달한다", async () => {

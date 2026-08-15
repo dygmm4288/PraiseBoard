@@ -31,7 +31,7 @@ export const useUpdateBoard = (
       return boardApi.updateBoard(payload);
     },
     onSuccess: () => {
-      void analytics.board.updated();
+      void analytics.board.updated(boardId);
       void refreshAfterBoardChanged(queryClient, boardId);
     },
     onError: (error) => {

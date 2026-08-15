@@ -1,5 +1,9 @@
 import type { AnalyticsAdapter } from "./analytics.adapter";
-import type { TrackEvent } from "./analytics.types";
+import {
+  analyticsEventSchemas,
+  type AnalyticsProperties,
+  type TrackEvent,
+} from "./analytics.types";
 
 type AnalyticsAdapterErrorHandler = (
   adapterName: string,
@@ -12,10 +16,26 @@ export const createTrackEvent = (
 ): TrackEvent => {
   const track: TrackEvent = async (eventName, ...args) => {
     const properties = args[0];
+    const validation = analyticsEventSchemas[eventName].safeParse(properties);
+
+    if (!validation.success) {
+      try {
+        onAdapterError?.("contract", validation.error);
+      } catch {
+        // Analytics diagnostics must never affect the user action.
+      }
+      return;
+    }
+
+    const validatedProperties = validation.data as
+      | AnalyticsProperties
+      | undefined;
 
     const results = await Promise.allSettled(
       analyticsAdapters.map((adapter) =>
-        Promise.resolve().then(() => adapter.track(eventName, properties)),
+        Promise.resolve().then(() =>
+          adapter.track(eventName, validatedProperties),
+        ),
       ),
     );
 

@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.3";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 const MESSAGE_TRIGGER = "evening_reminder";
 const MESSAGE_TYPE = "whale_message";
+const PUSH_TYPE = "daily_reminder";
 const MESSAGE_TITLE = "웨일던";
 const MESSAGE_BODY =
   "오늘 하루도 얼마 남지 않았어요. 1분만 투자해서 습관을 지켜볼까요?";
@@ -143,13 +144,17 @@ serve(async (request: Request) => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(
-          messageChunk.map(({ token }) => ({
+          messageChunk.map(({ token, logId }) => ({
             to: token,
             title: MESSAGE_TITLE,
             body: MESSAGE_BODY,
             sound: "default",
             channelId: "remind.v1",
-            data: { trigger: MESSAGE_TRIGGER },
+            data: {
+              trigger: MESSAGE_TRIGGER,
+              push_type: PUSH_TYPE,
+              push_id: logId,
+            },
           })),
         ),
       });

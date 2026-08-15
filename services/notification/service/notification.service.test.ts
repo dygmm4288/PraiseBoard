@@ -19,6 +19,8 @@ jest.mock("@/services/analytics", () => ({
   analytics: {
     notification: {
       permissionResolved: jest.fn().mockResolvedValue(undefined),
+      received: jest.fn().mockResolvedValue(undefined),
+      clicked: jest.fn().mockResolvedValue(undefined),
     },
   },
 }));
@@ -42,6 +44,10 @@ jest.mock("expo-notifications", () => ({
   requestPermissionsAsync: jest.fn(),
   getExpoPushTokenAsync: jest.fn(),
   setNotificationHandler: jest.fn(),
+  addNotificationReceivedListener: jest.fn(),
+  addNotificationResponseReceivedListener: jest.fn(),
+  getLastNotificationResponseAsync: jest.fn(),
+  clearLastNotificationResponseAsync: jest.fn(),
 }));
 
 const ensureAndroidChannelsMock = jest.mocked(ensureAndroidChannels);
@@ -57,6 +63,20 @@ const getExpoPushTokenMock = jest.mocked(
 );
 const permissionResolvedMock = jest.mocked(
   analytics.notification.permissionResolved,
+);
+const receivedMock = jest.mocked(analytics.notification.received);
+const clickedMock = jest.mocked(analytics.notification.clicked);
+const addReceivedListenerMock = jest.mocked(
+  Notifications.addNotificationReceivedListener,
+);
+const addResponseListenerMock = jest.mocked(
+  Notifications.addNotificationResponseReceivedListener,
+);
+const getLastResponseMock = jest.mocked(
+  Notifications.getLastNotificationResponseAsync,
+);
+const clearLastResponseMock = jest.mocked(
+  Notifications.clearLastNotificationResponseAsync,
 );
 
 const pushState = {
@@ -77,6 +97,85 @@ beforeEach(() => {
   });
   getPushStateMock.mockResolvedValue(pushState);
   savePushTokenMock.mockResolvedValue(undefined);
+  addReceivedListenerMock.mockReturnValue({ remove: jest.fn() });
+  addResponseListenerMock.mockReturnValue({ remove: jest.fn() });
+  getLastResponseMock.mockResolvedValue(null);
+  clearLastResponseMock.mockResolvedValue(undefined);
+});
+
+const createPushNotification = (pushId: string) =>
+  ({
+    request: {
+      content: {
+        data: {
+          push_type: "daily_reminder",
+          push_id: pushId,
+        },
+      },
+    },
+  }) as never;
+
+test("bootstrap에서 push 수신과 클릭 listener를 등록하고 해제한다", async () => {
+  const removeReceived = jest.fn();
+  const removeResponse = jest.fn();
+  let onReceived: ((value: never) => void) | undefined;
+  let onResponse: ((value: never) => void) | undefined;
+  addReceivedListenerMock.mockImplementation((listener) => {
+    onReceived = listener as (value: never) => void;
+    return { remove: removeReceived };
+  });
+  addResponseListenerMock.mockImplementation((listener) => {
+    onResponse = listener as (value: never) => void;
+    return { remove: removeResponse };
+  });
+
+  const dispose = await notification.bootstrap();
+  const pushNotification = createPushNotification("push-listener-1");
+  onReceived?.(pushNotification);
+  onResponse?.({ notification: pushNotification } as never);
+
+  expect(receivedMock).toHaveBeenCalledWith({
+    pushType: "daily_reminder",
+    pushId: "push-listener-1",
+  });
+  expect(clickedMock).toHaveBeenCalledWith({
+    pushType: "daily_reminder",
+    pushId: "push-listener-1",
+  });
+
+  dispose();
+  expect(removeReceived).toHaveBeenCalledTimes(1);
+  expect(removeResponse).toHaveBeenCalledTimes(1);
+});
+
+test("종료 상태에서 눌린 마지막 push를 한 번 기록하고 응답을 비운다", async () => {
+  const pushNotification = createPushNotification("push-last-1");
+  getLastResponseMock.mockResolvedValueOnce({
+    notification: pushNotification,
+  } as never);
+
+  await notification.bootstrap();
+
+  expect(clickedMock).toHaveBeenCalledWith({
+    pushType: "daily_reminder",
+    pushId: "push-last-1",
+  });
+  expect(clearLastResponseMock).toHaveBeenCalledTimes(1);
+});
+
+test("분석 식별자가 없는 push payload는 기록하지 않는다", async () => {
+  let onReceived: ((value: never) => void) | undefined;
+  addReceivedListenerMock.mockImplementation((listener) => {
+    onReceived = listener as (value: never) => void;
+    return { remove: jest.fn() };
+  });
+
+  await notification.bootstrap();
+  onReceived?.({
+    request: { content: { data: { trigger: "debug" } } },
+  } as never);
+
+  expect(receivedMock).not.toHaveBeenCalled();
 });
 
 test("거절된 permission을 저장한 뒤 결과를 기록한다", async () => {

@@ -10,10 +10,11 @@ type NotificationToggleResult = {
   permissionStatus: NotificationPermissionStatus;
 };
 
-/**
- * TODO(EAS-86)
- * - push receive/click: listener ownership과 허용 payload schema가 정의된 뒤 추가한다.
- */
+type PushEvent = {
+  pushType: string;
+  pushId: string;
+};
+
 export const notificationAnalytics = {
   /** 알림 설정 mutation 후 server에서 재조회한 상태가 확정됐을 때 호출한다. */
   toggled({
@@ -31,5 +32,19 @@ export const notificationAnalytics = {
   /** OS permission 결과가 push state에 저장된 뒤 호출한다. */
   permissionResolved(status: NotificationPermissionStatus) {
     return trackEvent("notification_permission_result", { status });
+  },
+
+  received({ pushType, pushId }: PushEvent) {
+    return trackEvent("push_received", {
+      push_type: pushType,
+      push_id: pushId,
+    });
+  },
+
+  clicked({ pushType, pushId }: PushEvent) {
+    return trackEvent("push_clicked", {
+      push_type: pushType,
+      push_id: pushId,
+    });
   },
 };

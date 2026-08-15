@@ -9,9 +9,25 @@ const adapters: readonly AnalyticsAdapter[] = [
   firebaseAnalyticsAdapter,
 ];
 
-export const trackEvent = createTrackEvent(adapters, (adapterName, error) => {
+const reportAnalyticsError = (adapterName: string, error: unknown) => {
   reportError(error, {
     scope: `analytics.${adapterName}`,
     severity: "warning",
   });
-});
+};
+
+export const trackEvent = createTrackEvent(adapters, reportAnalyticsError);
+
+export const identifyAnalyticsUser = async (userId: string) => {
+  const identifyingAdapters = adapters.filter(
+    (adapter) => adapter.identify !== undefined,
+  );
+  const results = await Promise.allSettled(
+    identifyingAdapters.map((adapter) => adapter.identify?.(userId)),
+  );
+
+  results.forEach((result, index) => {
+    if (result.status !== "rejected") return;
+    reportAnalyticsError(identifyingAdapters[index].name, result.reason);
+  });
+};

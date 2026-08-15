@@ -9,6 +9,56 @@ import { PushPermissionStatus } from "../model/notification.interface";
 import { notificationApi } from "../notification.api";
 import { resolveNotificationSettingsState } from "../notification.policy";
 
+type PushAnalyticsData = {
+  pushType: string;
+  pushId: string;
+};
+
+const handledPushClickIds = new Set<string>();
+const MAX_HANDLED_PUSH_CLICK_IDS = 100;
+
+const parsePushAnalyticsData = (
+  data: Record<string, unknown>,
+): PushAnalyticsData | null => {
+  const pushType = data.push_type;
+  const pushId = data.push_id;
+  if (
+    typeof pushType !== "string" ||
+    pushType.length === 0 ||
+    typeof pushId !== "string" ||
+    pushId.length === 0
+  ) {
+    return null;
+  }
+
+  return { pushType, pushId };
+};
+
+const getPushAnalyticsData = (
+  notificationEvent: Notifications.Notification,
+) => parsePushAnalyticsData(notificationEvent.request.content.data);
+
+const trackPushReceived = (notificationEvent: Notifications.Notification) => {
+  const push = getPushAnalyticsData(notificationEvent);
+  if (!push) return;
+
+  void analytics.notification.received(push);
+};
+
+const trackPushClicked = (
+  response: Notifications.NotificationResponse,
+) => {
+  const push = getPushAnalyticsData(response.notification);
+  if (!push || handledPushClickIds.has(push.pushId)) return;
+
+  handledPushClickIds.add(push.pushId);
+  if (handledPushClickIds.size > MAX_HANDLED_PUSH_CLICK_IDS) {
+    const oldestPushId = handledPushClickIds.values().next().value;
+    if (oldestPushId) handledPushClickIds.delete(oldestPushId);
+  }
+  void analytics.notification.clicked(push);
+};
+
 const getDeviceIdentity = async () => {
   const [profileId, deviceId] = await Promise.all([
     localStorage.getItem("profile_id"),
@@ -147,6 +197,22 @@ export const notification = {
     });
 
     await ensureAndroidChannels();
+
+    const receivedSubscription =
+      Notifications.addNotificationReceivedListener(trackPushReceived);
+    const responseSubscription =
+      Notifications.addNotificationResponseReceivedListener(trackPushClicked);
+    const lastResponse =
+      await Notifications.getLastNotificationResponseAsync();
+    if (lastResponse) {
+      trackPushClicked(lastResponse);
+      await Notifications.clearLastNotificationResponseAsync();
+    }
+
+    return () => {
+      receivedSubscription.remove();
+      responseSubscription.remove();
+    };
   },
   async requestPermissionFromOnboarding(): Promise<boolean> {
     return requestPermissionAndSave();

@@ -2,7 +2,9 @@ import NetInfo from "@react-native-community/netinfo";
 import { act, render, waitFor } from "@testing-library/react-native";
 import type { AppStateStatus } from "react-native";
 import { AppState } from "react-native";
+import * as Application from "expo-application";
 import { notification } from "@/services/notification";
+import { analytics, identifyAnalyticsUser } from "@/services/analytics";
 import AppLifecycleEffects from "./app-lifecycle-effects";
 
 const mockUseUser = jest.fn(() => ({
@@ -21,6 +23,19 @@ jest.mock("@/services/notification", () => ({
   },
 }));
 
+jest.mock("@/services/analytics", () => ({
+  analytics: {
+    app: {
+      opened: jest.fn().mockResolvedValue(undefined),
+    },
+  },
+  identifyAnalyticsUser: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock("expo-application", () => ({
+  getInstallationTimeAsync: jest.fn(),
+}));
+
 jest.mock("@react-native-community/netinfo", () => ({
   __esModule: true,
   default: {
@@ -31,10 +46,25 @@ jest.mock("@react-native-community/netinfo", () => ({
 const bootstrapMock = jest.mocked(notification.bootstrap);
 const syncPushTokenMock = jest.mocked(notification.syncPushToken);
 const addNetInfoListenerMock = jest.mocked(NetInfo.addEventListener);
+const getInstallationTimeMock = jest.mocked(
+  Application.getInstallationTimeAsync,
+);
+const identifyAnalyticsUserMock = jest.mocked(identifyAnalyticsUser);
+const appOpenedMock = jest.mocked(analytics.app.opened);
 
 beforeEach(() => {
-  bootstrapMock.mockResolvedValue(undefined);
+  bootstrapMock.mockResolvedValue(jest.fn());
   syncPushTokenMock.mockResolvedValue(undefined);
+  getInstallationTimeMock.mockResolvedValue(
+    new Date("2026-08-12T00:00:00.000Z"),
+  );
+  jest.spyOn(Date, "now").mockReturnValue(
+    new Date("2026-08-15T00:00:00.000Z").getTime(),
+  );
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 test("앱 수명주기 한 곳에서 알림 초기화와 활성화 동기화를 실행한다", async () => {
@@ -55,6 +85,8 @@ test("앱 수명주기 한 곳에서 알림 초기화와 활성화 동기화를 
     expect(bootstrapMock).toHaveBeenCalledTimes(1);
     expect(syncPushTokenMock).toHaveBeenCalledTimes(1);
     expect(addNetInfoListenerMock).toHaveBeenCalledTimes(1);
+    expect(identifyAnalyticsUserMock).toHaveBeenCalledWith("profile-1");
+    expect(appOpenedMock).toHaveBeenCalledWith(3);
   });
 
   await act(async () => {
@@ -66,9 +98,9 @@ test("앱 수명주기 한 곳에서 알림 초기화와 활성화 동기화를 
     onAppStateChange?.("active");
   });
   await waitFor(() => expect(syncPushTokenMock).toHaveBeenCalledTimes(2));
+  await waitFor(() => expect(appOpenedMock).toHaveBeenCalledTimes(2));
 
   await screen.unmount();
   expect(removeAppStateListener).toHaveBeenCalledTimes(1);
   expect(removeNetInfoListener).toHaveBeenCalledTimes(1);
-  addAppStateListener.mockRestore();
 });

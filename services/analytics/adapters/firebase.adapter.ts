@@ -1,4 +1,8 @@
-import { getAnalytics, logEvent } from "@react-native-firebase/analytics";
+import {
+  getAnalytics,
+  logEvent,
+  setUserId,
+} from "@react-native-firebase/analytics";
 import { Platform } from "react-native";
 import type { AnalyticsAdapter } from "../core/analytics.adapter";
 import type { AnalyticsProperties } from "../core/analytics.types";
@@ -16,6 +20,11 @@ const normalizeProperties = (properties?: AnalyticsProperties) => {
 
 export const firebaseAnalyticsAdapter: AnalyticsAdapter = {
   name: "firebase",
+  async identify(userId) {
+    if (Platform.OS === "web") return;
+
+    await setUserId(getAnalytics(), userId);
+  },
   async track(eventName, properties) {
     if (Platform.OS === "web") return;
 

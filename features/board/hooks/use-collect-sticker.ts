@@ -32,7 +32,7 @@ export const useCollectSticker = () => {
       });
     },
     onSuccess: async (updatedBoard, variables) => {
-      void analytics.board.stickerCollected(variables.source);
+      void analytics.board.stickerCollected(updatedBoard, variables.source);
       await refreshAfterStickerCollected(queryClient, updatedBoard.id);
     },
     onError: async (

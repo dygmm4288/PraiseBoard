@@ -10,14 +10,16 @@ test("모든 analytics adapter에 같은 이벤트를 전달한다", async () =>
   ];
   const trackEvent = createTrackEvent(adapters);
 
-  await trackEvent("sticker_collected", { source: "app" });
+  const properties = {
+    source: "app" as const,
+    board_id: "board-1",
+    current_progress: 10,
+    is_first_check: false,
+  };
+  await trackEvent("sticker_collected", properties);
 
-  expect(firstTrack).toHaveBeenCalledWith("sticker_collected", {
-    source: "app",
-  });
-  expect(secondTrack).toHaveBeenCalledWith("sticker_collected", {
-    source: "app",
-  });
+  expect(firstTrack).toHaveBeenCalledWith("sticker_collected", properties);
+  expect(secondTrack).toHaveBeenCalledWith("sticker_collected", properties);
 });
 
 test("한 adapter 실패가 다른 adapter와 호출자에게 전파되지 않는다", async () => {
@@ -51,4 +53,28 @@ test("실패 보고 callback 오류도 호출자에게 전파하지 않는다", 
   );
 
   await expect(trackEvent("stats_viewed")).resolves.toBeUndefined();
+});
+
+test("runtime contract에 맞지 않는 event는 adapter로 보내지 않는다", async () => {
+  const adapterTrack = jest.fn();
+  const onAdapterError = jest.fn();
+  const trackEvent = createTrackEvent(
+    [{ name: "adapter", track: adapterTrack }],
+    onAdapterError,
+  );
+
+  await expect(
+    trackEvent("board_created", {
+      source: "board_create",
+      board_id: "",
+      target_count: 0,
+      is_first_board: false,
+    }),
+  ).resolves.toBeUndefined();
+
+  expect(adapterTrack).not.toHaveBeenCalled();
+  expect(onAdapterError).toHaveBeenCalledWith(
+    "contract",
+    expect.objectContaining({ message: expect.any(String) }),
+  );
 });

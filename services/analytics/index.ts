@@ -1,4 +1,5 @@
 export { postHogClient } from "./adapters/posthog-client";
+export { identifyAnalyticsUser } from "./core/track-event";
 export { analytics } from "./events/analytics";
 export { useTrackOnboardingStart } from "./hooks/use-track-onboarding-start";
 export { useTrackView } from "./hooks/use-track-view";

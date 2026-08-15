@@ -35,6 +35,7 @@ jest.mock("@/services/analytics", () => ({
       created: jest.fn().mockResolvedValue(undefined),
       updated: jest.fn().mockResolvedValue(undefined),
       deleted: jest.fn().mockResolvedValue(undefined),
+      deleteCancelled: jest.fn().mockResolvedValue(undefined),
       activeLimitReached: jest.fn().mockResolvedValue(undefined),
     },
   },
@@ -61,6 +62,9 @@ const refreshAfterBoardChangedMock = jest.mocked(refreshAfterBoardChanged);
 const boardCreatedMock = jest.mocked(analytics.board.created);
 const boardUpdatedMock = jest.mocked(analytics.board.updated);
 const boardDeletedMock = jest.mocked(analytics.board.deleted);
+const boardDeleteCancelledMock = jest.mocked(
+  analytics.board.deleteCancelled,
+);
 const activeLimitReachedMock = jest.mocked(
   analytics.board.activeLimitReached,
 );
@@ -98,7 +102,11 @@ afterAll(() => {
 });
 
 test("board 생성 API 성공 뒤 created를 기록한다", async () => {
-  createBoardMock.mockResolvedValue({} as never);
+  const createdBoard = {
+    id: "board-1",
+    targetCount: 30,
+  };
+  createBoardMock.mockResolvedValue(createdBoard as never);
   const { result } = await renderHook(() => useCreateBoard(), {
     wrapper: createWrapper(),
   });
@@ -114,7 +122,10 @@ test("board 생성 API 성공 뒤 created를 기록한다", async () => {
     await result.current.createBoard();
   });
 
-  expect(boardCreatedMock).toHaveBeenCalledWith("board_create");
+  expect(boardCreatedMock).toHaveBeenCalledWith(
+    createdBoard,
+    "board_create",
+  );
   expect(refreshAfterBoardChangedMock).toHaveBeenCalled();
 });
 
@@ -188,19 +199,28 @@ test("board 수정 성공과 실패를 각각 기록한다", async () => {
 });
 
 test("board 삭제 성공과 실패를 각각 기록한다", async () => {
+  const board = {
+    id: "board-1",
+    currentCount: 12,
+    targetCount: 30,
+  };
   deleteBoardMock.mockResolvedValueOnce(undefined);
-  const success = await renderHook(() => useDeleteBoard("board-1"), {
+  const success = await renderHook(() => useDeleteBoard(board), {
     wrapper: createWrapper(),
   });
 
   await act(async () => {
+    await success.result.current.cancelDelete();
+  });
+  await act(async () => {
     await success.result.current.deleteBoard();
   });
-  expect(boardDeletedMock).toHaveBeenCalledTimes(1);
+  expect(boardDeleteCancelledMock).toHaveBeenCalledWith("board-1");
+  expect(boardDeletedMock).toHaveBeenCalledWith(board);
 
   const error = new Error("delete failed");
   deleteBoardMock.mockRejectedValueOnce(error);
-  const failure = await renderHook(() => useDeleteBoard("board-1"), {
+  const failure = await renderHook(() => useDeleteBoard(board), {
     wrapper: createWrapper(),
   });
 

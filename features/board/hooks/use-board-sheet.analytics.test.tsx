@@ -58,6 +58,7 @@ const board = {
   title: "산책하기",
   emoji: "🌱",
   targetCount: 30,
+  currentCount: 10,
   limitCount: 1,
   rewardMemo: "",
 };
